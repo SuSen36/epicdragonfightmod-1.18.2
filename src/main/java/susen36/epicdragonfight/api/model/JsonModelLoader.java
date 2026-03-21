@@ -201,7 +201,7 @@ public class JsonModelLoader {
 			}
 		}
 		
-		Set<String> allowedJoints = Sets.<String>newLinkedHashSet();
+		Set<String> allowedJoints = Sets.newLinkedHashSet();
 		
 		if (attack) {
 			for (Phase phase : ((AttackAnimation)animation).phases) {
@@ -303,7 +303,7 @@ public class JsonModelLoader {
 	}
 	
 	private static TransformSheet getTransformSheet(float[] times, float[] trasnformMatrix, OpenMatrix4f invLocalTransform, boolean correct) {
-		List<Keyframe> keyframeList = new ArrayList<Keyframe> ();
+		List<Keyframe> keyframeList = new ArrayList<>();
 		
 		for (int i = 0; i < times.length; i++) {
 			float timeStamp = times[i];

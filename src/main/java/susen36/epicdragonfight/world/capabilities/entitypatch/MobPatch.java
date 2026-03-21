@@ -52,7 +52,7 @@ public abstract class MobPatch<T extends Mob> extends LivingEntityPatch<T> {
 	public void setAttakTargetSync(LivingEntity entityIn) {
 		if (!this.original.level.isClientSide()) {
 			this.original.setTarget(entityIn);
-			}
+		}
 	}
 	
 	@Override

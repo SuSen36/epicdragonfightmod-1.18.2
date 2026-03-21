@@ -76,7 +76,14 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		
 		if (!this.dragonpatch.isLogicalClient()) {
 			this.dragon.level.explode((Entity)null, blockpos.getX(), blockpos.getY(), blockpos.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
+		} else {
+			this.dragonpatch.shieldEndEffectAge = 0;
 		}
+	}
+
+	@Override
+	public float onHurt(net.minecraft.world.damagesource.DamageSource damagesource, float amount) {
+		return Math.max(amount - 4.0F, 0.0F);
 	}
 
 	@Override

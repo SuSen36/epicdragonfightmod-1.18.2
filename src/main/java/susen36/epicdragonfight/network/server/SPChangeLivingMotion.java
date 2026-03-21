@@ -62,28 +62,33 @@ public class SPChangeLivingMotion {
 			buf.writeInt(anim.getId());
 		}
 	}
-	
+
 	public static void handle(SPChangeLivingMotion msg, Supplier<NetworkEvent.Context> ctx) {
 		ctx.get().enqueueWork(() -> {
 			Minecraft mc = Minecraft.getInstance();
-			Entity entity = mc.player.level.getEntity(msg.entityId);
-			
+			if (mc.level == null) return;
+
+			Entity entity = mc.level.getEntity(msg.entityId);
 			if (entity != null) {
-				LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
-				ClientAnimator animator = entitypatch.getClientAnimator();
-				animator.resetMotions();
-				animator.resetCompositeMotion();
-				
-				for (int i = 0; i < msg.count; i++) {
-					entitypatch.getClientAnimator().addLivingAnimation(msg.motionList.get(i), msg.animationList.get(i));
-				}
-				
-				if (msg.setChangesAsDefault) {
-					animator.setCurrentMotionsAsDefault();
-				}
+				entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).ifPresent(cap -> {
+					LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) cap;
+					ClientAnimator animator = entitypatch.getClientAnimator();
+
+					if (animator != null) {
+						animator.resetMotions();
+						animator.resetCompositeMotion();
+
+						for (int i = 0; i < msg.count; i++) {
+							animator.addLivingAnimation(msg.motionList.get(i), msg.animationList.get(i));
+						}
+
+						if (msg.setChangesAsDefault) {
+							animator.setCurrentMotionsAsDefault();
+						}
+					}
+				});
 			}
 		});
-		
 		ctx.get().setPacketHandled(true);
 	}
 }

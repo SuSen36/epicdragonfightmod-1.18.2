@@ -1,14 +1,16 @@
 {
-	"required": true,
-	"minVersion": "0.8",
-	"compatibilityLevel": "JAVA_17",
-	"package": "susen36.epicdragonfight.mixin",
-	"client": [
-      "MixinBufferBuilder",
-      "MixinEnderDragonRenderer"
-    ],
-	"mixins": [
-		"MixinEndCrystal"
-	],
-	"refmap": "epicdragonfight.mixins.refmap.json"
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "susen36.epicdragonfight.mixin",
+  "client": [
+    "MixinBufferBuilder",
+    "MixinEnderDragonRenderer"
+  ],
+  "mixins": [
+    "MixinAreaEffectCloud",
+    "MixinDragonFireball",
+    "MixinEndCrystal"
+  ],
+  "refmap": "epicdragonfight.mixins.refmap.json"
 }

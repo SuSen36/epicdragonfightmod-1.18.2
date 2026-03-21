@@ -15,7 +15,6 @@ public class ClientEngine {
 		instance = this;
 		this.minecraft = Minecraft.getInstance();
 		this.renderEngine = new RenderEngine();
-
 	}
 
 }

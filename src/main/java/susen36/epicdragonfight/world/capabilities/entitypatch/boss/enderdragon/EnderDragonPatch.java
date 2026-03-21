@@ -46,6 +46,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	public float xRootO;
 	public float zRoot;
 	public float zRootO;
+	public int shieldEndEffectAge;
 	public LivingMotion prevMotion = LivingMotions.FLY;
 	@Override
 	public void onConstructed(EnderDragon entityIn) {
@@ -78,13 +79,15 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 			INSTANCE_SERVER = this;
 		}
 	}
+
 	@Override
 	protected void initAttributes() {
 		super.initAttributes();
-		this.original.getAttribute(Attributes.ARMOR).setBaseValue(250.0F);
-		this.original.getAttribute(Attributes.ARMOR).setBaseValue(4.0F);
+		this.original.getAttribute(Attributes.MAX_HEALTH).setBaseValue(300.0F);
+		this.original.getAttribute(Attributes.ARMOR).setBaseValue(3.0F);
 		this.original.getAttribute(Attributes.ARMOR_TOUGHNESS).setBaseValue(2.0F);
-		this.original.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(12.0F);
+		this.original.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(10.0F);
+		this.original.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(0.35F);
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -147,31 +150,30 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 		AABB bodyBoundingBox = bodyPart.getBoundingBox();
 		List<Entity> list = this.original.level.getEntities(this.original, bodyBoundingBox, EntitySelector.pushableBy(this.original));
 		if (!list.isEmpty()) {
-			for (int l = 0; l < list.size(); ++l) {
-				Entity entity = list.get(l);
-				double d0 = entity.getX() - this.original.getX();
-				double d1 = entity.getZ() - this.original.getZ();
-				double d2 = Mth.absMax(d0, d1);
-				
-				if (d2 >= 0.01D) {
-					d2 = Math.sqrt(d2);
-					d0 = d0 / d2;
-					d1 = d1 / d2;
-					double d3 = 1.0D / d2;
-					
-					if (d3 > 1.0D) {
-						d3 = 1.0D;
-					}
-					
-					d0 = d0 * d3 * 0.2D;
-					d1 = d1 * d3 * 0.2D;
-					
-					if (!entity.isVehicle()) {
-						entity.push(d0, 0.0D, d1);
-						entity.hurtMarked = true;
-					}
-				}
-			}
+            for (Entity entity : list) {
+                double d0 = entity.getX() - this.original.getX();
+                double d1 = entity.getZ() - this.original.getZ();
+                double d2 = Mth.absMax(d0, d1);
+
+                if (d2 >= 0.01D) {
+                    d2 = Math.sqrt(d2);
+                    d0 = d0 / d2;
+                    d1 = d1 / d2;
+                    double d3 = 1.0D / d2;
+
+                    if (d3 > 1.0D) {
+                        d3 = 1.0D;
+                    }
+
+                    d0 = d0 * d3 * 0.2D;
+                    d1 = d1 * d3 * 0.2D;
+
+                    if (!entity.isVehicle()) {
+                        entity.push(d0, 0.0D, d1);
+                        entity.hurtMarked = true;
+                    }
+                }
+            }
 		}
 	}
 
@@ -181,6 +183,10 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 		this.zRootO = this.zRoot;
 		super.clientTick(event);
 		this.updateTipPoints();
+		
+		if (this.shieldEndEffectAge < 10) {
+			this.shieldEndEffectAge++;
+		}
 	}
 
 	@Override
@@ -198,7 +204,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 			}
 		}
 		
-		if (this.tipPointAnimations.size() > 0) {
+		if (!this.tipPointAnimations.isEmpty()) {
 			TipPointAnimation frontL = this.getTipPointAnimation("Leg_Front_L3");
 			TipPointAnimation frontR = this.getTipPointAnimation("Leg_Front_R3");
 			TipPointAnimation backL = this.getTipPointAnimation("Leg_Back_L3");

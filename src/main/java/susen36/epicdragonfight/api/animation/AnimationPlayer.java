@@ -20,8 +20,8 @@ public class AnimationPlayer {
 	
 	public void tick(LivingEntityPatch<?> entitypatch) {
 		this.prevElapsedTime = this.elapsedTime;
-		this.elapsedTime += 0.05 * this.getAnimation().getPlaySpeed(entitypatch) *
-				(this.isReversed() && this.getAnimation().canBePlayedReverse() ? -1.0F : 1.0F); 
+		this.elapsedTime += (float) (0.05 * this.getAnimation().getPlaySpeed(entitypatch) *
+                        (this.isReversed() && this.getAnimation().canBePlayedReverse() ? -1.0F : 1.0F));
 		
 		if (this.elapsedTime >= this.play.getTotalTime()) {
 			if (this.play.isRepeat()) {
@@ -42,9 +42,7 @@ public class AnimationPlayer {
 			}
 		}
 	}
-	
 
-	
 	public void reset() {
 		this.elapsedTime = 0;
 		this.prevElapsedTime = 0;

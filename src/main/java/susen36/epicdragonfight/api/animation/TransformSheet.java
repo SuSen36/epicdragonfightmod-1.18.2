@@ -67,20 +67,17 @@ public class TransformSheet {
 	
 	public Vec3f getInterpolatedTranslation(float currentTime) {
 		InterpolationInfo interpolInfo = this.getInterpolationInfo(currentTime);
-		Vec3f vec3f = MathUtils.lerpVector(this.keyframes[interpolInfo.prev].transform().translation(), this.keyframes[interpolInfo.next].transform().translation(), interpolInfo.zero2One);
-		return vec3f;
+        return MathUtils.lerpVector(this.keyframes[interpolInfo.prev].transform().translation(), this.keyframes[interpolInfo.next].transform().translation(), interpolInfo.zero2One);
 	}
 	
 	public Quaternion getInterpolatedRotation(float currentTime) {
 		InterpolationInfo interpolInfo = this.getInterpolationInfo(currentTime);
-		Quaternion quat = MathUtils.lerpQuaternion(this.keyframes[interpolInfo.prev].transform().rotation(), this.keyframes[interpolInfo.next].transform().rotation(), interpolInfo.zero2One);
-		return quat;
+        return MathUtils.lerpQuaternion(this.keyframes[interpolInfo.prev].transform().rotation(), this.keyframes[interpolInfo.next].transform().rotation(), interpolInfo.zero2One);
 	}
 	
 	public JointTransform getInterpolatedTransform(float currentTime) {
 		InterpolationInfo interpolInfo = this.getInterpolationInfo(currentTime);
-		JointTransform trasnform = JointTransform.interpolate(this.keyframes[interpolInfo.prev].transform(), this.keyframes[interpolInfo.next].transform(), interpolInfo.zero2One);
-		return trasnform;
+        return JointTransform.interpolate(this.keyframes[interpolInfo.prev].transform(), this.keyframes[interpolInfo.next].transform(), interpolInfo.zero2One);
 	}
 	
 	public void correctAnimationByNewPosition(Vec3f startpos, Vec3f startToEnd, Vec3f modifiedStart, Vec3f modifiedStartToEnd) {

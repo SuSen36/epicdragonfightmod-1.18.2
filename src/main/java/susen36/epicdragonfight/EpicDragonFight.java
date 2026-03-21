@@ -28,7 +28,6 @@ import susen36.epicdragonfight.network.DragoFightNetworkManager;
 import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
 import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
 import susen36.epicdragonfight.world.capabilities.provider.ProviderEntity;
-import susen36.epicdragonfight.world.entity.DragonFightEntities;
 
 import java.util.function.Function;
 
@@ -58,8 +57,6 @@ public class EpicDragonFight {
     	bus.addGenericListener(DataSerializerEntry.class, DraagonFightDataSerializers::register);
 
     	LivingMotion.ENUM_MANAGER.loadPreemptive(LivingMotions.class);
-
-		DragonFightEntities.ENTITIES.register(bus);
 
         MinecraftForge.EVENT_BUS.register(EntityEvents.class);
         MinecraftForge.EVENT_BUS.register(CapabilityEvent.class);

@@ -17,7 +17,6 @@ public class SPPlayAnimation {
 	protected int entityId;
 	protected float convertTimeModifier;
 
-	
 	public SPPlayAnimation(StaticAnimation animation, float convertTimeModifier, LivingEntityPatch<?> entitypatch) {
 		this(animation.getNamespaceId(), animation.getId(), entitypatch.getOriginal().getId(), convertTimeModifier);
 	}

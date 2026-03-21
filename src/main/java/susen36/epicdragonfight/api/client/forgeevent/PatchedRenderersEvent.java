@@ -20,17 +20,5 @@ public abstract class PatchedRenderersEvent extends Event implements IModBusEven
 			this.entityRendererProvider = entityRendererProvider;
 		}
 
-
-		public static class Modify extends PatchedRenderersEvent {
-			private Map<EntityType<?>, PatchedEntityRenderer> renderers;
-
-			public Modify(Map<EntityType<?>, PatchedEntityRenderer> renderers) {
-				this.renderers = renderers;
-			}
-
-			public PatchedEntityRenderer get(EntityType<?> entityType) {
-				return this.renderers.get(entityType);
-			}
-		}
 	}
 }

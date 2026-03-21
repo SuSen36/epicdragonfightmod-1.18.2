@@ -17,7 +17,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 	private int currentBehaviorPointer;
 	
 	protected CombatBehaviors(Builder<T> builder, T mobpatch) {
-		builder.behaviorSeriesList.stream().map((behaviorSeriesBuilder) -> behaviorSeriesBuilder.build()).forEach(this.behaviorSeriesList::add);
+		builder.behaviorSeriesList.stream().map(BehaviorSeries.Builder::build).forEach(this.behaviorSeriesList::add);
 		this.mobpatch = mobpatch;
 		this.currentBehaviorPointer = -1;
 	}

@@ -16,7 +16,6 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAnimationProperty;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
-import susen36.epicdragonfight.api.collider.Collider;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.api.utils.math.Vec3f;
@@ -54,8 +53,8 @@ public class AttackAnimation extends ActionAnimation {
 	
 	public final Phase[] phases;
 	
-	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, @Nullable Collider collider, String index, String path, Model model) {
-		this(convertTime, path, model, new Phase(0.0F, antic, preDelay, contact, recovery, Float.MAX_VALUE, index, collider));
+	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String path, Model model) {
+		this(convertTime, path, model, new Phase(0.0F, antic, preDelay, contact, recovery, Float.MAX_VALUE, index));
 	}
 
 	public AttackAnimation(float convertTime, String path, Model model, Phase... phases) {
@@ -145,12 +144,6 @@ public class AttackAnimation extends ActionAnimation {
 		super.onLoaded();
 	}
 	
-	public Collider getCollider(LivingEntityPatch<?> entitypatch, float elapsedTime) {
-		Phase phase = this.getPhaseByTime(elapsedTime);
-		
-		return  phase.collider;
-	}
-	
 	public LivingEntity getTrueEntity(Entity entity) {
 		if (entity instanceof LivingEntity) {
 			return (LivingEntity)entity;
@@ -213,22 +206,7 @@ public class AttackAnimation extends ActionAnimation {
 		return currentPhase;
 	}
 	
-	@Deprecated
-	public void changeCollider(Collider newCollider, int index) {
-		this.phases[index].collider = newCollider;
-	}
-	
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playTime, float partialTicks) {
-		AnimationPlayer animPlayer = entitypatch.getAnimator().getPlayerFor(this);
-		float prevElapsedTime = animPlayer.getPrevElapsedTime();
-		float elapsedTime = animPlayer.getElapsedTime();
-		this.getCollider(entitypatch, elapsedTime).draw(poseStack, buffer, entitypatch, this, prevElapsedTime, elapsedTime, partialTicks, this.getPlaySpeed(entitypatch));
-	}
-	
 	public static class Phase {
-
 		protected final float start;
 		protected final float antic;
 		protected final float preDelay;
@@ -237,21 +215,18 @@ public class AttackAnimation extends ActionAnimation {
 		protected final float end;
 		protected final String jointName;
 		protected final InteractionHand hand;
-		protected Collider collider;
-
 		
-		public Phase(float start, float antic, float preDelay, float contact, float recovery, float end, String jointName, Collider collider) {
-			this(start, antic, preDelay, contact, recovery, end, InteractionHand.MAIN_HAND, jointName, collider);
+		public Phase(float start, float antic, float preDelay, float contact, float recovery, float end, String jointName) {
+			this(start, antic, preDelay, contact, recovery, end, InteractionHand.MAIN_HAND, jointName);
 		}
 		
-		public Phase(float start, float antic, float preDelay, float contact, float recovery, float end, InteractionHand hand, String jointName, Collider collider) {
+		public Phase(float start, float antic, float preDelay, float contact, float recovery, float end, InteractionHand hand, String jointName) {
 			this.start = start;
 			this.antic = antic;
 			this.preDelay = preDelay;
 			this.contact = contact;
 			this.recovery = recovery;
 			this.end = end;
-			this.collider = collider;
 			this.jointName = jointName;
 			this.hand = hand;
 		}

@@ -75,6 +75,18 @@ public class DragonFightRenderTypes extends RenderType {
 				.createCompositeState(true);
 		return create(EpicDragonFight.MODID + ":eyes", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, true, false, state);
 	});
+
+	private static final Function<ResourceLocation, RenderType> FORCE_FIELD = Util.memoize((textureLocation) -> {
+		CompositeState state = CompositeState.builder()
+				.setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+				.setTextureState(new TextureStateShard(textureLocation, false, false))
+				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				.setCullState(NO_CULL)
+				.setLightmapState(LIGHTMAP)
+				.setOverlayState(OVERLAY)
+				.createCompositeState(true);
+		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.TRIANGLES, 256, true, false, state);
+	});
 	public static RenderType animatedModel(ResourceLocation locationIn) {
 		return ANIMATED_MODEL.apply(locationIn);
 	}
@@ -93,5 +105,9 @@ public class DragonFightRenderTypes extends RenderType {
 
 	public static RenderType debugQuads() {
 		return DEBUG_QUADS;
+	}
+
+	public static RenderType forceField(ResourceLocation locationIn) {
+		return FORCE_FIELD.apply(locationIn);
 	}
 }

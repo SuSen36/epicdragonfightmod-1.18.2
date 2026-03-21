@@ -40,9 +40,7 @@ public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<Enti
 	}
 	
 	public static void registerEntityPatchesClient() {
-		CAPABILITIES.put(EntityType.PLAYER, (entityIn) -> {
-				return () -> null;
-		});
+		CAPABILITIES.put(EntityType.PLAYER, (entityIn) -> () -> null);
 	}
 	
 	public static void clear() {

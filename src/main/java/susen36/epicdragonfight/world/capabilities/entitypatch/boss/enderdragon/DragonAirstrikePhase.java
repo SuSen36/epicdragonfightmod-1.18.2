@@ -18,7 +18,7 @@ import susen36.epicdragonfight.api.client.model.ClientModels;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.api.utils.math.Vec3f;
-import susen36.epicdragonfight.world.entity.AreaEffectBreath;
+import net.minecraft.world.entity.AreaEffectCloud;
 
 public class DragonAirstrikePhase extends PatchedDragonPhase {
 	private Vec3 startpos;
@@ -140,12 +140,13 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 					if (this.isActuallyAttacking) {
 						if (this.dragon.tickCount % 5 == 0) {
 							Vec3 createpos = this.dragon.position().add(this.dragon.getLookAngle().scale(-4.5D));
-							AreaEffectBreath breatharea = new AreaEffectBreath(this.dragon.level, createpos.x, createpos.y, createpos.z);
-							breatharea.setOwner((LivingEntity)this.dragon);
+							AreaEffectCloud breatharea = new AreaEffectCloud(this.dragon.level, createpos.x, createpos.y, createpos.z);
+							breatharea.setOwner(this.dragon);
 							breatharea.setWaitTime(0);
-							breatharea.setRadius(0.7F);
+							breatharea.setRadius(0.5F);
 							breatharea.setDuration(20);
-							breatharea.setRadiusPerTick(0.3F);
+							breatharea.setRadiusPerTick(0.2F);
+							breatharea.setParticle(ParticleTypes.DRAGON_BREATH);
 							breatharea.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
 							breatharea.setDeltaMovement(0, -1, 0);
 							this.dragon.level.addFreshEntity(breatharea);

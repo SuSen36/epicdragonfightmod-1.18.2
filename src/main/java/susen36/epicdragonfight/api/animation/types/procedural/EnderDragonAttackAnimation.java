@@ -20,7 +20,6 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAnimationProperty;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.api.animation.types.AttackAnimation;
-import susen36.epicdragonfight.api.collider.Collider;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.api.utils.math.Vec3f;
@@ -33,8 +32,8 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransform;
 	
-	public EnderDragonAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, Collider collider, String index, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, antic, preDelay, contact, recovery, collider, index, path, model);
+	public EnderDragonAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String path, Model model, IKInfo[] ikInfos) {
+		super(convertTime, antic, preDelay, contact, recovery, index, path, model);
 		this.ikInfos = ikInfos;
 		this.addProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE, true);
 		this.properties.remove(ActionAnimationProperty.COORD_SET_TICK);

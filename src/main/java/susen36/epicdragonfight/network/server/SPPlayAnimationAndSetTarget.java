@@ -17,17 +17,18 @@ public class SPPlayAnimationAndSetTarget extends SPPlayAnimation {
 		this.targetId = targetId;
 	}
 
-	
+
 	@Override
 	public void onArrive() {
 		super.onArrive();
 		Minecraft mc = Minecraft.getInstance();
-		Entity entity = mc.player.level.getEntity(this.entityId);
-		Entity target = mc.player.level.getEntity(this.targetId);
+		if (mc.level == null) return;
 
-		if (entity instanceof Mob && target instanceof LivingEntity) {
-			Mob entityliving = (Mob)entity;
-			entityliving.setTarget((LivingEntity)target);
+		Entity entity = mc.level.getEntity(this.entityId);
+		Entity target = mc.level.getEntity(this.targetId);
+
+		if (entity instanceof Mob mob && target instanceof LivingEntity livingTarget) {
+			mob.setTarget(livingTarget);
 		}
 	}
 	

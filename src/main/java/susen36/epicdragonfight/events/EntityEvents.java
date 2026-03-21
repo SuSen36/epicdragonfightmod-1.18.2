@@ -67,14 +67,10 @@ public class EntityEvents {
 					if (hitEntity.position().horizontalDistanceSqr() < 40000) {
 						event.setAmount(event.getAmount()*0.8f);
 					}
-
-			    event.setAmount(event.getAmount());
+					event.setAmount(event.getAmount());
 				}
 		}
 	}
-
-
-
 
 	@SubscribeEvent
 	public static void sizingEvent(EntityEvent.Size event) {
@@ -83,7 +79,6 @@ public class EntityEvents {
 		}
 	}
 
-	
 	@SubscribeEvent
 	public static void deathEvent(LivingDeathEvent event) {
 		LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>)event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
