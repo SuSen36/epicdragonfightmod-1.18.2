@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -25,7 +26,6 @@ import susen36.epicdragonfight.api.client.model.ClientModels;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
 import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.DragonCrystalLinkPhase;
@@ -42,7 +42,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		poseStack.pushPose();
         this.mulPoseStack(poseStack, armature, entityIn, entitypatch, partialTicks);
 		OpenMatrix4f[] poses = this.getPoseMatrices(entitypatch, armature, partialTicks);
-		poses[0] = OpenMatrix4f.rotate(-90.0F, Vec3f.X_AXIS, poses[0], null);
+		poses[0] = OpenMatrix4f.rotate(-90.0F, Vector3f.XP, poses[0], null);
 		
 		if (entityIn.dragonDeathTime > 0) {
 			poseStack.translate(entityIn.getRandom().nextGaussian() * 0.08D, 0.0D, entityIn.getRandom().nextGaussian() * 0.08D);
@@ -113,7 +113,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 			float f = (float)entityIn.getLatencyPos(7, partialTicks)[0];
 		    float f1 = (float)(entityIn.getLatencyPos(5, partialTicks)[1] - entityIn.getLatencyPos(10, partialTicks)[1]);
 		    float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F : (float)Mth.rotWrap((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
-			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vec3f.Z_AXIS);
+			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
 		} else {
 			modelMatrix = entitypatch.getModelMatrix(partialTicks).scale(-1.0F, 1.0F, -1.0F);
 		}
@@ -147,7 +147,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		RenderSystem.setShaderTexture(0, EnderDragonRenderer.CRYSTAL_BEAM_LOCATION);
 
 		poseStack.pushPose();
-		poseStack.translate(0.0, -2.0, -2.0);
+		poseStack.translate(0.0, -2.0, 0.0);
 		poseStack.mulPose(com.mojang.math.Vector3f.YP.rotationDegrees(interpolatedYaw));
 		poseStack.mulPose(com.mojang.math.Vector3f.ZP.rotationDegrees(-45.0F));
 		poseStack.mulPose(com.mojang.math.Vector3f.XP.rotationDegrees(0.0F));

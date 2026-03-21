@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.mojang.datafixers.util.Pair;
 
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.Joint;
@@ -11,7 +12,6 @@ import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 
 @OnlyIn(Dist.CLIENT)
 public class JointMask {
@@ -38,7 +38,7 @@ public class JointMask {
 				OpenMatrix4f childTransform = OpenMatrix4f.mul(subJoint.getLocalTrasnform(), lowestPose.getOrDefaultTransform(subJoint.getName()).toMatrix(), null);
 				OpenMatrix4f lowestFinal = OpenMatrix4f.mul(lowestLocalTransform, childTransform, null);
 				OpenMatrix4f currentFinal = OpenMatrix4f.mul(currentLocalTransform, childTransform, null);
-				Vec3f vec = new Vec3f(0, currentFinal.m31 - lowestFinal.m31, currentFinal.m32 - lowestFinal.m32);
+				Vector3f vec = new Vector3f(0, currentFinal.m31 - lowestFinal.m31, currentFinal.m32 - lowestFinal.m32);
 				JointTransform jt = result.getJointTransformData().getOrDefault(subJoint.getName(), JointTransform.empty());
 				jt.parent(JointTransform.getTranslation(vec), OpenMatrix4f::mul);
 				jt.jointLocal(JointTransform.fromMatrixNoScale(currentToLowest), OpenMatrix4f::mul);

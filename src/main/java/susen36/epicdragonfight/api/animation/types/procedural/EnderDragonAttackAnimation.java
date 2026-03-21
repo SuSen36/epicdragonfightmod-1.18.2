@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +23,6 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAn
 import susen36.epicdragonfight.api.animation.types.AttackAnimation;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.RenderingTool;
 import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
@@ -59,14 +59,16 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	    	float xo = (float)entitypatch.getOriginal().xo;
 	    	float yo = (float)entitypatch.getOriginal().yo;
 	    	float zo = (float)entitypatch.getOriginal().zo;
-	    	OpenMatrix4f toModelPos = OpenMatrix4f.mul(OpenMatrix4f.translate(new Vec3f(xo + (x - xo) * partialTicks, yo + (y - yo) * partialTicks, zo + (z - zo) * partialTicks), new OpenMatrix4f(), null), entitypatch.getModelMatrix(partialTicks), null).invert();
+	    	OpenMatrix4f toModelPos = OpenMatrix4f.mul(OpenMatrix4f.translate(new Vector3f(xo + (x - xo) * partialTicks, yo + (y - yo) * partialTicks, zo + (z - zo) * partialTicks), new OpenMatrix4f(), null), entitypatch.getModelMatrix(partialTicks), null).invert();
 	    	this.correctRootRotation(pose.getJointTransformData().get("Root"), enderdragonpatch, partialTicks);
 	    	
 	    	for (IKInfo ikInfo : this.ikInfos) {
 		    	TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
 	    		JointTransform jt = tipAnim.getTipTransform(partialTicks);
-		    	Vec3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jt.translation(), null);
-		    	this.applyFabrikToJoint(jointModelpos.multiply(-1.0F, 1.0F, -1.0F), pose, this.getModel().getArmature(), ikInfo.startJoint, ikInfo.endJoint, jt.rotation());
+		    	Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jt.translation(), null);
+		    	Vector3f jointModelposMultiplied = jointModelpos.copy();
+		    	jointModelposMultiplied.mul(-1.0F, 1.0F, -1.0F);
+		    	this.applyFabrikToJoint(jointModelposMultiplied, pose, this.getModel().getArmature(), ikInfo.startJoint, ikInfo.endJoint, jt.rotation());
 	    	}
 		}
 		
@@ -91,18 +93,24 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 				TransformSheet tipAnim = this.getFirstPart(this.tipPointTransform.get(ikInfo.endJoint));
 				Keyframe[] keyframes = tipAnim.getKeyframes();
 				JointTransform firstposeTransform = keyframes[0].transform();
-				firstposeTransform.translation().multiply(-1.0F, 1.0F, -1.0F);
+				Vector3f firstTranslation = firstposeTransform.translation();
+				firstTranslation.mul(-1.0F, 1.0F, -1.0F);
 				
 				if (!ikInfo.clipAnimation || ikInfo.touchingGround[0]) {
-					Vec3f rayResultPosition = this.getRayCastedTipPosition(firstposeTransform.translation().add(0.0F, 2.5F, 0.0F), toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight);
-					firstposeTransform.translation().set(rayResultPosition);
+					Vector3f firstTranslationAdded = firstTranslation.copy();
+					firstTranslationAdded.add(0.0F, 2.5F, 0.0F);
+					Vector3f rayResultPosition = this.getRayCastedTipPosition(firstTranslationAdded, toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight);
+					firstposeTransform.translation().set(rayResultPosition.x, rayResultPosition.y, rayResultPosition.z);
 				} else {
-					firstposeTransform.translation().set(OpenMatrix4f.transform3v(toWorld, firstposeTransform.translation(), null));
-				}
-				
-				for (Keyframe keyframe : keyframes) {
-					keyframe.transform().translation().set(firstposeTransform.translation());
-				}
+					Vector3f transformedFirstTranslation = new Vector3f();
+					OpenMatrix4f.transform3v(toWorld, firstTranslation, transformedFirstTranslation);
+					firstposeTransform.translation().set(transformedFirstTranslation.x, transformedFirstTranslation.y, transformedFirstTranslation.z);
+  				}
+  				
+  				for (Keyframe keyframe : keyframes) {
+  					Vector3f keyframeTranslation = keyframe.transform().translation();
+  					keyframeTranslation.set(firstposeTransform.translation().x, firstposeTransform.translation().y, firstposeTransform.translation().z);
+  				}
 				
 				enderdragonpatch.addTipPointAnimation(ikInfo.endJoint, firstposeTransform.translation(), tipAnim, ikInfo);
 			}
@@ -132,10 +140,14 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 					
 					if (startTime <= elapsedTime && elapsedTime < endTime) {
 						TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
-						Vec3f clipStart = ikInfo.endpos.copy().add(0.0F, 2.5F, 0.0F).multiply(-1.0F, 1.0F, -1.0F);
-						Vec3f finalTargetpos = (!ikInfo.clipAnimation || ikInfo.touchingGround[ikInfo.touchingGround.length - 1]) ? 
+						Vector3f clipStart = ikInfo.endpos.copy();
+						clipStart.add(0.0F, 2.5F, 0.0F);
+						clipStart.mul(-1.0F, 1.0F, -1.0F);
+						Vector3f endposMultiplied = ikInfo.endpos.copy();
+						endposMultiplied.mul(-1.0F, 1.0F, -1.0F);
+						Vector3f finalTargetpos = (!ikInfo.clipAnimation || ikInfo.touchingGround[ikInfo.touchingGround.length - 1]) ? 
 							this.getRayCastedTipPosition(clipStart, toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight) : 
-								OpenMatrix4f.transform3v(toWorld, ikInfo.endpos.multiply(-1.0F, 1.0F, -1.0F), null);
+								OpenMatrix4f.transform3v(toWorld, endposMultiplied, null);
 						
 						if (tipAnim.isOnWorking()) {
 							tipAnim.newTargetPosition(finalTargetpos);
@@ -168,12 +180,14 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	       	
 			for (IKInfo ikInfo : this.ikInfos) {
 				VertexConsumer vertexBuilder = buffer.getBuffer(DragonFightRenderTypes.debugQuads());
-				Vec3f worldtargetpos = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint).getTargetPosition();
-				Vec3f modeltargetpos = OpenMatrix4f.transform3v(toModelPos, worldtargetpos, null).multiply(-1.0F, 1.0F, -1.0F);
+				Vector3f worldtargetpos = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint).getTargetPosition();
+				Vector3f modeltargetpos = OpenMatrix4f.transform3v(toModelPos, worldtargetpos, null);
+				modeltargetpos.mul(-1.0F, 1.0F, -1.0F);
 				RenderingTool.drawQuad(poseStack, vertexBuilder, modeltargetpos, 0.5F, 1.0F, 0.0F, 0.0F);
 				
-		       	Vec3f jointWorldPos = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint).getTipPosition(partialTicks);
-		       	Vec3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jointWorldPos, null).multiply(-1.0F, 1.0F, -1.0F);
+		       	Vector3f jointWorldPos = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint).getTipPosition(partialTicks);
+		       	Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jointWorldPos, null);
+		       	jointModelpos.mul(-1.0F, 1.0F, -1.0F);
 		       	RenderingTool.drawQuad(poseStack, vertexBuilder, jointModelpos, 0.4F, 0.0F, 0.0F, 1.0F);
 		       	Pose pose = new Pose();
 		       	

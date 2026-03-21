@@ -21,7 +21,7 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
-import susen36.epicdragonfight.world.entity.ai.goal.CombatBehaviors;
+import susen36.epicdragonfight.world.entity.ai.CombatBehaviors;
 
 import java.util.List;
 

@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.api.animation.types;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,8 +18,7 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
-import susen36.epicdragonfight.api.utils.math.Vec4f;
+import com.mojang.math.Vector4f;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
 
@@ -84,7 +84,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		
 		if (state.inaction()) {
 			LivingEntity livingentity = entitypatch.getOriginal();
-			Vec3f vec3 = this.getCoordVector(entitypatch, animation);
+			Vector3f vec3 = this.getCoordVector(entitypatch, animation);
 			BlockPos blockpos = new BlockPos(livingentity.getX(), livingentity.getBoundingBox().minY - 1.0D, livingentity.getZ());
 			BlockState blockState = livingentity.level.getBlockState(blockpos);
 			AttributeInstance movementSpeed = livingentity.getAttribute(Attributes.MOVEMENT_SPEED);
@@ -137,10 +137,10 @@ public class ActionAnimation extends MainFrameAnimation {
 	@Override
 	protected void modifyPose(Pose pose, LivingEntityPatch<?> entitypatch, float time) {
 		JointTransform jt = pose.getOrDefaultTransform("Root");
-		Vec3f jointPosition = jt.translation();
+		Vector3f jointPosition = jt.translation();
 		OpenMatrix4f toRootTransformApplied = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("Root").getLocalTrasnform().removeTranslation();
 		OpenMatrix4f toOrigin = OpenMatrix4f.invert(toRootTransformApplied, null);
-		Vec3f worldPosition = OpenMatrix4f.transform3v(toRootTransformApplied, jointPosition, null);
+		Vector3f worldPosition = OpenMatrix4f.transform3v(toRootTransformApplied, jointPosition, null);
 		worldPosition.x = 0.0F;
 		worldPosition.y = (this.getProperty(ActionAnimationProperty.MOVE_VERTICAL).orElse(false) && worldPosition.y > 0.0F) ? 0.0F : worldPosition.y;
 		worldPosition.z = 0.0F;
@@ -166,9 +166,9 @@ public class ActionAnimation extends MainFrameAnimation {
 		Map<String, JointTransform> data1 = pose1.getJointTransformData();
 		Pose pose = this.getPoseByTime(entitypatch, nextStart, 1.0F);
 		JointTransform jt = pose.getOrDefaultTransform("Root");
-		Vec3f withPosition = entitypatch.getAnimator().getPlayerFor(this).getActionAnimationCoord().getInterpolatedTranslation(nextStart);
-		
-		jt.translation().set(withPosition);
+		Vector3f withPosition = entitypatch.getAnimator().getPlayerFor(this).getActionAnimationCoord().getInterpolatedTranslation(nextStart);
+
+		jt.translation().set(withPosition.x, withPosition.y, withPosition.z);
 		Map<String, JointTransform> data2 = pose.getJointTransformData();
 		
 		for (String jointName : data1.keySet()) {
@@ -182,7 +182,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		}
 	}
 	
-	protected Vec3f getCoordVector(LivingEntityPatch<?> entitypatch, DynamicAnimation animation) {
+	protected Vector3f getCoordVector(LivingEntityPatch<?> entitypatch, DynamicAnimation animation) {
 		if (!this.getProperty(ActionAnimationProperty.COORD_SET_TICK).isEmpty()) {
 			ActionAnimationCoordSetter actionAnimationCoordSetter = this.getProperty(ActionAnimationProperty.COORD_SET_TICK).orElse(null);
 			
@@ -209,13 +209,13 @@ public class ActionAnimation extends MainFrameAnimation {
 		AnimationPlayer player = entitypatch.getAnimator().getPlayerFor(animation);
 		JointTransform jt = rootCoord.getInterpolatedTransform(player.getElapsedTime());
 		JointTransform prevJt = rootCoord.getInterpolatedTransform(player.getPrevElapsedTime());
-		Vec4f currentpos = new Vec4f(jt.translation().x, jt.translation().y, jt.translation().z, 1.0F);
-		Vec4f prevpos = new Vec4f(prevJt.translation().x, prevJt.translation().y, prevJt.translation().z, 1.0F);
+		Vector4f currentpos = new Vector4f(jt.translation().x, jt.translation().y, jt.translation().z, 1.0F);
+		Vector4f prevpos = new Vector4f(prevJt.translation().x, prevJt.translation().y, prevJt.translation().z, 1.0F);
 		OpenMatrix4f rotationTransform = entitypatch.getModelMatrix(1.0F).removeTranslation();
 		OpenMatrix4f localTransform = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("Root").getLocalTrasnform().removeTranslation();
 		rotationTransform.mulBack(localTransform);
-		currentpos.transform(rotationTransform);
-		prevpos.transform(rotationTransform);
+		OpenMatrix4f.transform(rotationTransform, currentpos, currentpos);
+		OpenMatrix4f.transform(rotationTransform, prevpos, prevpos);
 		boolean hasNoGravity = entitypatch.getOriginal().isNoGravity();
 		boolean moveVertical = this.getProperty(ActionAnimationProperty.MOVE_VERTICAL).orElse(false);
 		float dx = prevpos.x - currentpos.x;
@@ -229,7 +229,7 @@ public class ActionAnimation extends MainFrameAnimation {
 			livingentity.setDeltaMovement(motion.x, motion.y <= 0 ? (motion.y + 0.08D) : motion.y, motion.z);
 		}
 		
-		return new Vec3f(dx, dy, dz);
+		return new Vector3f(dx, dy, dz);
 	}
 	
 	public static class ActionTime {

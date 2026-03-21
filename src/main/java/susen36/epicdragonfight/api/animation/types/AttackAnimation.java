@@ -18,7 +18,6 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
@@ -33,15 +32,17 @@ public class AttackAnimation extends ActionAnimation {
 			Keyframe[] keyframes = transform.getKeyframes();
 			int startFrame = 0;
 			int endFrame = transform.getKeyframes().length - 1;
-			Vec3f keyLast = keyframes[endFrame].transform().translation();
+			Vector3f keyLast = keyframes[endFrame].transform().translation();
 			Vec3 pos = entitypatch.getOriginal().getEyePosition();
 			Vec3 targetpos = attackTarget.position();
 			float horizontalDistance = Math.max((float)targetpos.subtract(pos).horizontalDistance() - (attackTarget.getBbWidth() + entitypatch.getOriginal().getBbWidth()) * 0.75F, 0.0F);
-			Vec3f worldPosition = new Vec3f(keyLast.x, 0.0F, -horizontalDistance);
-			float scale = Math.min(worldPosition.length() / keyLast.length(), 2.0F);
+			Vector3f worldPosition = new Vector3f(keyLast.x, 0.0F, -horizontalDistance);
+			float worldPositionLength = (float) Math.sqrt(worldPosition.dot(worldPosition));
+			float keyLastLength = (float) Math.sqrt(keyLast.dot(keyLast));
+			float scale = Math.min(worldPositionLength / keyLastLength, 2.0F);
 			
 			for (int i = startFrame; i <= endFrame; i++) {
-				Vec3f translation = keyframes[i].transform().translation();
+				Vector3f translation = keyframes[i].transform().translation();
 				translation.z *= scale;
 			}
 			

@@ -1,14 +1,14 @@
 package susen36.epicdragonfight.api.animation.types.procedural;
 
+import com.mojang.math.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.TransformSheet;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 
 public class TipPointAnimation {
 	public final IKInfo ikSetter;
 	private final TransformSheet animation;
-	private Vec3f targetpos;
+	private Vector3f targetpos;
 	private float time;
 	private float startTime;
 	private float totalTime;
@@ -16,7 +16,7 @@ public class TipPointAnimation {
 	private boolean isWorking;
 	private boolean isTouchingGround;
 	
-	public TipPointAnimation(TransformSheet animation, Vec3f initpos, IKInfo ikSetter) {
+	public TipPointAnimation(TransformSheet animation, Vector3f initpos, IKInfo ikSetter) {
 		this.animation = animation;
 		this.targetpos = initpos;
 		this.ikSetter = ikSetter;
@@ -32,7 +32,7 @@ public class TipPointAnimation {
 		return curTime * (this.totalTime - this.startTime) + this.startTime;
 	}
 	
-	public void start(Vec3f targetpos, TransformSheet animation, float speed) {
+	public void start(Vector3f targetpos, TransformSheet animation, float speed) {
 		this.isWorking = true;
 		this.time = 0.0F;
 		this.targetpos = targetpos;
@@ -46,8 +46,10 @@ public class TipPointAnimation {
 		}
 	}
 	
-	public void newTargetPosition(Vec3f targetpos) {
-		Vec3f dv = targetpos.copy().sub(this.targetpos);
+	public void newTargetPosition(Vector3f targetpos) {
+		Vector3f dv = targetpos.copy();
+		dv.sub(this.targetpos);
+
 		this.targetpos = targetpos;
 		Keyframe[] keyframes = this.animation.getKeyframes();
 		float curTime = this.getTime(1.0F);
@@ -89,7 +91,7 @@ public class TipPointAnimation {
 		}
 	}
 	
-	public Vec3f getTipPosition(float partialTicks) {
+	public Vector3f getTipPosition(float partialTicks) {
 		return this.animation.getInterpolatedTranslation(this.getTime(partialTicks));
 	}
 	
@@ -97,7 +99,7 @@ public class TipPointAnimation {
 		return this.animation.getInterpolatedTransform(this.getTime(partialTicks));
 	}
 	
-	public Vec3f getTargetPosition() {
+	public Vector3f getTargetPosition() {
 		return this.targetpos;
 	}
 	

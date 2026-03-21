@@ -3,6 +3,8 @@ package susen36.epicdragonfight.api.utils.math;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.api.animation.JointTransform;
 
@@ -229,9 +231,9 @@ public class OpenMatrix4f {
 	}
 
 	
-	public static Vec4f transform(OpenMatrix4f matrix, Vec4f src, Vec4f dest) {
+	public static Vector4f transform(OpenMatrix4f matrix, Vector4f src, Vector4f dest) {
 		if (dest == null) {
-			dest = new Vec4f();
+			dest = new Vector4f();
 		}
 		
 		float x = matrix.m00 * src.x + matrix.m10 * src.y + matrix.m20 * src.z + matrix.m30 * src.w;
@@ -255,12 +257,12 @@ public class OpenMatrix4f {
 		return new Vec3(x, y ,z);
 	}
 	
-	public static Vec3f transform3v(OpenMatrix4f matrix, Vec3f src, Vec3f dest) {
+	public static Vector3f transform3v(OpenMatrix4f matrix, Vector3f src, Vector3f dest) {
 		if (dest == null) {
-			dest = new Vec3f();
+			dest = new Vector3f();
 		}
-		
-		Vec4f result = transform(matrix, new Vec4f(src.x, src.y, src.z, 1.0F), null);
+
+		Vector4f result = transform(matrix, new Vector4f(src.x, src.y, src.z, 1.0F), null);
 		dest.x = result.x;
 		dest.y = result.y;
 		dest.z = result.z;
@@ -382,15 +384,15 @@ public class OpenMatrix4f {
 	}
 
 	
-	public OpenMatrix4f translate(Vec3f vec) {
+	public OpenMatrix4f translate(Vector3f vec) {
 		return translate(vec, this);
 	}
 	
-	public OpenMatrix4f translate(Vec3f vec, OpenMatrix4f dest) {
+	public OpenMatrix4f translate(Vector3f vec, OpenMatrix4f dest) {
 		return translate(vec, this, dest);
 	}
 
-	public static OpenMatrix4f translate(Vec3f vec, OpenMatrix4f src, OpenMatrix4f dest) {
+	public static OpenMatrix4f translate(Vector3f vec, OpenMatrix4f src, OpenMatrix4f dest) {
 		if (dest == null) {
 			dest = new OpenMatrix4f();
 		}
@@ -403,27 +405,27 @@ public class OpenMatrix4f {
 	}
 	
 	public static OpenMatrix4f createTranslation(float x, float y, float z) {
-		return new OpenMatrix4f().translate(new Vec3f(x, y ,z));
+		return new OpenMatrix4f().translate(new Vector3f(x, y ,z));
 	}
 	
 
-	public OpenMatrix4f rotateDeg(float angle, Vec3f axis) {
+	public OpenMatrix4f rotateDeg(float angle, Vector3f axis) {
 		return rotate((float)Math.toRadians(angle), axis);
 	}
 	
-	public OpenMatrix4f rotate(float angle, Vec3f axis) {
+	public OpenMatrix4f rotate(float angle, Vector3f axis) {
 		return rotate(angle, axis, this);
 	}
 	
-	public OpenMatrix4f rotate(float angle, Vec3f axis, OpenMatrix4f dest) {
+	public OpenMatrix4f rotate(float angle, Vector3f axis, OpenMatrix4f dest) {
 		return rotate(angle, axis, this, dest);
 	}
 	
-	public static OpenMatrix4f createRotatorDeg(float angle, Vec3f axis) {
+	public static OpenMatrix4f createRotatorDeg(float angle, Vector3f axis) {
 		return rotate((float)Math.toRadians(angle), axis, new OpenMatrix4f(), null);
 	}
 	
-	public static OpenMatrix4f rotate(float angle, Vec3f axis, OpenMatrix4f src, OpenMatrix4f dest) {
+	public static OpenMatrix4f rotate(float angle, Vector3f axis, OpenMatrix4f src, OpenMatrix4f dest) {
 		if (dest == null) {
 			dest = new OpenMatrix4f();
 		}
@@ -474,12 +476,12 @@ public class OpenMatrix4f {
 		return dest;
 	}
 	
-	public Vec3f toTranslationVector() {
+	public Vector3f toTranslationVector() {
 		return toVector(this);
 	}
 	
-	public static Vec3f toVector(OpenMatrix4f matrix) {
-		return new Vec3f(matrix.m30, matrix.m31, matrix.m32);
+	public static Vector3f toVector(OpenMatrix4f matrix) {
+		return new Vector3f(matrix.m30, matrix.m31, matrix.m32);
 	}
 	
 	public Quaternion toQuaternion() {
@@ -545,14 +547,14 @@ public class OpenMatrix4f {
 	}
 	
 	public OpenMatrix4f scale(float x, float y, float z) {
-		return this.scale(new Vec3f(x, y, z));
+		return this.scale(new Vector3f(x, y, z));
 	}
 	
-	public OpenMatrix4f scale(Vec3f vec) {
+	public OpenMatrix4f scale(Vector3f vec) {
 		return scale(vec, this, this);
 	}
 	
-	public static OpenMatrix4f scale(Vec3f vec, OpenMatrix4f src, OpenMatrix4f dest) {
+	public static OpenMatrix4f scale(Vector3f vec, OpenMatrix4f src, OpenMatrix4f dest) {
 		if (dest == null) {
 			dest = new OpenMatrix4f();
 		}
@@ -570,9 +572,12 @@ public class OpenMatrix4f {
 		dest.m23 = src.m23 * vec.z;
 		return dest;
 	}
-	
-	public Vec3f toScaleVector() {
-		return new Vec3f(new Vec3f(this.m00, this.m01, this.m02).length(), new Vec3f(this.m10, this.m11, this.m12).length(), new Vec3f(this.m20, this.m21, this.m22).length());
+
+	public Vector3f toScaleVector() {
+		Vector3f v0 = new Vector3f(this.m00, this.m01, this.m02);
+		Vector3f v1 = new Vector3f(this.m10, this.m11, this.m12);
+		Vector3f v2 = new Vector3f(this.m20, this.m21, this.m22);
+		return new Vector3f((float)Math.sqrt(v0.dot(v0)), (float)Math.sqrt(v1.dot(v1)), (float)Math.sqrt(v2.dot(v2)));
 	}
 	
 	public OpenMatrix4f removeTranslation() {

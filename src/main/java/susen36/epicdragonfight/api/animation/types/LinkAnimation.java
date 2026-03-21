@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.api.animation.types;
 
+import com.mojang.math.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;
@@ -43,7 +44,8 @@ public class LinkAnimation extends DynamicAnimation {
 				Keyframe[] keyframe = this.jointTransforms.get(entry.getKey()).getKeyframes();
 				JointTransform jt = keyframe[keyframe.length - 1].transform();
 				JointTransform newJt = nextStartingPose.getJointTransformData().get(entry.getKey());
-				newJt.translation().set(jt.translation());
+				Vector3f jtTranslation = jt.translation();
+				newJt.translation().set(jtTranslation.x, jtTranslation.y, jtTranslation.z);
 				jt.copyFrom(newJt);
 			}
 		}

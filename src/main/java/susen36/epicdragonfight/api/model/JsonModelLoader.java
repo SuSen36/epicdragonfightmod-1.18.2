@@ -8,6 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
+import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -28,8 +29,7 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.client.model.Mesh;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
-import susen36.epicdragonfight.api.utils.math.Vec4f;
+import com.mojang.math.Vector4f;
 
 import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
@@ -42,7 +42,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class JsonModelLoader {
-	public static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vec3f.X_AXIS);
+	public static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 	
 	private static int[] toIntArray(JsonArray array) {
 		List<Integer> result = Lists.newArrayList();
@@ -120,7 +120,7 @@ public class JsonModelLoader {
 		
 		for (int i = 0; i < positionArray.length / 3; i++) {
 			int k = i * 3;
-			Vec4f posVector = new Vec4f(positionArray[k], positionArray[k+1], positionArray[k+2], 1.0F);
+			Vector4f posVector = new Vector4f(positionArray[k], positionArray[k+1], positionArray[k+2], 1.0F);
 			OpenMatrix4f.transform(CORRECTION, posVector, posVector);
 			positionArray[k] = posVector.x;
 			positionArray[k+1] = posVector.y;
@@ -131,7 +131,7 @@ public class JsonModelLoader {
 		
 		for (int i = 0; i < normalArray.length / 3; i++) {
 			int k = i * 3;
-			Vec4f normVector = new Vec4f(normalArray[k], normalArray[k+1], normalArray[k+2], 1.0F);
+			Vector4f normVector = new Vector4f(normalArray[k], normalArray[k+1], normalArray[k+2], 1.0F);
 			OpenMatrix4f.transform(CORRECTION, normVector, normVector);
 			normalArray[k] = normVector.x;
 			normalArray[k+1] = normVector.y;

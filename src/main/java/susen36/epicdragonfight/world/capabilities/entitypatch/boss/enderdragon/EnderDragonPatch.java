@@ -1,10 +1,13 @@
 package susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon;
 
 import com.google.common.collect.Maps;
+import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -26,7 +29,6 @@ import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
@@ -83,11 +85,6 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	@Override
 	protected void initAttributes() {
 		super.initAttributes();
-		this.original.getAttribute(Attributes.MAX_HEALTH).setBaseValue(300.0F);
-		this.original.getAttribute(Attributes.ARMOR).setBaseValue(3.0F);
-		this.original.getAttribute(Attributes.ARMOR_TOUGHNESS).setBaseValue(2.0F);
-		this.original.getAttribute(Attributes.ATTACK_DAMAGE).setBaseValue(10.0F);
-		this.original.getAttribute(Attributes.ATTACK_KNOCKBACK).setBaseValue(0.35F);
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -279,7 +276,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 		return this.tipPointAnimations.get(jointName);
 	}
 	
-	public void addTipPointAnimation(String jointName, Vec3f initpos, TransformSheet transformSheet, IKInfo ikSetter) {
+	public void addTipPointAnimation(String jointName, Vector3f initpos, TransformSheet transformSheet, IKInfo ikSetter) {
 		this.tipPointAnimations.put(jointName, new TipPointAnimation(transformSheet, initpos, ikSetter));
 	}
 

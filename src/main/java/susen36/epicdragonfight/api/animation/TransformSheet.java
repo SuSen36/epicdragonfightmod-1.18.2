@@ -3,11 +3,10 @@ package susen36.epicdragonfight.api.animation;
 import java.util.List;
 
 import com.mojang.math.Quaternion;
-
+import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import susen36.epicdragonfight.EpicDragonFight;
 
 public class TransformSheet {
@@ -65,7 +64,7 @@ public class TransformSheet {
 		return this;
 	}
 	
-	public Vec3f getInterpolatedTranslation(float currentTime) {
+	public Vector3f getInterpolatedTranslation(float currentTime) {
 		InterpolationInfo interpolInfo = this.getInterpolationInfo(currentTime);
         return MathUtils.lerpVector(this.keyframes[interpolInfo.prev].transform().translation(), this.keyframes[interpolInfo.next].transform().translation(), interpolInfo.zero2One);
 	}
@@ -80,23 +79,36 @@ public class TransformSheet {
         return JointTransform.interpolate(this.keyframes[interpolInfo.prev].transform(), this.keyframes[interpolInfo.next].transform(), interpolInfo.zero2One);
 	}
 	
-	public void correctAnimationByNewPosition(Vec3f startpos, Vec3f startToEnd, Vec3f modifiedStart, Vec3f modifiedStartToEnd) {
+	public void correctAnimationByNewPosition(Vector3f startpos, Vector3f startToEnd, Vector3f modifiedStart, Vector3f modifiedStartToEnd) {
 		Keyframe[] keyframes = this.getKeyframes();
 		Keyframe startKeyframe = keyframes[0];
 		Keyframe endKeyframe = keyframes[keyframes.length - 1];
-		float pitchDeg = (float) Math.toDegrees(Mth.atan2(modifiedStartToEnd.y - startToEnd.y, modifiedStartToEnd.length()));
-		float yawDeg = (float) Math.toDegrees(MathUtils.getAngleBetween(modifiedStartToEnd.copy().multiply(1.0F, 0.0F, 1.0F).normalise(), startToEnd.copy().multiply(1.0F, 0.0F, 1.0F).normalise()));
+		float modifiedLength = (float) Math.sqrt(modifiedStartToEnd.dot(modifiedStartToEnd));
+		float pitchDeg = (float) Math.toDegrees(Mth.atan2(modifiedStartToEnd.y - startToEnd.y, modifiedLength));
+		Vector3f modifiedDir = modifiedStartToEnd.copy();
+		modifiedDir.mul(1.0F, 0.0F, 1.0F);
+		modifiedDir.normalize();
+		Vector3f startDir = startToEnd.copy();
+		startDir.mul(1.0F, 0.0F, 1.0F);
+		startDir.normalize();
+		float yawDeg = (float) Math.toDegrees(MathUtils.getAngleBetween(modifiedDir, startDir));
 		
 		for (Keyframe kf : keyframes) {
 			float lerp = (kf.time() - startKeyframe.time()) / (endKeyframe.time() - startKeyframe.time());
-			Vec3f line = MathUtils.lerpVector(new Vec3f(0F, 0F, 0F), startToEnd, lerp);
-			Vec3f modifiedLine = MathUtils.lerpVector(new Vec3f(0F, 0F, 0F), modifiedStartToEnd, lerp);
-			Vec3f keyTransform = kf.transform().translation();
-			Vec3f startToKeyTransform = keyTransform.copy().sub(startpos).multiply(-1.0F, 1.0F, -1.0F);
-			Vec3f animOnLine = startToKeyTransform.copy().sub(line);
-			OpenMatrix4f rotator = OpenMatrix4f.createRotatorDeg(pitchDeg, Vec3f.X_AXIS).mulFront(OpenMatrix4f.createRotatorDeg(yawDeg, Vec3f.Y_AXIS));
-			Vec3f toNewKeyTransform = modifiedLine.add(OpenMatrix4f.transform3v(rotator, animOnLine, null));
-			keyTransform.set(modifiedStart.copy().add((toNewKeyTransform)));
+			Vector3f line = MathUtils.lerpVector(new Vector3f(0F, 0F, 0F), startToEnd, lerp);
+			Vector3f modifiedLine = MathUtils.lerpVector(new Vector3f(0F, 0F, 0F), modifiedStartToEnd, lerp);
+			Vector3f keyTransform = kf.transform().translation();
+			Vector3f startToKeyTransform = keyTransform.copy();
+			startToKeyTransform.sub(startpos);
+			startToKeyTransform.mul(-1.0F, 1.0F, -1.0F);
+			Vector3f animOnLine = startToKeyTransform.copy();
+			animOnLine.sub(line);
+			OpenMatrix4f rotator = OpenMatrix4f.createRotatorDeg(pitchDeg, Vector3f.XP).mulFront(OpenMatrix4f.createRotatorDeg(yawDeg, Vector3f.YP));
+			Vector3f transformedAnimOnLine = new Vector3f();
+			OpenMatrix4f.transform3v(rotator, animOnLine, transformedAnimOnLine);
+			Vector3f toNewKeyTransform = modifiedLine.copy();
+			toNewKeyTransform.add(transformedAnimOnLine);
+			keyTransform.set(modifiedStart.x + toNewKeyTransform.x, modifiedStart.y + toNewKeyTransform.y, modifiedStart.z + toNewKeyTransform.z);
 		}
 	}
 	

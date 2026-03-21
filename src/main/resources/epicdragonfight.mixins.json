@@ -10,7 +10,8 @@
   "mixins": [
     "MixinAreaEffectCloud",
     "MixinDragonFireball",
-    "MixinEndCrystal"
+    "MixinEndCrystal",
+    "MixinEnderDragon"
   ],
   "refmap": "epicdragonfight.mixins.refmap.json"
 }

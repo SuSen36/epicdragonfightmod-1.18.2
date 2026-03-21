@@ -25,7 +25,6 @@ import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
-import susen36.epicdragonfight.world.entity.ai.attribute.DragonFightAttributeSupplier;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +47,6 @@ public abstract class LivingEntityPatch<T extends LivingEntity> extends EntityPa
 	@Override
 	public void onJoinWorld(T entityIn, EntityJoinWorldEvent event) {
 		super.onJoinWorld(entityIn, event);
-		this.original.getAttributes().supplier = new DragonFightAttributeSupplier(this.original.getAttributes().supplier);
 		this.initAttributes();
 	}
 	

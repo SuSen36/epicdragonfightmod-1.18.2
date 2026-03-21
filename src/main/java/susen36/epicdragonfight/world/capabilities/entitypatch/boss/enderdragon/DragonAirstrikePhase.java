@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -17,7 +18,6 @@ import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.client.model.ClientModels;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import net.minecraft.world.entity.AreaEffectCloud;
 
 public class DragonAirstrikePhase extends PatchedDragonPhase {
@@ -54,8 +54,8 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
 		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);
 		@SuppressWarnings("deprecation")
-		float f2 = (float)Mth.rotWrap((this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));
-		OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vec3f.Z_AXIS);
+		float f2 = Mth.rotWrap((this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));
+		OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
 		mouthpos.mulFront(modelMatrix);
 		
 		if (this.dragon.getTarget() != null) {
@@ -66,19 +66,35 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 				this.isActuallyAttacking = true;
 			}
 		}
-		
+
 		if (this.isActuallyAttacking) {
 			for (int i = 0; i < 60; i++) {
-				Vec3f particleDelta = new Vec3f(0.0F, -1.0F, 0.0F);
+				// 初始化粒子方向向量
+				Vector3f particleDelta = new Vector3f(0.0F, -1.0F, 0.0F);
+
 				float xDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
 				float zDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
+
+				// 计算速度缩放因子
 				float speed = Math.min((60.0F - (Math.abs(xDeg) + Math.abs(zDeg))) / 20.0F, 1.0F);
-				
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(xDeg, Vec3f.X_AXIS), particleDelta, particleDelta);
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(zDeg, Vec3f.Z_AXIS), particleDelta, particleDelta);
-				particleDelta.scale(speed);
-				
-				this.dragon.level.addAlwaysVisibleParticle(ParticleTypes.DRAGON_BREATH, mouthpos.m30 + dragonpos.x, mouthpos.m31 + dragonpos.y, mouthpos.m32 + dragonpos.z, particleDelta.x, particleDelta.y, particleDelta.z);
+
+				// 执行矩阵变换（旋转粒子喷射方向）
+				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(xDeg, Vector3f.XP), particleDelta, particleDelta);
+				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(zDeg, Vector3f.ZP), particleDelta, particleDelta);
+
+				// 修复点：将 scale 替换为 mul
+				particleDelta.mul(speed);
+
+				// 生成粒子：确保坐标和速度分量访问正确
+				this.dragon.level.addAlwaysVisibleParticle(
+						ParticleTypes.DRAGON_BREATH,
+						mouthpos.m30 + (float)dragonpos.x,
+						mouthpos.m31 + (float)dragonpos.y,
+						mouthpos.m32 + (float)dragonpos.z,
+						particleDelta.x,
+						particleDelta.y,
+						particleDelta.z
+				);
 			}
 		}
 	}
@@ -108,13 +124,13 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 					double d4 = Math.sqrt(d8 * d8 + d10 * d10);
 					
 					if (d4 > 0.0D) {
-						d9 = Mth.clamp(d9 / d4, (double)-f5, (double)f5);
+						d9 = Mth.clamp(d9 / d4, -f5, f5);
 					}
 					
 					this.dragon.setDeltaMovement(this.dragon.getDeltaMovement().add(0.0D, d9 * 0.1D, 0.0D));
 					this.dragon.setYRot(Mth.wrapDegrees(this.dragon.getYRot()));
 					Vec3 vec32 = vec31.subtract(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ()).normalize();
-					Vec3 vec33 = (new Vec3((double)Mth.sin(this.dragon.getYRot() * ((float) Math.PI / 180F)), this.dragon.getDeltaMovement().y, (double) (-Mth.cos(this.dragon.getYRot() * ((float) Math.PI / 180F))))).normalize();
+					Vec3 vec33 = (new Vec3(Mth.sin(this.dragon.getYRot() * ((float) Math.PI / 180F)), this.dragon.getDeltaMovement().y, -Mth.cos(this.dragon.getYRot() * ((float) Math.PI / 180F)))).normalize();
 					float f6 = Math.max(((float)vec33.dot(vec32) + 0.5F) / 1.5F, 0.0F);
 					
 					if (Math.abs(d8) > (double)1.0E-5F || Math.abs(d10) > (double)1.0E-5F) {
@@ -128,14 +144,14 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 					}
 					
 					if (this.dragon.inWall) {
-						this.dragon.move(MoverType.SELF, this.dragon.getDeltaMovement().scale((double) 0.8F));
+						this.dragon.move(MoverType.SELF, this.dragon.getDeltaMovement().scale(0.8F));
 					} else {
 						this.dragon.move(MoverType.SELF, this.dragon.getDeltaMovement());
 					}
 					
 					Vec3 vec34 = this.dragon.getDeltaMovement().normalize();
 					double d6 = 0.8D + 0.15D * (vec34.dot(vec33) + 1.0D) / 2.0D;
-					this.dragon.setDeltaMovement(this.dragon.getDeltaMovement().multiply(d6, (double) 0.91F, d6));
+					this.dragon.setDeltaMovement(this.dragon.getDeltaMovement().multiply(d6, 0.91F, d6));
 					
 					if (this.isActuallyAttacking) {
 						if (this.dragon.tickCount % 5 == 0) {

@@ -14,8 +14,8 @@ import java.util.List;
 public class FABRIK {
 	private Armature armature;
 	private List<Chain> chains = Lists.newArrayList();
-	private Vec3f target = new Vec3f();
-	private Vec3f startPos = new Vec3f();
+	private Vector3f target = new Vector3f();
+	private Vector3f startPos = new Vector3f();
 	private Pose pose;
 	
 	public FABRIK(Pose pose, Armature armature, String startJoint, String endJoint) {
@@ -23,11 +23,11 @@ public class FABRIK {
 		this.pose = pose;
 		this.addChain(pose, this.armature.searchJointByName(startJoint), this.armature.searchJointByName(endJoint));
 	}
-	
+
 	public void addChain(Pose pose, Joint startJoint, Joint endJoint) {
 		OpenMatrix4f bindTransform = Animator.getBindedJointTransformByIndex(pose, this.armature, this.armature.searchPathIndex(startJoint.getName()));
 		int pathIndex = Integer.parseInt(startJoint.searchPath(new String(""), endJoint.getName()));
-		this.startPos.set(bindTransform.toTranslationVector());
+		this.startPos.set(bindTransform.m30, bindTransform.m31, bindTransform.m32);
 		this.addChainInternal(pose, bindTransform, startJoint, pathIndex);
 	}
 	
@@ -43,26 +43,37 @@ public class FABRIK {
 		}
 	}
 	
-	public void run(Vec3f target, int iteration) {
-		this.target.set(target);
-		
+	public void run(Vector3f target, int iteration) {
+		this.target.set(target.x, target.y, target.z);
+
 		for (int i = 0; i < iteration; i++) {
 			this.backward();
 			this.forward();
 		}
-		
-		Quaternion parentQuaternion = Quaternion.ONE;
-		
+
+		Quaternion parentQuaternion = Quaternion.ONE.copy();
+
 		for (Chain chain : this.chains) {
-			Vector3f tailToHeadM = chain.tailToHead.toMojangVector();
-			tailToHeadM.transform(parentQuaternion);
-			Vec3f tailToHead = Vec3f.fromMojangVector(tailToHeadM);
-			Vec3f tailToNewHead = chain.head.copy().sub(chain.tail);
-			Vec3f axis = Vec3f.cross(tailToNewHead, tailToHead, null).normalise();
-			float radian = Vec3f.getAngleBetween(tailToNewHead, tailToHead);
-			Quaternion rotationQuat = new Quaternion(axis.toMojangVector(), radian, false);
-			parentQuaternion = new Quaternion(axis.scale(-1.0F).toMojangVector(), radian, false);
-			
+			Vector3f tailToHead = chain.tailToHead.copy();
+			tailToHead.transform(parentQuaternion);
+
+			Vector3f tailToNewHead = chain.head.copy();
+			tailToNewHead.sub(chain.tail);
+
+			Vector3f axis = tailToNewHead.copy();
+			axis.cross(tailToHead);
+			axis.normalize();
+
+			float dot = tailToNewHead.dot(tailToHead);
+			float lens = (float) Math.sqrt(tailToNewHead.dot(tailToNewHead) * tailToHead.dot(tailToHead));
+			float radian = (float) Math.acos(Math.max(-1.0f, Math.min(1.0f, dot / lens)));
+
+			Quaternion rotationQuat = new Quaternion(axis, radian, false);
+
+			Vector3f invAxis = axis.copy();
+			invAxis.mul(-1.0F);
+			parentQuaternion = new Quaternion(invAxis, radian, false);
+
 			JointTransform jt = this.pose.getOrDefaultTransform(chain.jointName);
 			jt.frontResult(JointTransform.getRotation(rotationQuat), OpenMatrix4f::mulAsOriginFront);
 		}
@@ -70,30 +81,27 @@ public class FABRIK {
 	
 	private void forward() {
 		int chainNum = this.chains.size();
-		Vec3f newTailPos = new Vec3f();
-		newTailPos.set(this.startPos);
-		
-		for (int i = 0; i < chainNum; i++) {
-			Chain chain = this.chains.get(i);
-			chain.forwardAlign(newTailPos);
-			newTailPos.set(chain.head);
-		}
+		Vector3f newTailPos = new Vector3f(this.startPos.x(), this.startPos.y(), this.startPos.z());
+
+        for (Chain chain : this.chains) {
+            chain.forwardAlign(newTailPos);
+            newTailPos.set(chain.head.x(), chain.head.y(), chain.head.z());
+        }
 	}
 	
 	private void backward() {
 		int chainNum = this.chains.size();
-		Vec3f newHeadPos = new Vec3f();
-		newHeadPos.set(this.target);
+		Vector3f newHeadPos = new Vector3f(this.target.x(), this.target.y(), this.target.z());
 		
 		for (int i = chainNum - 1; i >= 0; i--) {
 			Chain chain = this.chains.get(i);
 			chain.backwardAlign(newHeadPos);
-			newHeadPos.set(chain.tail);
+			newHeadPos.set(chain.tail.x(), chain.tail.y(), chain.tail.z());
 		}
 	}
 	
-	public List<Vec3f> getChainingPosition() {
-		List<Vec3f> list = Lists.newArrayList();
+	public List<Vector3f> getChainingPosition() {
+		List<Vector3f> list = Lists.newArrayList();
 		for (Chain chain : this.chains) {
 			list.add(chain.tail);
 		}
@@ -101,37 +109,44 @@ public class FABRIK {
 		list.add(this.chains.get(this.chains.size() - 1).head);
 		return list;
 	}
-	
+
 	class Chain {
 		final String jointName;
 		float length;
-		Vec3f tail;
-		Vec3f head;
-		Vec3f tailToHead;
+		Vector3f tail;
+		Vector3f head;
+		Vector3f tailToHead;
 
-		Chain(String jointName, Vec3f tail, Vec3f head) {
+		Chain(String jointName, Vector3f tail, Vector3f head) {
 			this.jointName = jointName;
 			this.tail = tail;
 			this.head = head;
-			this.tailToHead = head.copy().sub(tail);
-			this.length = (float) Math.sqrt(tail.distanceSqr(head));
+
+			Vector3f diff = head.copy();
+			diff.sub(tail);
+			this.tailToHead = diff;
+
+			float dx = head.x() - tail.x();
+			float dy = head.y() - tail.y();
+			float dz = head.z() - tail.z();
+			this.length = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
 		}
 
-		public void forwardAlign(Vec3f newHeadPos) {
+		public void forwardAlign(Vector3f newHeadPos) {
 			this.correct(this.tail, this.head, newHeadPos);
 		}
 
-		public void backwardAlign(Vec3f newHeadPos) {
+		public void backwardAlign(Vector3f newHeadPos) {
 			this.correct(this.head, this.tail, newHeadPos);
 		}
 
-		private void correct(Vec3f start, Vec3f end, Vec3f newpos) {
-			start.set(newpos);
-			Vec3f startToEnd = end.sub(start);
-			float newLength = startToEnd.length();
+		private void correct(Vector3f start, Vector3f end, Vector3f newpos) {
+			start.set(newpos.x(), newpos.y(), newpos.z());
+			Vector3f startToEnd = end.copy(); startToEnd.sub(start);
+			float newLength = (float) Math.sqrt(startToEnd.dot(startToEnd));
 			float lengthRatio = this.length / newLength;
-			Vec3f startToEndScaled = startToEnd.copy().scale(lengthRatio);
-			end.set(start.copy().add(startToEndScaled));
+			Vector3f startToEndScaled = startToEnd.copy(); startToEndScaled.mul(lengthRatio);
+			Vector3f finalPos = start.copy(); finalPos.add(startToEndScaled); end.set(finalPos.x(), finalPos.y(), finalPos.z());
 		}
 	}
 }

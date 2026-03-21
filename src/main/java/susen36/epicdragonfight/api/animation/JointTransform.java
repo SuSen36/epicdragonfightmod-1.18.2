@@ -2,11 +2,11 @@ package susen36.epicdragonfight.api.animation;
 
 import com.google.common.collect.Maps;
 import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.MatrixOperation;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 
 import java.util.Map;
 
@@ -28,17 +28,17 @@ public class JointTransform {
 	}
 	
 	private Map<String, TransformEntry> entries = Maps.newHashMap();
-	private Vec3f translation;
-	private Vec3f scale;
+	private Vector3f translation;
+	private Vector3f scale;
 	private Quaternion rotation;
 	
-	public JointTransform(Vec3f translation, Quaternion rotation, Vec3f scale) {
+	public JointTransform(Vector3f translation, Quaternion rotation, Vector3f scale) {
 		this.translation = translation;
 		this.rotation = rotation;
 		this.scale = scale;
 	}
 	
-	public Vec3f translation() {
+	public Vector3f translation() {
 		return this.translation;
 	}
 
@@ -46,7 +46,7 @@ public class JointTransform {
 		return this.rotation;
 	}
 	
-	public Vec3f scale() {
+	public Vector3f scale() {
 		return this.scale;
 	}
 	
@@ -55,9 +55,9 @@ public class JointTransform {
 	}
 	
 	public JointTransform copyFrom(JointTransform jt) {
-		Vec3f newV = jt.translation();
+		Vector3f newV = jt.translation();
 		Quaternion newQ = jt.rotation();
-		Vec3f newS = jt.scale;
+		Vector3f newS = jt.scale;
 		this.translation.set(newV.x, newV.y, newV.z);
 		this.rotation.set(newQ.i(), newQ.j(), newQ.k(), newQ.r());
 		this.scale.set(newS.x, newS.y, newS.z);
@@ -136,23 +136,23 @@ public class JointTransform {
 	}
 	
 	public static JointTransform fromMatrixNoScale(OpenMatrix4f matrix) {
-		return new JointTransform(matrix.toTranslationVector(), matrix.toQuaternion(), new Vec3f(1.0F, 1.0F, 1.0F));
+		return new JointTransform(matrix.toTranslationVector(), matrix.toQuaternion(), new Vector3f(1.0F, 1.0F, 1.0F));
 	}
 	
-	public static JointTransform getTranslation(Vec3f vec) {
+	public static JointTransform getTranslation(Vector3f vec) {
 		return JointTransform.translationRotation(vec, new Quaternion(0.0F, 0.0F, 0.0F, 1.0F));
 	}
 	
 	public static JointTransform getRotation(Quaternion quat) {
-		return JointTransform.translationRotation(new Vec3f(0.0F, 0.0F, 0.0F), quat);
+		return JointTransform.translationRotation(new Vector3f(0.0F, 0.0F, 0.0F), quat);
 	}
 
 	
-	public static JointTransform translationRotation(Vec3f vec, Quaternion quat) {
-		return new JointTransform(vec, quat, new Vec3f(1.0F, 1.0F, 1.0F));
+	public static JointTransform translationRotation(Vector3f vec, Quaternion quat) {
+		return new JointTransform(vec, quat, new Vector3f(1.0F, 1.0F, 1.0F));
 	}
 	
 	public static JointTransform empty() {
-		return new JointTransform(new Vec3f(0.0F, 0.0F, 0.0F), new Quaternion(0.0F, 0.0F, 0.0F, 1.0F), new Vec3f(1.0F, 1.0F, 1.0F));
+		return new JointTransform(new Vector3f(0.0F, 0.0F, 0.0F), new Quaternion(0.0F, 0.0F, 0.0F, 1.0F), new Vector3f(1.0F, 1.0F, 1.0F));
 	}
 }

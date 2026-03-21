@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.entity.ai.goal;
+package susen36.epicdragonfight.world.entity.ai;
 
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.Entity;

@@ -2,9 +2,8 @@ package susen36.epicdragonfight.api.animation.types.procedural;
 
 import java.util.List;
 
+import com.mojang.math.Vector3f;
 import org.apache.commons.lang3.tuple.Pair;
-
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 
 public class IKInfo {
 	public final String startJoint;
@@ -17,9 +16,9 @@ public class IKInfo {
 	final float rayLeastHeight;
 	final boolean[] touchingGround;
 	List<String> pathToEndJoint;
-	Vec3f startpos;
-	Vec3f endpos;
-	Vec3f startToEnd;
+	Vector3f startpos;
+	Vector3f endpos;
+	Vector3f startToEnd;
 	
 	private IKInfo(String startJoint, String endJoint, String opponentJoint, Pair<Integer, Integer> clipFrame, float rayLeastHeight, int ikFrame, boolean[] touchGround) {
 		this.startJoint = startJoint;

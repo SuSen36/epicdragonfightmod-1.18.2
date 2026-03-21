@@ -3,6 +3,7 @@ package susen36.epicdragonfight.api.client.model;
 import java.util.List;
 import java.util.Map;
 
+import com.mojang.math.Vector3f;
 import org.apache.commons.compress.utils.Lists;
 
 import com.google.common.collect.Maps;
@@ -12,8 +13,7 @@ import com.google.gson.JsonObject;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
-import susen36.epicdragonfight.api.utils.math.Vec4f;
+import com.mojang.math.Vector4f;
 
 @OnlyIn(Dist.CLIENT)
 public class Mesh {
@@ -37,11 +37,11 @@ public class Mesh {
 		float[] positions = this.positions.clone();
 		float[] normals = this.noramls.clone();
 		
-		OpenMatrix4f toBlenderCoord = OpenMatrix4f.createRotatorDeg(90.0F, Vec3f.X_AXIS);
+		OpenMatrix4f toBlenderCoord = OpenMatrix4f.createRotatorDeg(90.0F, Vector3f.XP);
 		
 		for (int i = 0; i < positions.length / 3; i++) {
 			int k = i * 3;
-			Vec4f posVector = new Vec4f(positions[k], positions[k+1], positions[k+2], 1.0F);
+			Vector4f posVector = new Vector4f(positions[k], positions[k+1], positions[k+2], 1.0F);
 			OpenMatrix4f.transform(toBlenderCoord, posVector, posVector);
 			positions[k] = posVector.x;
 			positions[k+1] = posVector.y;
@@ -50,7 +50,7 @@ public class Mesh {
 		
 		for (int i = 0; i < normals.length / 3; i++) {
 			int k = i * 3;
-			Vec4f normVector = new Vec4f(normals[k], normals[k+1], normals[k+2], 1.0F);
+			Vector4f normVector = new Vector4f(normals[k], normals[k+1], normals[k+2], 1.0F);
 			OpenMatrix4f.transform(toBlenderCoord, normVector, normVector);
 			normals[k] = normVector.x;
 			normals[k+1] = normVector.y;

@@ -13,7 +13,7 @@ import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.world.entity.ai.goal.AnimatedAttackGoal;
+import susen36.epicdragonfight.world.entity.ai.AnimatedAttackGoal;
 
 import java.util.Set;
 

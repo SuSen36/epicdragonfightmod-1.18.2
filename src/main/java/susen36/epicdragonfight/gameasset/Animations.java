@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.gameasset;
 
+import com.mojang.math.Vector3f;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,7 +28,6 @@ import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.api.utils.math.Vec3f;
 import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
 import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
 import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.PatchedPhases;
@@ -110,10 +110,11 @@ public class Animations {
 						JointTransform jt0 = transform.getKeyframes()[0].transform();
 						JointTransform jt1 = transform.getKeyframes()[1].transform();
 						JointTransform jt2 = transform.getKeyframes()[2].transform();
-						OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(90F, Vec3f.X_AXIS);
-						Vec3f jointCoord = OpenMatrix4f.transform3v(coordReverse, new Vec3f(jt0.translation().x, verticalDistance, horizontalDistance), null);
-						jt0.translation().set(jointCoord);
-						jt1.translation().set(MathUtils.lerpVector(jt0.translation(), jt2.translation(), transform.getKeyframes()[1].time()));
+							OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(90F, Vector3f.XP);
+						Vector3f jointCoord = OpenMatrix4f.transform3v(coordReverse, new Vector3f(jt0.translation().x, verticalDistance, horizontalDistance), null);
+						jt0.translation().set(jointCoord.x, jointCoord.y, jointCoord.z);
+						Vector3f jt1Translation = MathUtils.lerpVector(jt0.translation(), jt2.translation(), transform.getKeyframes()[1].time());
+						jt1.translation().set(jt1Translation.x, jt1Translation.y, jt1Translation.z);
 						transformSheet.readFrom(transform);
 					}
 				})
@@ -242,7 +243,7 @@ public class Animations {
 		})
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(7.0F, (entitypatch) -> {
 					entitypatch.getOriginal().playSound(SoundEvents.ENDER_DRAGON_GROWL, 7.0F, 0.8F + entitypatch.getOriginal().getRandom().nextFloat() * 0.3F);
-					entitypatch.getOriginal().setHealth(entitypatch.getOriginal().getMaxHealth());
+					entitypatch.getOriginal().heal(50.0F);
 
 					if (entitypatch instanceof EnderDragonPatch dragonPatch) {
 						dragonPatch.getOriginal().getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);

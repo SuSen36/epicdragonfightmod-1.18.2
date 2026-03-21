@@ -9,23 +9,15 @@ import net.minecraft.world.phys.Vec3;
 public class MathUtils {
 	public static OpenMatrix4f getModelMatrixIntegral(float prevPosX, float posX, float prevPosY, float posY, float prevPosZ, float posZ, float prevPitch, float pitch, float prevYaw, float yaw, float partialTick, float scaleX, float scaleY, float scaleZ) {
 		OpenMatrix4f modelMatrix = new OpenMatrix4f();
-		Vec3f entityPosition = new Vec3f(-(prevPosX + (posX - prevPosX) * partialTick), ((prevPosY + (posY - prevPosY) * partialTick)), -(prevPosZ + (posZ - prevPosZ) * partialTick));
+		Vector3f entityPosition = new Vector3f(-(prevPosX + (posX - prevPosX) * partialTick), ((prevPosY + (posY - prevPosY) * partialTick)), -(prevPosZ + (posZ - prevPosZ) * partialTick));
 		float pitchDegree = lerpBetween(prevPitch, pitch, partialTick);
 		float yawDegree = lerpBetween(prevYaw, yaw, partialTick);
-		modelMatrix.translate(entityPosition).rotateDeg(-yawDegree, Vec3f.Y_AXIS).rotateDeg(-pitchDegree, Vec3f.X_AXIS).scale(scaleX, scaleY, scaleZ);
+		modelMatrix.translate(entityPosition).rotateDeg(-yawDegree, Vector3f.YP).rotateDeg(-pitchDegree, Vector3f.XP).scale(scaleX, scaleY, scaleZ);
 		return modelMatrix;
 	}
 
 	public static float lerpBetween(float f1, float f2, float zero2one) {
-		float f;
-
-		for (f = f2 - f1; f < -180.0F; f += 360.0F) {
-		}
-
-		while (f >= 180.0F) {
-			f -= 360.0F;
-		}
-
+		float f = net.minecraft.util.Mth.wrapDegrees(f2 - f1);
 		return f1 + zero2one * f;
 	}
 	
@@ -67,7 +59,7 @@ public class MathUtils {
 		mStack.scale(vector.x(), vector.y(), vector.z());
 	}
 	
-	public static double getAngleBetween(Vec3f a, Vec3f b) {
+	public static double getAngleBetween(Vector3f a, Vector3f b) {
 		double cos = (a.x * b.x + a.y * b.y + a.z * b.z);
 		return Math.acos(cos);
 	}
@@ -107,11 +99,11 @@ public class MathUtils {
 		return quat;
 	}
 	
-	public static Vec3f lerpVector(Vec3f start, Vec3f end, float weight) {
+	public static Vector3f lerpVector(Vector3f start, Vector3f end, float weight) {
 		float x = start.x + (end.x - start.x) * weight;
 		float y = start.y + (end.y - start.y) * weight;
 		float z = start.z + (end.z - start.z) * weight;
-		return new Vec3f(x, y, z);
+		return new Vector3f(x, y, z);
 	}
 	
 	public static Vec3 projectVector(Vec3 from, Vec3 to) {
@@ -169,12 +161,13 @@ public class MathUtils {
 			setQuaternion(quaternion, 0.0F, 0.0F, 0.0F, 0.0F);
 		}
 	}
-	
+
 	private static Vector3f getScaleVectorFromMatrix(OpenMatrix4f mat) {
-		Vec3f a = new Vec3f(mat.m00, mat.m10, mat.m20);
-		Vec3f b = new Vec3f(mat.m01, mat.m11, mat.m21);
-		Vec3f c = new Vec3f(mat.m02, mat.m12, mat.m22);
-		return new Vector3f(a.length(), b.length(), c.length());
+		Vector3f a = new Vector3f(mat.m00, mat.m10, mat.m20);
+		Vector3f b = new Vector3f(mat.m01, mat.m11, mat.m21);
+		Vector3f c = new Vector3f(mat.m02, mat.m12, mat.m22);
+
+		return new Vector3f((float) Math.sqrt(a.dot(a)), (float) Math.sqrt(b.dot(b)), (float) Math.sqrt(c.dot(c)));
 	}
 	
 	private static float fastInvSqrt(float number) {
