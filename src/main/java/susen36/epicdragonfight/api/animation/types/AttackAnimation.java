@@ -18,7 +18,6 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import javax.annotation.Nullable;
@@ -97,7 +96,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		super.tick(entitypatch);
 		
 		if (!entitypatch.isLogicalClient()) {
@@ -128,7 +127,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 	
 	@Override
-	public void end(LivingEntityPatch<?> entitypatch, boolean isEnd) {
+	public void end(MobPatch<?> entitypatch, boolean isEnd) {
 		super.end(entitypatch, isEnd);
 		entitypatch.currentlyAttackedEntity.clear();
 
@@ -160,7 +159,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 
 	@Override
-	public Pose getPoseByTime(LivingEntityPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
 		Pose pose = super.getPoseByTime(entitypatch, time, partialTicks);
 		
 		this.getProperty(AttackAnimationProperty.ROTATE_X).ifPresent((flag) -> {
@@ -176,7 +175,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 	
 	@Override
-	public float getPlaySpeed(LivingEntityPatch<?> entitypatch) {
+	public float getPlaySpeed(MobPatch<?> entitypatch) {
 		if (this.getProperty(StaticAnimationProperty.PLAY_SPEED).isPresent()) {
 			return super.getPlaySpeed(entitypatch);
 		}

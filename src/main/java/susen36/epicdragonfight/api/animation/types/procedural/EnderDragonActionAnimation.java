@@ -24,8 +24,8 @@ import susen36.epicdragonfight.api.utils.math.FABRIK;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.RenderingTool;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
 
 public class EnderDragonActionAnimation extends ActionAnimation implements ProceduralAnimation {
 	private final IKInfo[] ikInfos;
@@ -45,7 +45,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	}
 	
 	@Override
-	public Pose getPoseByTime(LivingEntityPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
 		Pose pose = super.getPoseByTime(entitypatch, time, partialTicks);
 		
 		if (entitypatch instanceof EnderDragonPatch enderdragonpatch) {
@@ -72,7 +72,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	}
 	
 	@Override
-	public void begin(LivingEntityPatch<?> entitypatch) {
+	public void begin(MobPatch<?> entitypatch) {
 		super.begin(entitypatch);
 		
 		if (entitypatch instanceof EnderDragonPatch enderdragonpatch) {
@@ -109,7 +109,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	}
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		super.tick(entitypatch);
 		
 		if (entitypatch instanceof EnderDragonPatch enderdragonpatch) {
@@ -143,7 +143,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playTime, float partialTicks) {
+	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, MobPatch<?> entitypatch, float playTime, float partialTicks) {
 		if (entitypatch instanceof EnderDragonPatch enderdragonpatch) {
             OpenMatrix4f modelmat = enderdragonpatch.getModelMatrix(partialTicks);
 			LivingEntity originalEntity = entitypatch.getOriginal();

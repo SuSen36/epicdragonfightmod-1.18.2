@@ -18,7 +18,7 @@ import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
 import susen36.epicdragonfight.api.model.JsonModelLoader;
 import susen36.epicdragonfight.api.model.Model;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.List;
 import java.util.Map;
@@ -97,7 +97,7 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public void begin(LivingEntityPatch<?> entitypatch) {
+	public void begin(MobPatch<?> entitypatch) {
 		this.getProperty(StaticAnimationProperty.EVENTS).ifPresent((events) -> {
 			for (Event event : events) {
 				if (event.time == Event.ON_BEGIN) {
@@ -108,7 +108,7 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public void end(LivingEntityPatch<?> entitypatch, boolean isEnd) {
+	public void end(MobPatch<?> entitypatch, boolean isEnd) {
 		this.getProperty(StaticAnimationProperty.EVENTS).ifPresent((events) -> {
 			for (Event event : events) {
 				if (event.time == Event.ON_END) {
@@ -119,7 +119,7 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		this.getProperty(StaticAnimationProperty.EVENTS).ifPresent((events) -> {
 			AnimationPlayer player = entitypatch.getAnimator().getPlayerFor(this);
 			
@@ -146,7 +146,7 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public boolean isJointEnabled(LivingEntityPatch<?> entitypatch, String joint) {
+	public boolean isJointEnabled(MobPatch<?> entitypatch, String joint) {
 		if (!super.isJointEnabled(entitypatch, joint)) {
 			return false;
 		} else {
@@ -159,7 +159,7 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public BindModifier getBindModifier(LivingEntityPatch<?> entitypatch, String joint) {
+	public BindModifier getBindModifier(MobPatch<?> entitypatch, String joint) {
 		return this.getProperty(ClientAnimationProperties.JOINT_MASK).map((jointMaskEntry) -> {
 			List<JointMask> list = jointMaskEntry.getMask(entitypatch.getCurrentLivingMotion());
 			int position = list.indexOf(JointMask.of(joint));
@@ -192,7 +192,7 @@ public class StaticAnimation extends DynamicAnimation {
 
 	
 	@Override
-	public float getPlaySpeed(LivingEntityPatch<?> entitypatch) {
+	public float getPlaySpeed(MobPatch<?> entitypatch) {
 		return this.getProperty(StaticAnimationProperty.PLAY_SPEED).orElse(1.0F);
 	}
 	
@@ -229,9 +229,9 @@ public class StaticAnimation extends DynamicAnimation {
 		public static final float ON_END = Float.MAX_VALUE;
 		final float time;
 		final Side executionSide;
-		final Consumer<LivingEntityPatch<?>> event;
+		final Consumer<MobPatch<?>> event;
 		
-		private Event(float time, Side executionSide, Consumer<LivingEntityPatch<?>> event) {
+		private Event(float time, Side executionSide, Consumer<MobPatch<?>> event) {
 			this.time = time;
 			this.executionSide = executionSide;
 			this.event = event;
@@ -246,13 +246,13 @@ public class StaticAnimation extends DynamicAnimation {
 			}
 		}
 		
-		public void testAndExecute(LivingEntityPatch<?> entitypatch) {
+		public void testAndExecute(MobPatch<?> entitypatch) {
 			if (this.executionSide.predicate.test(entitypatch.isLogicalClient())) {
 				this.event.accept(entitypatch);
 			}
 		}
 		
-		public static Event create(float time, Consumer<LivingEntityPatch<?>> event, Side isRemote) {
+		public static Event create(float time, Consumer<MobPatch<?>> event, Side isRemote) {
 			return new Event(time, isRemote, event);
 		}
 		

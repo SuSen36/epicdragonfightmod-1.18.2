@@ -22,6 +22,7 @@ import net.minecraft.util.GsonHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.LivingMotion;
+import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 
 @OnlyIn(Dist.CLIENT)
@@ -34,11 +35,11 @@ public class AnimationDataReader {
 		InputStream inputstream = iresource.getInputStream();
         Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
         AnimationDataReader propertySetter = GsonHelper.fromJson(GSON, reader, TYPE);
-        
-        if (propertySetter.jointMaskEntry.isValid()) {
-        	animation.addProperty(ClientAnimationProperties.JOINT_MASK, propertySetter.jointMaskEntry);
+
+        if (propertySetter != null && propertySetter.jointMaskEntry.isValid()) {
+            animation.addProperty(ClientAnimationProperties.JOINT_MASK, propertySetter.jointMaskEntry);
         }
-        
+
         animation.addProperty(ClientAnimationProperties.PRIORITY, propertySetter.priority);
         animation.addProperty(ClientAnimationProperties.LAYER_TYPE, propertySetter.layerType);
 	}
@@ -62,17 +63,17 @@ public class AnimationDataReader {
 			Layer.LayerType layerType = jsonObject.has("layer") ? Layer.LayerType.valueOf(GsonHelper.getAsString(jsonObject, "layer")) : Layer.LayerType.BASE_LAYER;
 			
 			if (jsonObject.has("masks")) {
-				builder.defaultMask(JointMaskEntry.NONE);
 				JsonArray maskArray = jsonObject.get("masks").getAsJsonArray();
 				maskArray.forEach((element) -> {
 					JsonObject jointMaskEntry = element.getAsJsonObject();
 					String livingMotionName = GsonHelper.getAsString(jointMaskEntry, "livingmotion");
+					List<JointMask> mask = getJointMaskEntry(GsonHelper.getAsString(jointMaskEntry, "type"));
 					
 					if (livingMotionName.equals("ALL")) {
-						builder.defaultMask(getJointMaskEntry(GsonHelper.getAsString(jointMaskEntry, "type")));
+						builder.defaultMask(mask);
 					} else {
-						LivingMotion livingMotion = LivingMotion.ENUM_MANAGER.get(livingMotionName);
-						builder.mask(livingMotion, getJointMaskEntry(GsonHelper.getAsString(jointMaskEntry, "type")));
+						LivingMotion livingMotion = LivingMotions.valueOf(livingMotionName.toUpperCase());
+						builder.mask(livingMotion, mask);
 					}
 				});
 			}
@@ -83,12 +84,8 @@ public class AnimationDataReader {
 	
 	private static List<JointMask> getJointMaskEntry(String type) {
         return switch (type) {
-            case "none" -> JointMaskEntry.NONE;
-            case "arms" -> JointMaskEntry.BIPED_ARMS;
-            case "upper_joints" -> JointMaskEntry.BIPED_UPPER_JOINTS;
-            case "root_upper_joints" -> JointMaskEntry.BIPED_UPPER_JOINTS_WITH_ROOT;
             case "wings" -> JointMaskEntry.WINGS;
-            default -> JointMaskEntry.NONE;
+            default -> List.of();
         };
 	}
 }

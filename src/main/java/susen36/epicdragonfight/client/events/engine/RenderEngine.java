@@ -1,74 +1,52 @@
 package susen36.epicdragonfight.client.events.engine;
 
-import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.common.Mod;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.client.forgeevent.PatchedRenderersEvent;
 import susen36.epicdragonfight.api.client.forgeevent.RenderEnderDragonEvent;
 import susen36.epicdragonfight.client.renderer.patched.entity.PEnderDragonRenderer;
 import susen36.epicdragonfight.client.renderer.patched.entity.PatchedEntityRenderer;
 import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
-
-import java.util.Map;
-import java.util.function.Supplier;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
 
 @SuppressWarnings("rawtypes")
 @OnlyIn(Dist.CLIENT)
 public class RenderEngine {
-	private Map<EntityType<?>, Supplier<PatchedEntityRenderer>> entityRendererProvider;
-	private Map<EntityType<?>, PatchedEntityRenderer> entityRendererCache;
+	private PatchedEntityRenderer dragonRenderer;
 	
 	public RenderEngine() {
 		Events.renderEngine = this;
-		this.entityRendererProvider = Maps.newHashMap();
-		this.entityRendererCache = Maps.newHashMap();
 	}
 	
 	public void registerRenderer() {
-		this.entityRendererProvider.put(EntityType.ENDER_DRAGON, PEnderDragonRenderer::new);
-		
-		ModLoader.get().postEvent(new PatchedRenderersEvent.Add(this.entityRendererProvider));
-		
-		for (Map.Entry<EntityType<?>, Supplier<PatchedEntityRenderer>> entry : this.entityRendererProvider.entrySet()) {
-			this.entityRendererCache.put(entry.getKey(), entry.getValue().get());
-		}
-		
+		this.dragonRenderer = new PEnderDragonRenderer();
 	}
-	
 
 	@SuppressWarnings("unchecked")
-	public void renderEntityArmatureModel(LivingEntity livingEntity, LivingEntityPatch<?> entitypatch, LivingEntityRenderer<? extends Entity, ?> renderer, MultiBufferSource buffer, PoseStack matStack, int packedLightIn, float partialTicks) {
-		this.getEntityRenderer(livingEntity).render(livingEntity, entitypatch, renderer, buffer, matStack, packedLightIn, partialTicks);
+	public void renderEntityArmatureModel(Mob mob, MobPatch<?> entitypatch, LivingEntityRenderer<? extends Entity, ?> renderer, MultiBufferSource buffer, PoseStack matStack, int packedLightIn, float partialTicks) {
+		this.dragonRenderer.render(mob, entitypatch, renderer, buffer, matStack, packedLightIn, partialTicks);
 	}
 	
 	public PatchedEntityRenderer getEntityRenderer(Entity entity) {
-		return this.entityRendererCache.get(entity.getType());
+		return this.dragonRenderer;
 	}
 	
 	public boolean hasRendererFor(Entity entity) {
-		return this.entityRendererCache.computeIfAbsent(entity.getType(), (key) -> this.entityRendererProvider.containsKey(key) ? this.entityRendererProvider.get(entity.getType()).get() : null) != null;
+		return entity instanceof EnderDragon;
 	}
-	
-	public void clearCustomEntityRenerer() {
-		this.entityRendererCache.clear();
-	}
-
 	
 	@Mod.EventBusSubscriber(modid = EpicDragonFight.MODID, value = Dist.CLIENT)
 	public static class Events {
@@ -83,11 +61,11 @@ public class RenderEngine {
 					return;
 				}
 				
-				LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) livingentity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
+				MobPatch<?> entitypatch = (MobPatch<?>) livingentity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
 				
-				if (entitypatch != null && !entitypatch.shouldSkipRender()) {
+				if (livingentity instanceof Mob mob && entitypatch != null && !entitypatch.shouldSkipRender()) {
 					event.setCanceled(true);
-					renderEngine.renderEntityArmatureModel(livingentity, entitypatch, event.getRenderer(), event.getMultiBufferSource(), event.getPoseStack(), event.getPackedLight(), event.getPartialTick());
+					renderEngine.renderEntityArmatureModel(mob, entitypatch, event.getRenderer(), event.getMultiBufferSource(), event.getPoseStack(), event.getPackedLight(), event.getPartialTick());
 				}
 			}
 		}

@@ -14,7 +14,7 @@ import susen36.epicdragonfight.api.animation.types.LayerOffAnimation;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 @OnlyIn(Dist.CLIENT)
 public class Layer {
@@ -32,7 +32,7 @@ public class Layer {
 		this.disabled = true;
 	}
 	
-	public void playAnimation(StaticAnimation nextAnimation, LivingEntityPatch<?> entitypatch, float convertTimeModifier) {
+	public void playAnimation(StaticAnimation nextAnimation, MobPatch<?> entitypatch, float convertTimeModifier) {
 		Pose lastPose = entitypatch.getAnimator().getPose(1.0F);
 		
 		this.animationPlayer.getAnimation().end(entitypatch, this.animationPlayer.isEnd());
@@ -47,7 +47,7 @@ public class Layer {
 		}
 	}
 	
-	public void playAnimationInstant(DynamicAnimation nextAnimation, LivingEntityPatch<?> entitypatch) {
+	public void playAnimationInstant(DynamicAnimation nextAnimation, MobPatch<?> entitypatch) {
 		this.animationPlayer.getAnimation().end(entitypatch, this.animationPlayer.isEnd());
 		this.resume();
 		nextAnimation.begin(entitypatch);
@@ -56,11 +56,11 @@ public class Layer {
 		this.nextAnimation = null;
 	}
 	
-	public void setLinkAnimation(DynamicAnimation nextAnimation, LivingEntityPatch<?> entitypatch, Pose lastPose, float convertTimeModifier) {
+	public void setLinkAnimation(DynamicAnimation nextAnimation, MobPatch<?> entitypatch, Pose lastPose, float convertTimeModifier) {
 		nextAnimation.setLinkAnimation(lastPose, convertTimeModifier, entitypatch, this.linkAnimationStorage);
 	}
 	
-	public void update(LivingEntityPatch<?> entitypatch) {
+	public void update(MobPatch<?> entitypatch) {
 		if (this.paused) {
 			this.animationPlayer.setElapsedTime(this.animationPlayer.getElapsedTime());
 		} else {
@@ -111,7 +111,7 @@ public class Layer {
 		return false;
 	}
 	
-	public void off(LivingEntityPatch<?> entitypatch) {
+	public void off(MobPatch<?> entitypatch) {
 		if (!this.isDisabled() && !(this.animationPlayer.getAnimation() instanceof LayerOffAnimation)) {
 			float convertTime = entitypatch.getClientAnimator().baseLayer.animationPlayer.getAnimation().getConvertTime();
 			setLayerOffAnimation(this.animationPlayer.getAnimation(), this.animationPlayer.getCurrentPose(entitypatch, 1.0F), this.layerOffAnimation, convertTime);
@@ -138,7 +138,7 @@ public class Layer {
 		}
 		
 		@Override
-		public void playAnimation(StaticAnimation nextAnimation, LivingEntityPatch<?> entitypatch, float convertTimeModifier) {
+		public void playAnimation(StaticAnimation nextAnimation, MobPatch<?> entitypatch, float convertTimeModifier) {
 			Priority priority = nextAnimation.getPriority();
 			this.baserLayerPriority = priority;
 			this.offCompositeLayerLowerThan(entitypatch, priority);
@@ -146,7 +146,7 @@ public class Layer {
 		}
 		
 		@Override
-		public void update(LivingEntityPatch<?> entitypatch) {
+		public void update(MobPatch<?> entitypatch) {
 			super.update(entitypatch);
 			
 			for (Layer layer : this.compositeLayers.values()) {
@@ -156,7 +156,7 @@ public class Layer {
 			}
 		}
 		
-		public void offCompositeLayerLowerThan(LivingEntityPatch<?> entitypatch, Priority priority) {
+		public void offCompositeLayerLowerThan(MobPatch<?> entitypatch, Priority priority) {
 			for (Priority p : priority.notUpperThan()) {
 				this.compositeLayers.get(p).off(entitypatch);
 			}
@@ -169,7 +169,7 @@ public class Layer {
 		}
 		
 		@Override
-		public void off(LivingEntityPatch<?> entitypatch) {
+		public void off(MobPatch<?> entitypatch) {
 			
 		}
 		
@@ -184,11 +184,11 @@ public class Layer {
 		}
 	}
 	
-	public static enum LayerType {
+	public enum LayerType {
 		BASE_LAYER, COMPOSITE_LAYER;
 	}
 	
-	public static enum Priority {
+	public enum Priority {
 		/**
 		 * LOWEST: Most living motions
 		 * MIDDLE: Composite living motions

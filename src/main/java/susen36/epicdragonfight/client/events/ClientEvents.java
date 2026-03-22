@@ -6,7 +6,6 @@ import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.client.ClientEngine;
 import susen36.epicdragonfight.world.capabilities.provider.ProviderEntity;
 
 @OnlyIn(Dist.CLIENT)
@@ -17,7 +16,6 @@ public class ClientEvents {
 	public static void clientLogoutEvent(ClientPlayerNetworkEvent.LoggedOutEvent event) {
 		if (event.getPlayer() != null) {
 			ProviderEntity.clear();
-			ClientEngine.instance.renderEngine.clearCustomEntityRenerer();
 		}
 	}
 }

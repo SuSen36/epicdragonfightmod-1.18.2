@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon;
+package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
 
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector3f;
@@ -6,9 +6,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;

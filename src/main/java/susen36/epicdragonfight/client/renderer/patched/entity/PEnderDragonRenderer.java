@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
@@ -28,9 +27,9 @@ import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.DragonCrystalLinkPhase;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.DragonCrystalLinkPhase;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.PatchedPhases;
 
 @OnlyIn(Dist.CLIENT)
 public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, EnderDragonPatch, EnderDragonRenderer> {

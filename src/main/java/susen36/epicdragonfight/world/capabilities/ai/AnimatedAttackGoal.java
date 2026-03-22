@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.entity.ai;
+package susen36.epicdragonfight.world.capabilities.ai;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;

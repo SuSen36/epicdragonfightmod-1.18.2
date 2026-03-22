@@ -4,7 +4,7 @@ import com.mojang.math.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.Map;
 
@@ -13,12 +13,12 @@ public class LinkAnimation extends DynamicAnimation {
 	protected float startsAt;
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		this.nextAnimation.linkTick(entitypatch, this);
 	}
 	
 	@Override
-	public void end(LivingEntityPatch<?> entitypatch, boolean isEnd) {
+	public void end(MobPatch<?> entitypatch, boolean isEnd) {
 		if (!isEnd) {
 			this.nextAnimation.end(entitypatch, isEnd);
 		} else {
@@ -36,7 +36,7 @@ public class LinkAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public Pose getPoseByTime(LivingEntityPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
 		Pose nextStartingPose = this.nextAnimation.getPoseByTime(entitypatch, this.startsAt, 1.0F);
 		
 		for (Map.Entry<String, JointTransform> entry : nextStartingPose.getJointTransformData().entrySet()) {
@@ -54,12 +54,12 @@ public class LinkAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	protected void modifyPose(Pose pose, LivingEntityPatch<?> entitypatch, float time) {
+	protected void modifyPose(Pose pose, MobPatch<?> entitypatch, float time) {
 		this.nextAnimation.modifyPose(pose, entitypatch, time);
 	}
 	
 	@Override
-	public float getPlaySpeed(LivingEntityPatch<?> entitypatch) {
+	public float getPlaySpeed(MobPatch<?> entitypatch) {
 		return this.nextAnimation.getPlaySpeed(entitypatch);
 	}
 	
@@ -69,7 +69,7 @@ public class LinkAnimation extends DynamicAnimation {
 
 	
 	@Override
-	public boolean isJointEnabled(LivingEntityPatch<?> entitypatch, String joint) {
+	public boolean isJointEnabled(MobPatch<?> entitypatch, String joint) {
 		return this.nextAnimation.isJointEnabled(entitypatch, joint);
 	}
 	

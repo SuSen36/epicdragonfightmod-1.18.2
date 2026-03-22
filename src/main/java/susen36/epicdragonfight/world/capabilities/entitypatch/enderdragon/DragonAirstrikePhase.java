@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon;
+package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
 
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;

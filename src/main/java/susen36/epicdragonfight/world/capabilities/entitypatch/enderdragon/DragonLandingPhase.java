@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon;
+package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
@@ -38,16 +38,16 @@ public class DragonLandingPhase extends PatchedDragonPhase {
 	public Vec3 getFarthestLandingPosition() {
 		double max = 0.0D;
 		Vec3 result = null;
-		
-		for (int i = 0; i < this.landingCandidates.length; i++) {
-			Vec3 vec3d = new Vec3(this.landingCandidates[i].getX(), this.landingCandidates[i].getY(), this.landingCandidates[i].getZ());
-			double distanceSqr = vec3d.distanceToSqr(this.dragon.position());
-			
-			if (distanceSqr > max) {
-				max = distanceSqr;
-				result = vec3d;
-			}
-		}
+
+        for (BlockPos landingCandidate : this.landingCandidates) {
+            Vec3 vec3d = new Vec3(landingCandidate.getX(), landingCandidate.getY(), landingCandidate.getZ());
+            double distanceSqr = vec3d.distanceToSqr(this.dragon.position());
+
+            if (distanceSqr > max) {
+                max = distanceSqr;
+                result = vec3d;
+            }
+        }
 		
 		return result;
 	}

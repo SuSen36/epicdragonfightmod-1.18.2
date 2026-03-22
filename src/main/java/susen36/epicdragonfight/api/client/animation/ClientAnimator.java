@@ -14,7 +14,7 @@ import susen36.epicdragonfight.api.client.animation.Layer.Priority;
 import susen36.epicdragonfight.api.client.model.ClientModels;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientAnimator extends Animator {
-	public static Animator getAnimator(LivingEntityPatch<?> entitypatch) {
+	public static Animator getAnimator(MobPatch<?> entitypatch) {
 		return entitypatch.isLogicalClient() ? new ClientAnimator(entitypatch) : ServerAnimator.getAnimator(entitypatch);
 	}
 
@@ -33,7 +33,7 @@ public class ClientAnimator extends Animator {
 	private LivingMotion currentMotion;
 	private LivingMotion currentCompositeMotion;
 
-	public ClientAnimator(LivingEntityPatch<?> entitypatch) {
+	public ClientAnimator(MobPatch<?> entitypatch) {
 		this.entitypatch = entitypatch;
 		this.currentMotion = LivingMotions.IDLE;
 		this.currentCompositeMotion = LivingMotions.IDLE;
@@ -291,7 +291,7 @@ public class ClientAnimator extends Animator {
 		return this.baseLayer.animationPlayer;
 	}
 
-	public LivingEntityPatch<?> getOwner() {
+	public MobPatch<?> getOwner() {
 		return this.entitypatch;
 	}
 

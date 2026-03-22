@@ -25,8 +25,8 @@ import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.RenderingTool;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
 
 public class EnderDragonAttackAnimation extends AttackAnimation implements ProceduralAnimation {
 	private final IKInfo[] ikInfos;
@@ -48,7 +48,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public Pose getPoseByTime(LivingEntityPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
 		Pose pose = super.getPoseByTime(entitypatch, time, partialTicks);
 		
 		if (entitypatch instanceof EnderDragonPatch) {
@@ -76,7 +76,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public void begin(LivingEntityPatch<?> entitypatch) {
+	public void begin(MobPatch<?> entitypatch) {
 		ActionAnimationCoordSetter movementAnimationSetter = this.getProperty(ActionAnimationProperty.COORD_SET_BEGIN).orElse((self, entitypatch$2, transformSheet) -> {
 			transformSheet.readFrom(self.getTransfroms().get("Root"));
 		});
@@ -123,7 +123,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		super.tick(entitypatch);
 		
 		if (entitypatch instanceof EnderDragonPatch) {
@@ -136,7 +136,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 				if (ikInfo.clipAnimation) {
 					Keyframe[] keyframes = this.getTransfroms().get(ikInfo.endJoint).getKeyframes();
 					float startTime = keyframes[ikInfo.startFrame].time();
-					float endTime = keyframes[ikInfo.endFrame - 1].time();
+					float endTime = keyframes[ikInfo.endFrame -1].time();
 					
 					if (startTime <= elapsedTime && elapsedTime < endTime) {
 						TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
@@ -162,7 +162,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playTime, float partialTicks) {
+	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, MobPatch<?> entitypatch, float playTime, float partialTicks) {
 		super.renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks);
 		
 		if (entitypatch instanceof EnderDragonPatch) {

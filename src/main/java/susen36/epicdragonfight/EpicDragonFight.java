@@ -26,7 +26,7 @@ import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DraagonFightDataSerializers;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
 import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 import susen36.epicdragonfight.world.capabilities.provider.ProviderEntity;
 
 import java.util.function.Function;
@@ -42,8 +42,7 @@ public class EpicDragonFight {
 	}
 	
 	public final AnimationManager animationManager;
-	private Function<LivingEntityPatch<?>, Animator> animatorProvider;
-
+	private Function<MobPatch<?>, Animator> animatorProvider;
 	
     public EpicDragonFight() {
     	this.animationManager = new AnimationManager();
@@ -55,8 +54,6 @@ public class EpicDragonFight {
     	bus.addListener(DragonFightCapabilities::registerCapabilities);
     	bus.addListener(Animations::registerAnimations);
     	bus.addGenericListener(DataSerializerEntry.class, DraagonFightDataSerializers::register);
-
-    	LivingMotion.ENUM_MANAGER.loadPreemptive(LivingMotions.class);
 
         MinecraftForge.EVENT_BUS.register(EntityEvents.class);
         MinecraftForge.EVENT_BUS.register(CapabilityEvent.class);
@@ -88,9 +85,8 @@ public class EpicDragonFight {
 		event.enqueueWork(DragoFightNetworkManager::registerPackets);
 		event.enqueueWork(ProviderEntity::registerEntityPatches);
     }
-
 	
-	public static Animator getAnimator(LivingEntityPatch<?> entitypatch) {
+	public static Animator getAnimator(MobPatch<?> entitypatch) {
 		return EpicDragonFight.getInstance().animatorProvider.apply(entitypatch);
 	}
 	

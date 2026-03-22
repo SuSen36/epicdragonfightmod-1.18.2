@@ -1,10 +1,10 @@
-package susen36.epicdragonfight.world.entity.ai;
+package susen36.epicdragonfight.world.capabilities.ai;
 
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.Entity;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch.AnimationPacketProvider;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch.AnimationPacketProvider;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.List;

@@ -8,7 +8,7 @@ import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,7 @@ public abstract class DynamicAnimation {
 	}
 
 	
-	public Pose getPoseByTime(LivingEntityPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
 		Pose pose = new Pose();
 		
 		for (String jointName : this.jointTransforms.keySet()) {
@@ -50,10 +50,10 @@ public abstract class DynamicAnimation {
 	}
 	
 	/** Modify the pose which also modified in link animation. **/
-	protected void modifyPose(Pose pose, LivingEntityPatch<?> entitypatch, float time) {
+	protected void modifyPose(Pose pose, MobPatch<?> entitypatch, float time) {
 	}
 	
-	public void setLinkAnimation(Pose pose1, float convertTimeModifier, LivingEntityPatch<?> entitypatch, LinkAnimation dest) {
+	public void setLinkAnimation(Pose pose1, float convertTimeModifier, MobPatch<?> entitypatch, LinkAnimation dest) {
 		if (!entitypatch.isLogicalClient()) {
 			pose1 = Animations.DUMMY_ANIMATION.getPoseByTime(entitypatch, 0.0F, 1.0F);
 		}
@@ -88,16 +88,16 @@ public abstract class DynamicAnimation {
 		player.setPlayAnimation(this);
 	}
 	
-	public void begin(LivingEntityPatch<?> entitypatch) {}
-	public void tick(LivingEntityPatch<?> entitypatch) {}
-	public void end(LivingEntityPatch<?> entitypatch, boolean isEnd) {}
-	public void linkTick(LivingEntityPatch<?> entitypatch, LinkAnimation linkAnimation) {}
+	public void begin(MobPatch<?> entitypatch) {}
+	public void tick(MobPatch<?> entitypatch) {}
+	public void end(MobPatch<?> entitypatch, boolean isEnd) {}
+	public void linkTick(MobPatch<?> entitypatch, LinkAnimation linkAnimation) {}
 	
-	public boolean isJointEnabled(LivingEntityPatch<?> entitypatch, String joint) {
+	public boolean isJointEnabled(MobPatch<?> entitypatch, String joint) {
 		return this.jointTransforms.containsKey(joint);
 	}
 	
-	public BindModifier getBindModifier(LivingEntityPatch<?> entitypatch, String joint) {
+	public BindModifier getBindModifier(MobPatch<?> entitypatch, String joint) {
 		return null;
 	}
 	
@@ -109,7 +109,7 @@ public abstract class DynamicAnimation {
 		return this.jointTransforms;
 	}
 	
-	public float getPlaySpeed(LivingEntityPatch<?> entitypatch) {
+	public float getPlaySpeed(MobPatch<?> entitypatch) {
 		return 1.0F;
 	}
 	
@@ -162,7 +162,7 @@ public abstract class DynamicAnimation {
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, LivingEntityPatch<?> entitypatch, float playTime, float partialTicks) {
+	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, MobPatch<?> entitypatch, float playTime, float partialTicks) {
 		
 	}
 }

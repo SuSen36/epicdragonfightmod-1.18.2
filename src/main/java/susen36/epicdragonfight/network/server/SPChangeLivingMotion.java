@@ -7,10 +7,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.LivingMotion;
+import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -35,7 +36,7 @@ public class SPChangeLivingMotion {
 		List<StaticAnimation> animationList = Lists.newArrayList();
 		
 		for (int i = 0; i < msg.count; i++) {
-			motionList.add(LivingMotion.ENUM_MANAGER.get(buf.readInt()));
+			motionList.add(LivingMotions.values()[buf.readInt()]);
 		}
 		
 		for (int i = 0; i < msg.count; i++) {
@@ -54,7 +55,7 @@ public class SPChangeLivingMotion {
 		buf.writeBoolean(msg.setChangesAsDefault);
 		
 		for (LivingMotion motion : msg.motionList) {
-			buf.writeInt(motion.universalOrdinal());
+			buf.writeInt(((LivingMotions) motion).ordinal());
 		}
 		
 		for (StaticAnimation anim : msg.animationList) {
@@ -71,7 +72,7 @@ public class SPChangeLivingMotion {
 			Entity entity = mc.level.getEntity(msg.entityId);
 			if (entity != null) {
 				entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).ifPresent(cap -> {
-					LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) cap;
+					MobPatch<?> entitypatch = (MobPatch<?>) cap;
 					ClientAnimator animator = entitypatch.getClientAnimator();
 
 					if (animator != null) {

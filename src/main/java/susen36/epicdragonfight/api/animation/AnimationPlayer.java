@@ -3,7 +3,7 @@ package susen36.epicdragonfight.api.animation;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 public class AnimationPlayer {
 	private float elapsedTime;
@@ -18,7 +18,7 @@ public class AnimationPlayer {
 		this.setPlayAnimation(Animations.DUMMY_ANIMATION);
 	}
 	
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		this.prevElapsedTime = this.elapsedTime;
 		this.elapsedTime += (float) (0.05 * this.getAnimation().getPlaySpeed(entitypatch) *
                         (this.isReversed() && this.getAnimation().canBePlayedReverse() ? -1.0F : 1.0F));
@@ -59,7 +59,7 @@ public class AnimationPlayer {
 		this.play = animation;
 	}
 	
-	public void setActionAnimationCoord(DynamicAnimation animation, LivingEntityPatch<?> entitypatch, ActionAnimationCoordSetter actionAnimationCoordSetter) {
+	public void setActionAnimationCoord(DynamicAnimation animation, MobPatch<?> entitypatch, ActionAnimationCoordSetter actionAnimationCoordSetter) {
 		actionAnimationCoordSetter.set(animation, entitypatch, this.actionAnimationCoord);
 	}
 	
@@ -67,7 +67,7 @@ public class AnimationPlayer {
 		return this.actionAnimationCoord;
 	}
 	
-	public Pose getCurrentPose(LivingEntityPatch<?> entitypatch, float partialTicks) {
+	public Pose getCurrentPose(MobPatch<?> entitypatch, float partialTicks) {
 		return this.play.getPoseByTime(entitypatch, this.prevElapsedTime + (this.elapsedTime - this.prevElapsedTime) * partialTicks, partialTicks);
 	}
 	

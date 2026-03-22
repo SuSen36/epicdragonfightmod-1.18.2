@@ -5,7 +5,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.model.Model;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 public class MainFrameAnimation extends StaticAnimation {
 	public MainFrameAnimation(float convertTime, String path, Model model) {
@@ -13,7 +13,7 @@ public class MainFrameAnimation extends StaticAnimation {
 	}
 	
 	@Override
-	public void begin(LivingEntityPatch<?> entitypatch) {
+	public void begin(MobPatch<?> entitypatch) {
 		super.begin(entitypatch);
 		
 		entitypatch.updateEntityState();
@@ -26,7 +26,7 @@ public class MainFrameAnimation extends StaticAnimation {
 	}
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		super.tick(entitypatch);
 		entitypatch.getOriginal().animationSpeed = 0;
 	}

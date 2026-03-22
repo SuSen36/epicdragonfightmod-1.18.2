@@ -28,9 +28,9 @@ import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.PatchedPhases;
 
 import java.util.function.Consumer;
 
@@ -277,7 +277,7 @@ public class Animations {
 	}
 
 	private static class ReuseableEvents {
-		private static final Consumer<LivingEntityPatch<?>> WING_FLAP = (entitypatch) -> {
+		private static final Consumer<MobPatch<?>> WING_FLAP = (entitypatch) -> {
 			if (entitypatch instanceof EnderDragonPatch dragonPatch) {
 				dragonPatch.getOriginal().onFlap();
 			}

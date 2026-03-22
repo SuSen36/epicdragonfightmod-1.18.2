@@ -8,9 +8,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.DragonCrystalLinkPhase;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.DragonCrystalLinkPhase;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.PatchedPhases;
 
 @Mixin(value = EndCrystal.class)
 public abstract class MixinEndCrystal {

@@ -14,57 +14,7 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class JointMaskEntry {
-	public static final List<JointMask> BIPED_UPPER_JOINTS = new ArrayList<> (
-		Arrays.asList(
-			JointMask.of("Torso"), JointMask.of("Chest"),
-			JointMask.of("Head"), JointMask.of("Shoulder_R"),
-			JointMask.of("Arm_R"), JointMask.of("Hand_R"),
-			JointMask.of("Elbow_R"), JointMask.of("Tool_R"),
-			JointMask.of("Shoulder_L"), JointMask.of("Arm_L"),
-			JointMask.of("Hand_L"), JointMask.of("Elbow_L"),
-			JointMask.of("Tool_L")
-		)
-	);
-	
-	public static final List<JointMask> BIPED_UPPER_JOINTS_WITH_ROOT = new ArrayList<> (
-		Arrays.asList(
-			JointMask.of("Root", JointMask.ROOT_COMBINE), JointMask.of("Torso"),
-			JointMask.of("Chest"), JointMask.of("Head"),
-			JointMask.of("Shoulder_R"), JointMask.of("Arm_R"),
-			JointMask.of("Hand_R"), JointMask.of("Elbow_R"),
-			JointMask.of("Tool_R"), JointMask.of("Shoulder_L"),
-			JointMask.of("Arm_L"), JointMask.of("Hand_L"),
-			JointMask.of("Elbow_L"), JointMask.of("Tool_L")
-		)
-	);
-
-	
-	public static final List<JointMask> BIPED_ARMS = new ArrayList<> (
-		Arrays.asList(
-			JointMask.of("Shoulder_R"), JointMask.of("Arm_R"),
-			JointMask.of("Hand_R"), JointMask.of("Elbow_R"),
-			JointMask.of("Tool_R"), JointMask.of("Shoulder_L"),
-			JointMask.of("Arm_L"), JointMask.of("Hand_L"),
-			JointMask.of("Elbow_L"), JointMask.of("Tool_L")
-		)
-	);
-	
 	public static final List<JointMask> WINGS = new ArrayList<> (Arrays.asList(JointMask.of("Wing_L"), JointMask.of("Wing_R")));
-	
-	public static final List<JointMask> NONE = new ArrayList<> (
-		Arrays.asList(
-			JointMask.of("Root"), JointMask.of("Thigh_R"),
-			JointMask.of("Leg_R"), JointMask.of("Knee_R"),
-			JointMask.of("Thigh_L"), JointMask.of("Leg_L"),
-			JointMask.of("Knee_L"), JointMask.of("Torso"),
-			JointMask.of("Chest"), JointMask.of("Head"),
-			JointMask.of("Shoulder_R"), JointMask.of("Arm_R"),
-			JointMask.of("Hand_R"), JointMask.of("Elbow_R"),
-			JointMask.of("Tool_R"), JointMask.of("Shoulder_L"),
-			JointMask.of("Arm_L"), JointMask.of("Hand_L"),
-			JointMask.of("Elbow_L"), JointMask.of("Tool_L")
-		)
-	);
 	
 	private final Map<LivingMotion, List<JointMask>> masks = Maps.newHashMap();
 	private final List<JointMask> defaultMask;

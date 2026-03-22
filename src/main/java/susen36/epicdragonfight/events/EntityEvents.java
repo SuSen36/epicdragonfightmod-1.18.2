@@ -3,6 +3,7 @@ package susen36.epicdragonfight.events;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.level.Level;
@@ -15,22 +16,24 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.EntityPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+	import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 @Mod.EventBusSubscriber(modid= EpicDragonFight.MODID)
 public class EntityEvents {
 	@SuppressWarnings("unchecked")
 	@SubscribeEvent
 	public static void spawnEvent(EntityJoinWorldEvent event) {
-		EntityPatch<Entity> entitypatch = event.getEntity().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
+		Entity entity = event.getEntity();
+		
+		if (entity instanceof Mob mobEntity) {
+			MobPatch<Mob> entitypatch = (MobPatch<Mob>) mobEntity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
 
-		if (entitypatch != null && !entitypatch.isInitialized()) {
-			entitypatch.onJoinWorld(event.getEntity(), event);
+			if (entitypatch != null && !entitypatch.isInitialized()) {
+				entitypatch.onJoinWorld(mobEntity, event);
+			}
 		}
 
-		Entity entity = event.getEntity();
 		if(entity instanceof EnderMan) {
 			if (entity.level.dimension() == Level.END) {
 				if (entity.position().horizontalDistanceSqr() < 40000) {
@@ -42,7 +45,7 @@ public class EntityEvents {
 
 	@SubscribeEvent
 	public static void updateEvent(LivingUpdateEvent event) {
-		LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>) event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
+		MobPatch<?> entitypatch = (MobPatch<?>) event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
 
 		if (entitypatch != null && entitypatch.getOriginal() != null) {
 			entitypatch.tick(event);
@@ -51,7 +54,7 @@ public class EntityEvents {
 
 	@SubscribeEvent
 	public static void knockBackEvent(LivingKnockBackEvent event) {
-		EntityPatch<?> cap = event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).orElse(null);
+		MobPatch<?> cap = (MobPatch<?>) event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).orElse(null);
 
 		if (cap != null) {
 			event.setCanceled(true);
@@ -81,7 +84,7 @@ public class EntityEvents {
 
 	@SubscribeEvent
 	public static void deathEvent(LivingDeathEvent event) {
-		LivingEntityPatch<?> entitypatch = (LivingEntityPatch<?>)event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
+		MobPatch<?> entitypatch = (MobPatch<?>)event.getEntityLiving().getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
 		if (entitypatch != null) {
 			entitypatch.onDeath();
 		}

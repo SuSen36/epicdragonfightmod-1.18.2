@@ -14,19 +14,19 @@ import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.registries.ForgeRegistries;
 import susen36.epicdragonfight.api.forgeevent.EntityPatchRegistryEvent;
 import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.EntityPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.boss.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
 
 import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<EntityPatch<?>> {
-	private static final Map<EntityType<?>, Function<Entity, Supplier<EntityPatch<?>>>> CAPABILITIES = Maps.newHashMap();
-	private static final Map<EntityType<?>, Function<Entity, Supplier<EntityPatch<?>>>> CUSTOM_CAPABILITIES = Maps.newHashMap();
+public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<MobPatch<?>> {
+	private static final Map<EntityType<?>, Function<Entity, Supplier<MobPatch<?>>>> CAPABILITIES = Maps.newHashMap();
+	private static final Map<EntityType<?>, Function<Entity, Supplier<MobPatch<?>>>> CUSTOM_CAPABILITIES = Maps.newHashMap();
 	
 	public static void registerEntityPatches() {
-		Map<EntityType<?>, Function<Entity, Supplier<EntityPatch<?>>>> registry = Maps.newHashMap();
+		Map<EntityType<?>, Function<Entity, Supplier<MobPatch<?>>>> registry = Maps.newHashMap();
 			registry.put(EntityType.ENDER_DRAGON, (entityIn) -> {
 			if (entityIn instanceof EnderDragon) {
 				return EnderDragonPatch::new;
@@ -47,17 +47,17 @@ public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<Enti
 		CUSTOM_CAPABILITIES.clear();
 	}
 	
-	public static Function<Entity, Supplier<EntityPatch<?>>> get(String registryName) {
+	public static Function<Entity, Supplier<MobPatch<?>>> get(String registryName) {
 		ResourceLocation rl = new ResourceLocation(registryName);
 		EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(rl);
 		return CAPABILITIES.get(entityType);
 	}
 	
-	private EntityPatch<?> capability;
-	private LazyOptional<EntityPatch<?>> optional = LazyOptional.of(this);
+	private MobPatch<?> capability;
+	private LazyOptional<MobPatch<?>> optional = LazyOptional.of(this);
 	
 	public ProviderEntity(Entity entity) {
-		Function<Entity, Supplier<EntityPatch<?>>> provider = CUSTOM_CAPABILITIES.getOrDefault(entity.getType(), CAPABILITIES.get(entity.getType()));
+		Function<Entity, Supplier<MobPatch<?>>> provider = CUSTOM_CAPABILITIES.getOrDefault(entity.getType(), CAPABILITIES.get(entity.getType()));
 		
 		if (provider != null) {
 			this.capability = provider.apply(entity).get();
@@ -69,12 +69,12 @@ public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<Enti
 	}
 	
 	@Override
-	public EntityPatch<?> get() {
+	public MobPatch<?> get() {
 		return this.capability;
 	}
 	
 	@Override
 	public <T> LazyOptional<T> getCapability(Capability<T> cap, Direction side) {
-		return cap == DragonFightCapabilities.CAPABILITY_ENTITY ? this.optional.cast() :  LazyOptional.empty();
+		return DragonFightCapabilities.CAPABILITY_ENTITY.orEmpty(cap, LazyOptional.of(() -> this.capability));
 	}
 }

@@ -20,7 +20,7 @@ import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import com.mojang.math.Vector4f;
 import susen36.epicdragonfight.gameasset.Models;
-import susen36.epicdragonfight.world.capabilities.entitypatch.LivingEntityPatch;
+import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
 import java.util.Map;
 
@@ -49,7 +49,7 @@ public class ActionAnimation extends MainFrameAnimation {
 	}
 	
 	@Override
-	public void begin(LivingEntityPatch<?> entitypatch) {
+	public void begin(MobPatch<?> entitypatch) {
 		super.begin(entitypatch);
 		entitypatch.cancelUsingItem();
 		
@@ -65,17 +65,17 @@ public class ActionAnimation extends MainFrameAnimation {
 	}
 	
 	@Override
-	public void tick(LivingEntityPatch<?> entitypatch) {
+	public void tick(MobPatch<?> entitypatch) {
 		super.tick(entitypatch);
 		this.move(entitypatch, this);
 	}
 	
 	@Override
-	public void linkTick(LivingEntityPatch<?> entitypatch, LinkAnimation linkAnimation) {
+	public void linkTick(MobPatch<?> entitypatch, LinkAnimation linkAnimation) {
 		this.move(entitypatch, linkAnimation);
 	}
 	
-	private void move(LivingEntityPatch<?> entitypatch, DynamicAnimation animation) {
+	private void move(MobPatch<?> entitypatch, DynamicAnimation animation) {
 		if (!this.validateMovement(entitypatch, animation)) {
 			return;
 		}
@@ -95,7 +95,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		}
 	}
 	
-	private boolean validateMovement(LivingEntityPatch<?> entitypatch, DynamicAnimation animation) {
+	private boolean validateMovement(MobPatch<?> entitypatch, DynamicAnimation animation) {
 		LivingEntity livingentity = entitypatch.getOriginal();
 		
 		if (entitypatch.isLogicalClient()) {
@@ -135,7 +135,7 @@ public class ActionAnimation extends MainFrameAnimation {
 	}
 	
 	@Override
-	protected void modifyPose(Pose pose, LivingEntityPatch<?> entitypatch, float time) {
+	protected void modifyPose(Pose pose, MobPatch<?> entitypatch, float time) {
 		JointTransform jt = pose.getOrDefaultTransform("Root");
 		Vector3f jointPosition = jt.translation();
 		OpenMatrix4f toRootTransformApplied = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("Root").getLocalTrasnform().removeTranslation();
@@ -151,7 +151,7 @@ public class ActionAnimation extends MainFrameAnimation {
 	}
 	
 	@Override
-	public void setLinkAnimation(Pose pose1, float convertTimeModifier, LivingEntityPatch<?> entitypatch, LinkAnimation dest) {
+	public void setLinkAnimation(Pose pose1, float convertTimeModifier, MobPatch<?> entitypatch, LinkAnimation dest) {
 		float totalTime = convertTimeModifier > 0.0F ? convertTimeModifier : 0.0F + this.convertTime;
 		float nextStart = 0.0F;
 		
@@ -182,7 +182,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		}
 	}
 	
-	protected Vector3f getCoordVector(LivingEntityPatch<?> entitypatch, DynamicAnimation animation) {
+	protected Vector3f getCoordVector(MobPatch<?> entitypatch, DynamicAnimation animation) {
 		if (!this.getProperty(ActionAnimationProperty.COORD_SET_TICK).isEmpty()) {
 			ActionAnimationCoordSetter actionAnimationCoordSetter = this.getProperty(ActionAnimationProperty.COORD_SET_TICK).orElse(null);
 			
