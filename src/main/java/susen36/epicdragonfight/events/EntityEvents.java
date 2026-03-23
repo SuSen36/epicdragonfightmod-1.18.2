@@ -65,7 +65,6 @@ public class EntityEvents {
 	public static void hurtEvent(LivingHurtEvent event) {
 		LivingEntity hitEntity = event.getEntityLiving();
 		if ((hitEntity instanceof EnderDragon)) {
-
 				if (hitEntity.level.dimension() == Level.END) {
 					if (hitEntity.position().horizontalDistanceSqr() < 40000) {
 						event.setAmount(event.getAmount()*0.8f);
@@ -78,7 +77,7 @@ public class EntityEvents {
 	@SubscribeEvent
 	public static void sizingEvent(EntityEvent.Size event) {
 		if (event.getEntity() instanceof EnderDragon) {
-			event.setNewSize(EntityDimensions.scalable(3.0F, 5.0F));
+			event.setNewSize(EntityDimensions.scalable(3.5F, 4.5F));
 		}
 	}
 

@@ -19,7 +19,6 @@ import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
 
-import susen36.epicdragonfight.client.ClientEngine;
 import susen36.epicdragonfight.events.CapabilityEvent;
 import susen36.epicdragonfight.events.EntityEvents;
 import susen36.epicdragonfight.gameasset.Animations;
@@ -62,8 +61,6 @@ public class EpicDragonFight {
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {
-    	new ClientEngine();
-
 		this.animatorProvider = ClientAnimator::getAnimator;
 		ProviderEntity.registerEntityPatchesClient();
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();

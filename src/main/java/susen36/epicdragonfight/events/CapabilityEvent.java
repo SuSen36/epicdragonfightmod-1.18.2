@@ -23,7 +23,7 @@ public class CapabilityEvent {
 		if (entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).orElse(null) == null) {
 			ProviderEntity prov = new ProviderEntity(entity);
 			if (prov.hasCapability()) {
-				MobPatch entityCap = (MobPatch) prov.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).orElse(null);
+				MobPatch entityCap = prov.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).orElse(null);
 				if (entity instanceof Mob mobEntity) {
 					entityCap.onConstructed(mobEntity);
 				}
