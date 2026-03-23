@@ -21,7 +21,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.model.ClientModel;
-import susen36.epicdragonfight.api.client.model.ClientModels;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
@@ -36,7 +35,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 	
 	@Override
 	public void render(EnderDragon entityIn, EnderDragonPatch entitypatch, EnderDragonRenderer renderer, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
-		ClientModel model = entitypatch.getEntityModel(ClientModels.LOGICAL_CLIENT);
+		ClientModel model = entitypatch.getClientModel();
 		Armature armature = model.getArmature();
 		poseStack.pushPose();
         this.mulPoseStack(poseStack, armature, entityIn, entitypatch, partialTicks);
@@ -111,7 +110,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		if (!entitypatch.isGroundPhase() || entitypatch.getOriginal().dragonDeathTime > 0) {
 			float f = (float)entityIn.getLatencyPos(7, partialTicks)[0];
 		    float f1 = (float)(entityIn.getLatencyPos(5, partialTicks)[1] - entityIn.getLatencyPos(10, partialTicks)[1]);
-		    float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F : (float)Mth.rotWrap((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
+		    float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F : Mth.rotWrap((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
 			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
 		} else {
 			modelMatrix = entitypatch.getModelMatrix(partialTicks).scale(-1.0F, 1.0F, -1.0F);
@@ -135,8 +134,8 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		int chargingCount = phase.getChargingCount();
 		int age = DragonCrystalLinkPhase.CHARGING_TICK - chargingCount;
 		
-		float scaleO = 1.0F + (float)(Math.max(30.0F - age - 1, 0.0F)) / 140.0F;
-		float scale = 1.0F + (float)(Math.max(30.0F - age, 0.0F)) / 140.0F;
+		float scaleO = 1.0F + Math.max(30.0F - age - 1, 0.0F) / 140.0F;
+		float scale = 1.0F + Math.max(30.0F - age, 0.0F) / 140.0F;
 		float interpolatedScale = scaleO + (scale - scaleO) * partialTicks;
 		
 		float yawO = (dragon.tickCount - 1 + partialTicks) * 36.0F;

@@ -15,7 +15,7 @@ import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.client.model.ClientModels;
+
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import net.minecraft.world.entity.AreaEffectCloud;
@@ -49,7 +49,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 	public void doClientTick() {
 		super.doClientTick();
 		Vec3 dragonpos = this.dragon.position();
-		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel(ClientModels.LOGICAL_CLIENT).getArmature(), "Mouth_Upper");
+		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel(null).getArmature(), "Mouth_Upper");
 		
 		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
 		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);

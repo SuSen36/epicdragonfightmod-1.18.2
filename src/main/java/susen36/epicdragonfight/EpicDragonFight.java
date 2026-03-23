@@ -17,7 +17,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.api.client.model.ClientModels;
+import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
+
 import susen36.epicdragonfight.client.ClientEngine;
 import susen36.epicdragonfight.events.CapabilityEvent;
 import susen36.epicdragonfight.events.EntityEvents;
@@ -66,11 +67,10 @@ public class EpicDragonFight {
 		this.animatorProvider = ClientAnimator::getAnimator;
 		ProviderEntity.registerEntityPatchesClient();
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		ClientModels.LOGICAL_CLIENT.loadModels(resourceManager);
-		ClientModels.LOGICAL_CLIENT.loadArmatures(resourceManager);
+		EnderDragonPatch.CLIENT_MODEL.loadMeshAndProperties(resourceManager);
+		EnderDragonPatch.CLIENT_MODEL.loadArmatureData(resourceManager);
 		Models.LOGICAL_SERVER.loadArmatures(resourceManager);
 		this.animationManager.loadAnimationsInit(resourceManager);
-        ((ReloadableResourceManager)resourceManager).registerReloadListener(ClientModels.LOGICAL_CLIENT);
         ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);
     }
 	

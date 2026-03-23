@@ -11,7 +11,7 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.client.animation.Layer.Priority;
-import susen36.epicdragonfight.api.client.model.ClientModels;
+
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
@@ -121,7 +121,7 @@ public class ClientAnimator extends Animator {
 	}
 
 	public void setPoseToModel(float partialTicks) {
-		Joint rootJoint = this.entitypatch.getEntityModel(ClientModels.LOGICAL_CLIENT).getArmature().getJointHierarcy();
+		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
 		this.applyPoseToJoint(rootJoint, new OpenMatrix4f(), this.getPose(partialTicks));
 	}
 
@@ -204,7 +204,7 @@ public class ClientAnimator extends Animator {
 			}
 		}
 
-		Joint rootJoint = this.entitypatch.getEntityModel(ClientModels.LOGICAL_CLIENT).getArmature().getJointHierarcy();
+		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
 		this.applyBindModifier(composedPose, rootJoint, layerPoses);
 
 		return composedPose;
@@ -227,7 +227,7 @@ public class ClientAnimator extends Animator {
 			}
 		}
 
-		Joint rootJoint = this.entitypatch.getEntityModel(ClientModels.LOGICAL_CLIENT).getArmature().getJointHierarcy();
+		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
 		this.applyBindModifier(composedPose, rootJoint, layerPoses);
 
 		return composedPose;

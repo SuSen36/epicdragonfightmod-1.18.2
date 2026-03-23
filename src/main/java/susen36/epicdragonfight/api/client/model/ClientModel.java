@@ -39,12 +39,7 @@ public class ClientModel extends Model {
 			if (parent == null) {
 				this.mesh = loader.getMesh();
 			} else {
-				ClientModel model = ClientModels.LOGICAL_CLIENT.get(parent);
-				if (model == null) {
-					throw new IllegalStateException("the parent location " + parent + " not exists!");
-				}
-				
-				this.mesh = ClientModels.LOGICAL_CLIENT.get(parent).getMesh();
+				throw new IllegalStateException("Parent models are not supported in this simplified implementation");
 			}
 			
 			this.properties = loader.getRenderProperties();

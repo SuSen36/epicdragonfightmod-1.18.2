@@ -27,6 +27,7 @@ import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Animations;
+import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
@@ -38,6 +39,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	public static final TargetingConditions DRAGON_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight();
 	public static EnderDragonPatch INSTANCE_CLIENT;
 	public static EnderDragonPatch INSTANCE_SERVER;
+	public static final ClientModel CLIENT_MODEL = new ClientModel(new net.minecraft.resources.ResourceLocation(susen36.epicdragonfight.EpicDragonFight.MODID, "entity/dragon"));
 	private Map<String, TipPointAnimation> tipPointAnimations = Maps.newHashMap();
 	private Map<LivingMotions, StaticAnimation> livingMotions = Maps.newHashMap();
 	private boolean groundPhase;
@@ -243,7 +245,11 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 
 	@Override
 	public <M extends Model> M getEntityModel(Models<M> modelDB) {
-		return modelDB.dragon;
+		return (M) CLIENT_MODEL;
+	}
+	
+	public ClientModel getClientModel() {
+		return CLIENT_MODEL;
 	}
 	
 	@Override

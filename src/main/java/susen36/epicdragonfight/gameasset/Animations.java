@@ -23,7 +23,8 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event.Side;
 import susen36.epicdragonfight.api.animation.types.procedural.*;
-import susen36.epicdragonfight.api.client.model.ClientModels;
+
+import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
@@ -60,8 +61,7 @@ public class Animations {
 	}
 
 	private static void build() {
-		Models<?> models = FMLEnvironment.dist == Dist.CLIENT ? ClientModels.LOGICAL_CLIENT : Models.LOGICAL_SERVER;
-		Model dragon = models.dragon;
+		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? EnderDragonPatch.CLIENT_MODEL : Models.LOGICAL_SERVER.dragon;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "dragon/idle", dragon);
 		DRAGON_WALK = new EnderDraonWalkAnimation(0.35F, "dragon/walk", dragon,
