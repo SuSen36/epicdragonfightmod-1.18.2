@@ -60,7 +60,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	    	float yo = (float)entitypatch.getOriginal().yo;
 	    	float zo = (float)entitypatch.getOriginal().zo;
 	    	OpenMatrix4f toModelPos = OpenMatrix4f.mul(OpenMatrix4f.translate(new Vector3f(xo + (x - xo) * partialTicks, yo + (y - yo) * partialTicks, zo + (z - zo) * partialTicks), new OpenMatrix4f(), null), entitypatch.getModelMatrix(partialTicks), null).invert();
-	    	this.correctRootRotation(pose.getJointTransformData().get("Root"), enderdragonpatch, partialTicks);
+	    	this.correctRootRotation(pose.getJointTransformData().get("root"), enderdragonpatch, partialTicks);
 	    	
 	    	for (IKInfo ikInfo : this.ikInfos) {
 		    	TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
@@ -78,7 +78,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	@Override
 	public void begin(MobPatch<?> entitypatch) {
 		ActionAnimationCoordSetter movementAnimationSetter = this.getProperty(ActionAnimationProperty.COORD_SET_BEGIN).orElse((self, entitypatch$2, transformSheet) -> {
-			transformSheet.readFrom(self.getTransfroms().get("Root"));
+			transformSheet.readFrom(self.getTransfroms().get("root"));
 		});
 		
 		entitypatch.getAnimator().getPlayerFor(this).setActionAnimationCoord(this, entitypatch, movementAnimationSetter);

@@ -27,7 +27,7 @@ public class AttackAnimation extends ActionAnimation {
 		LivingEntity attackTarget = entitypatch.getTarget();
 		
 		if (!self.getRealAnimation().getProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE).orElse(false) && attackTarget != null) {
-			TransformSheet transform = self.getTransfroms().get("Root").copyAll();
+			TransformSheet transform = self.getTransfroms().get("root").copyAll();
 			Keyframe[] keyframes = transform.getKeyframes();
 			int startFrame = 0;
 			int endFrame = transform.getKeyframes().length - 1;
@@ -47,7 +47,7 @@ public class AttackAnimation extends ActionAnimation {
 			
 			transformSheet.readFrom(transform);
 		} else {
-			transformSheet.readFrom(self.getTransfroms().get("Root"));
+			transformSheet.readFrom(self.getTransfroms().get("root"));
 		}
 	};
 	

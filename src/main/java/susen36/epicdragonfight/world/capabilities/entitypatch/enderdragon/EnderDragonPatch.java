@@ -201,10 +201,10 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 		}
 		
 		if (!this.tipPointAnimations.isEmpty()) {
-			TipPointAnimation frontL = this.getTipPointAnimation("Leg_Front_L3");
-			TipPointAnimation frontR = this.getTipPointAnimation("Leg_Front_R3");
-			TipPointAnimation backL = this.getTipPointAnimation("Leg_Back_L3");
-			TipPointAnimation backR = this.getTipPointAnimation("Leg_Back_R3");
+			TipPointAnimation frontL = this.getTipPointAnimation("left_front_foot");
+			TipPointAnimation frontR = this.getTipPointAnimation("right_front_foot");
+			TipPointAnimation backL = this.getTipPointAnimation("left_hind_foot");
+			TipPointAnimation backR = this.getTipPointAnimation("right_hind_foot");
 			float entityPosY = (float)this.original.position().y;
 			float yFrontL = (frontL != null && frontL.isTouchingGround()) ? frontL.getTargetPosition().y : entityPosY;
 			float yFrontR = (frontR != null && frontR.isTouchingGround()) ? frontR.getTargetPosition().y : entityPosY;

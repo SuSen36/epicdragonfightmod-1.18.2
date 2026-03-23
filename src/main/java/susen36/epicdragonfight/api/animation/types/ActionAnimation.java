@@ -58,7 +58,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		}
 		
 		ActionAnimationCoordSetter actionCoordSetter = this.getProperty(ActionAnimationProperty.COORD_SET_BEGIN).orElse((self, entitypatch$2, transformSheet) -> {
-			transformSheet.readFrom(self.jointTransforms.get("Root"));
+			transformSheet.readFrom(self.jointTransforms.get("root"));
 		});
 		
 		entitypatch.getAnimator().getPlayerFor(this).setActionAnimationCoord(this, entitypatch, actionCoordSetter);
@@ -136,9 +136,9 @@ public class ActionAnimation extends MainFrameAnimation {
 	
 	@Override
 	protected void modifyPose(Pose pose, MobPatch<?> entitypatch, float time) {
-		JointTransform jt = pose.getOrDefaultTransform("Root");
+		JointTransform jt = pose.getOrDefaultTransform("root");
 		Vector3f jointPosition = jt.translation();
-		OpenMatrix4f toRootTransformApplied = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("Root").getLocalTrasnform().removeTranslation();
+		OpenMatrix4f toRootTransformApplied = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
 		OpenMatrix4f toOrigin = OpenMatrix4f.invert(toRootTransformApplied, null);
 		Vector3f worldPosition = OpenMatrix4f.transform3v(toRootTransformApplied, jointPosition, null);
 		worldPosition.x = 0.0F;
@@ -165,7 +165,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		dest.setNextAnimation(this);
 		Map<String, JointTransform> data1 = pose1.getJointTransformData();
 		Pose pose = this.getPoseByTime(entitypatch, nextStart, 1.0F);
-		JointTransform jt = pose.getOrDefaultTransform("Root");
+		JointTransform jt = pose.getOrDefaultTransform("root");
 		Vector3f withPosition = entitypatch.getAnimator().getPlayerFor(this).getActionAnimationCoord().getInterpolatedTranslation(nextStart);
 
 		jt.translation().set(withPosition.x, withPosition.y, withPosition.z);
@@ -187,7 +187,7 @@ public class ActionAnimation extends MainFrameAnimation {
 			ActionAnimationCoordSetter actionAnimationCoordSetter = this.getProperty(ActionAnimationProperty.COORD_SET_TICK).orElse(null);
 			
 			if (animation instanceof LinkAnimation) {
-				actionAnimationCoordSetter.set(animation, entitypatch, animation.jointTransforms.get("Root"));
+				actionAnimationCoordSetter.set(animation, entitypatch, animation.jointTransforms.get("root"));
 			} else {
 				entitypatch.getAnimator().getPlayerFor(this).setActionAnimationCoord(this, entitypatch, actionAnimationCoordSetter);
 			}
@@ -196,12 +196,12 @@ public class ActionAnimation extends MainFrameAnimation {
 		TransformSheet rootCoord;
 		
 		if (animation instanceof LinkAnimation) {
-			rootCoord = animation.jointTransforms.get("Root");
+			rootCoord = animation.jointTransforms.get("root");
 		} else {
 			rootCoord = entitypatch.getAnimator().getPlayerFor(this).getActionAnimationCoord();
 			
 			if (rootCoord == null) {
-				rootCoord = animation.jointTransforms.get("Root");
+				rootCoord = animation.jointTransforms.get("root");
 			}
 		}
 		
@@ -212,7 +212,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		Vector4f currentpos = new Vector4f(jt.translation().x, jt.translation().y, jt.translation().z, 1.0F);
 		Vector4f prevpos = new Vector4f(prevJt.translation().x, prevJt.translation().y, prevJt.translation().z, 1.0F);
 		OpenMatrix4f rotationTransform = entitypatch.getModelMatrix(1.0F).removeTranslation();
-		OpenMatrix4f localTransform = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("Root").getLocalTrasnform().removeTranslation();
+		OpenMatrix4f localTransform = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
 		rotationTransform.mulBack(localTransform);
 		OpenMatrix4f.transform(rotationTransform, currentpos, currentpos);
 		OpenMatrix4f.transform(rotationTransform, prevpos, prevpos);

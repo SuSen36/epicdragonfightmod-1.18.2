@@ -1,4 +1,4 @@
-{
+﻿{
     "vertices": {
         "positions": {
             "stride": 3,
@@ -37,22 +37,22 @@
         }
     },
     "armature": {
-        "joints": ["Root", "Leg_Back_R1", "Leg_Back_R2", "Leg_Back_R3", "Leg_Back_L1", "Leg_Back_L2", "Leg_Back_L3", "Torso", "Tail1", "Tail2", "Tail3", "Tail4", "Tail5", "Tail6", "Tail7", "Tail8", "Tail9", "Tail10", "Tail11", "Tail12", "Leg_Front_R1", "Leg_Front_R2", "Leg_Front_R3", "Leg_Front_L1", "Leg_Front_L2", "Leg_Front_L3", "Wing_R1", "Wing_R2", "Wing_L1", "Wing_L2", "Neck1", "Neck2", "Neck3", "Neck4", "Neck5", "Head", "Mouth_Upper", "Mouse_Lower"],
+        "joints": ["root", "right_hind_leg", "right_hind_leg_tip", "right_hind_foot", "left_hind_leg", "left_hind_leg_tip", "left_hind_foot", "body", "neck_tail_1", "neck_tail_2", "neck_tail_3", "neck_tail_4", "neck_tail_5", "neck_tail_6", "neck_tail_7", "neck_tail_8", "neck_tail_9", "neck_tail_10", "neck_tail_11", "neck_tail_12", "right_front_leg", "right_front_leg_tip", "right_front_foot", "left_front_leg", "left_front_leg_tip", "left_front_foot", "right_wing", "right_wing_tip", "left_wing", "left_wing_tip", "neck", "neck2", "neck3", "neck4", "neck5", "head", "upperJaw", "jaw"],
         "hierarchy": [
             {
-                "name": "Root",
+                "name": "root",
                 "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1e-06, -1.268548, 0.0, -1e-06, 1.0, 2.441811, 0.0, 0.0, 0.0, 1.0],
                 "children": [
                     {
-                        "name": "Leg_Back_R1",
+                        "name": "right_hind_leg",
                         "transform": [1.0, 0.0, 0.0, 0.999855, 0.0, -0.857079, 0.515184, 0.544667, 0.0, -0.515184, -0.857079, 0.036199, 0.0, 0.0, 0.0, 1.0],
                         "children": [
                             {
-                                "name": "Leg_Back_R2",
+                                "name": "right_hind_leg_tip",
                                 "transform": [1.0, -0.0, -0.0, 0.0, 0.0, 0.871159, 0.491001, 1.692269, -0.0, -0.491001, 0.871159, 0.0, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Leg_Back_R3",
+                                        "name": "right_hind_foot",
                                         "transform": [1.0, 0.0, -0.0, 0.0, -0.0, 0.659118, -0.75204, 2.159911, 0.0, 0.75204, 0.659118, -0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": []
                                     }
@@ -61,15 +61,15 @@
                         ]
                     },
                     {
-                        "name": "Leg_Back_L1",
+                        "name": "left_hind_leg",
                         "transform": [1.0, 0.0, 0.0, -0.999948, 0.0, -0.857079, 0.515184, 0.544667, 0.0, -0.515184, -0.857079, 0.036199, 0.0, 0.0, 0.0, 1.0],
                         "children": [
                             {
-                                "name": "Leg_Back_L2",
+                                "name": "left_hind_leg_tip",
                                 "transform": [1.0, -0.0, -0.0, 0.0, 0.0, 0.871159, 0.491001, 1.692269, -0.0, -0.491001, 0.871159, 0.0, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Leg_Back_L3",
+                                        "name": "left_hind_foot",
                                         "transform": [1.0, -0.0, -0.0, -0.0, -0.0, 0.659118, -0.75204, 2.159911, 0.0, 0.75204, 0.659118, -0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": []
                                     }
@@ -78,55 +78,55 @@
                         ]
                     },
                     {
-                        "name": "Torso",
+                        "name": "body",
                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, -1e-06, 0.273754, 0.0, 1e-06, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                         "children": [
                             {
-                                "name": "Tail1",
+                                "name": "neck_tail_1",
                                 "transform": [-1.0, 0.0, 0.0, -0.0, 0.0, -1.0, 0.0, -0.516188, 0.0, 0.0, 1.0, 0.429314, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Tail2",
+                                        "name": "neck_tail_2",
                                         "transform": [1.0, 0.0, 0.0, 0.0, -0.0, 1.0, 0.0, 0.615504, 0.0, -0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": [
                                             {
-                                                "name": "Tail3",
+                                                "name": "neck_tail_3",
                                                 "transform": [1.0, -0.0, 0.0, 0.0, 0.0, 1.0, -0.0, 0.624616, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                 "children": [
                                                     {
-                                                        "name": "Tail4",
+                                                        "name": "neck_tail_4",
                                                         "transform": [1.0, -0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.62624, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                         "children": [
                                                             {
-                                                                "name": "Tail5",
+                                                                "name": "neck_tail_5",
                                                                 "transform": [1.0, 0.0, 0.0, 0.0, -0.0, 1.0, 0.0, 0.624649, -0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                                 "children": [
                                                                     {
-                                                                        "name": "Tail6",
+                                                                        "name": "neck_tail_6",
                                                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.623273, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                                         "children": [
                                                                             {
-                                                                                "name": "Tail7",
+                                                                                "name": "neck_tail_7",
                                                                                 "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.625387, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                                                 "children": [
                                                                                     {
-                                                                                        "name": "Tail8",
+                                                                                        "name": "neck_tail_8",
                                                                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.625387, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                                                         "children": [
                                                                                             {
-                                                                                                "name": "Tail9",
+                                                                                                "name": "neck_tail_9",
                                                                                                 "transform": [1.0, -0.0, -0.0, 0.0, -0.0, 1.0, -0.0, 0.624782, 0.0, 0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                                                                                 "children": [
                                                                                                     {
-                                                                                                        "name": "Tail10",
+                                                                                                        "name": "neck_tail_10",
                                                                                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.62586, 0.0, 0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                                                                                         "children": [
                                                                                                             {
-                                                                                                                "name": "Tail11",
+                                                                                                                "name": "neck_tail_11",
                                                                                                                 "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.625142, 0.0, 0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                                                                                                 "children": [
                                                                                                                     {
-                                                                                                                        "name": "Tail12",
+                                                                                                                        "name": "neck_tail_12",
                                                                                                                         "transform": [1.0, 0.0, -0.0, 0.0, 0.0, 1.0, -0.0, 0.624677, 0.0, 0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                                                                                                         "children": []
                                                                                                                     }
@@ -153,15 +153,15 @@
                                 ]
                             },
                             {
-                                "name": "Leg_Front_R1",
+                                "name": "right_front_leg",
                                 "transform": [1.0, 0.0, 0.0, 0.749746, 0.0, -0.917921, 0.396764, 2.917176, 0.0, -0.396764, -0.91792, -0.176387, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Leg_Front_R2",
+                                        "name": "right_front_leg_tip",
                                         "transform": [1.0, 0.0, 0.0, 0.0, -0.0, 0.956842, -0.290608, 1.253495, -0.0, 0.290608, 0.956842, 0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": [
                                             {
-                                                "name": "Leg_Front_R3",
+                                                "name": "right_front_foot",
                                                 "transform": [1.0, -0.0, 0.0, 0.0, 0.0, 0.646395, -0.763003, 1.488528, 0.0, 0.763003, 0.646395, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                 "children": []
                                             }
@@ -170,15 +170,15 @@
                                 ]
                             },
                             {
-                                "name": "Leg_Front_L1",
+                                "name": "left_front_leg",
                                 "transform": [1.0, 0.0, 0.0, -0.749884, 0.0, -0.917921, 0.396764, 2.917176, 0.0, -0.396764, -0.91792, -0.176387, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Leg_Front_L2",
+                                        "name": "left_front_leg_tip",
                                         "transform": [1.0, -0.0, -0.0, -0.0, 0.0, 0.956842, -0.290608, 1.253495, 0.0, 0.290608, 0.956842, 0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": [
                                             {
-                                                "name": "Leg_Front_L3",
+                                                "name": "left_front_foot",
                                                 "transform": [1.0, 0.0, -0.0, -0.0, -0.0, 0.646395, -0.763003, 1.488528, -0.0, 0.763003, 0.646395, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                 "children": []
                                             }
@@ -187,58 +187,58 @@
                                 ]
                             },
                             {
-                                "name": "Wing_R1",
+                                "name": "right_wing",
                                 "transform": [0.0, 1.0, 0.0, 0.749813, -1.0, 0.0, -0.0, 2.861323, -0.0, 0.0, 1.0, 0.744816, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Wing_R2",
+                                        "name": "right_wing_tip",
                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 3.499784, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": []
                                     }
                                 ]
                             },
                             {
-                                "name": "Wing_L1",
+                                "name": "left_wing",
                                 "transform": [-0.0, -1.0, 0.0, -0.75068, 1.0, -0.0, -0.0, 2.861323, 0.0, 0.0, 1.0, 0.744816, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Wing_L2",
+                                        "name": "left_wing_tip",
                                         "transform": [1.0, -0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 3.499784, -0.0, -0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": []
                                     }
                                 ]
                             },
                             {
-                                "name": "Neck1",
+                                "name": "neck",
                                 "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, -0.0, 3.493827, 0.0, 0.0, 1.0, 1e-06, 0.0, 0.0, 0.0, 1.0],
                                 "children": [
                                     {
-                                        "name": "Neck2",
+                                        "name": "neck2",
                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.623755, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                         "children": [
                                             {
-                                                "name": "Neck3",
+                                                "name": "neck3",
                                                 "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, -0.0, 0.626764, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                 "children": [
                                                     {
-                                                        "name": "Neck4",
+                                                        "name": "neck4",
                                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.624224, 0.0, -0.0, 1.0, -0.0, 0.0, 0.0, 0.0, 1.0],
                                                         "children": [
                                                             {
-                                                                "name": "Neck5",
+                                                                "name": "neck5",
                                                                 "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.624445, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                                 "children": [
                                                                     {
-                                                                        "name": "Head",
+                                                                        "name": "head",
                                                                         "transform": [1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.629229, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0],
                                                                         "children": [
                                                                             {
-                                                                                "name": "Mouth_Upper",
+                                                                                "name": "upperJaw",
                                                                                 "transform": [1.0, 0.0, 0.0, 0.001002, 0.0, 1.0, 0.0, 0.873064, 0.0, 0.0, 1.0, -0.249922, 0.0, 0.0, 0.0, 1.0],
                                                                                 "children": []
                                                                             },
                                                                             {
-                                                                                "name": "Mouse_Lower",
+                                                                                "name": "jaw",
                                                                                 "transform": [1.0, 0.0, 0.0, 0.001002, 0.0, 1.0, 0.0, 0.873064, 0.0, 0.0, 1.0, -0.257517, 0.0, 0.0, 0.0, 1.0],
                                                                                 "children": []
                                                                             }

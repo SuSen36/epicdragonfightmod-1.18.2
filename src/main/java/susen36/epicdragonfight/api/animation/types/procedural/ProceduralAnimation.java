@@ -54,7 +54,7 @@ public interface ProceduralAnimation {
 				tipTransform.copyFrom(bindedJointTransform);
 				
 				if (correctY || correctZ) {
-					JointTransform rootTransform = src.get("Root").getInterpolatedTransform(kf.time());
+					JointTransform rootTransform = src.get("root").getInterpolatedTransform(kf.time());
 					Vector3f rootPos = rootTransform.translation();
 					float yCorrection = correctY ? -rootPos.z : 0.0F;
 					float zCorrection = correctZ ? rootPos.y : 0.0F;

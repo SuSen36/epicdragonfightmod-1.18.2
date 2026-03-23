@@ -14,7 +14,7 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class JointMaskEntry {
-	public static final List<JointMask> WINGS = new ArrayList<> (Arrays.asList(JointMask.of("Wing_L"), JointMask.of("Wing_R")));
+	public static final List<JointMask> WINGS = new ArrayList<> (Arrays.asList(JointMask.of("left_wing"), JointMask.of("right_wing")));
 	
 	private final Map<LivingMotion, List<JointMask>> masks = Maps.newHashMap();
 	private final List<JointMask> defaultMask;
@@ -70,3 +70,4 @@ public class JointMaskEntry {
 		}
 	}
 }
+

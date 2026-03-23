@@ -222,7 +222,7 @@ public class JsonModelLoader {
 				}
 			}
 		} else if (action) {
-			allowedJoints.add("Root");
+			allowedJoints.add("root");
 		}
 		
 		for (JsonElement element : array) {
