@@ -32,6 +32,7 @@ public class EnderDragonModel extends EntityModel<EnderDragon> {
     private final ModelPart neck3;
     private final ModelPart neck4;
     private final ModelPart neck5;
+    private final ModelPart upperJaw;
     private final ModelPart jaw;
     private final ModelPart body;
     private final ModelPart leftWing;
@@ -79,6 +80,7 @@ public class EnderDragonModel extends EntityModel<EnderDragon> {
         this.neck4 = this.neck3.getChild("neck4");
         this.neck5 = this.neck4.getChild("neck5");
         this.head = this.neck5.getChild("head");
+        this.upperJaw = this.head.getChild("upperJaw");
         this.jaw = this.head.getChild("jaw");
         this.leftWing = this.body.getChild("left_wing");
         this.leftWingTip = this.leftWing.getChild("left_wing_tip");
@@ -120,7 +122,8 @@ public class EnderDragonModel extends EntityModel<EnderDragon> {
         PartDefinition neck3 = neck2.addOrReplaceChild("neck3", CubeListBuilder.create().addBox("box", -5.0F, -5.0F, -5.0F, 10, 10, 10, 192, 104).addBox("scale", -1.0F, -9.0F, -3.0F, 2, 4, 6, 48, 0), PartPose.offset(0.0F, 0.0F, -10.0F));
         PartDefinition neck4 = neck3.addOrReplaceChild("neck4", CubeListBuilder.create().addBox("box", -5.0F, -5.0F, -5.0F, 10, 10, 10, 192, 104).addBox("scale", -1.0F, -9.0F, -3.0F, 2, 4, 6, 48, 0), PartPose.offset(0.0F, 0.0F, -10.0F));
         PartDefinition neck5 = neck4.addOrReplaceChild("neck5", CubeListBuilder.create().addBox("box", -5.0F, -5.0F, -5.0F, 10, 10, 10, 192, 104).addBox("scale", -1.0F, -9.0F, -3.0F, 2, 4, 6, 48, 0), PartPose.offset(0.0F, 0.0F, -10.0F));
-        PartDefinition headDef = neck5.addOrReplaceChild("head", CubeListBuilder.create().addBox("upperlip", -6.0F, -1.0F, -24.0F, 12, 5, 16, 176, 44).addBox("upperhead", -8.0F, -8.0F, -10.0F, 16, 16, 16, 112, 30).mirror().addBox("scale", -5.0F, -12.0F, -4.0F, 2, 4, 6, 0, 0).addBox("nostril", -5.0F, -3.0F, -22.0F, 2, 2, 4, 112, 0).mirror().addBox("scale", 3.0F, -12.0F, -4.0F, 2, 4, 6, 0, 0).addBox("nostril", 3.0F, -3.0F, -22.0F, 2, 2, 4, 112, 0), PartPose.offset(0.0F, 0.0F, -10.0F));
+        PartDefinition headDef = neck5.addOrReplaceChild("head", CubeListBuilder.create().addBox("upperhead", -8.0F, -8.0F, -10.0F, 16, 16, 16, 112, 30).mirror().addBox("scale", -5.0F, -12.0F, -4.0F, 2, 4, 6, 0, 0).addBox("nostril", -5.0F, -3.0F, -22.0F, 2, 2, 4, 112, 0).mirror().addBox("scale", 3.0F, -12.0F, -4.0F, 2, 4, 6, 0, 0).addBox("nostril", 3.0F, -3.0F, -22.0F, 2, 2, 4, 112, 0), PartPose.offset(0.0F, 0.0F, -10.0F));
+        headDef.addOrReplaceChild("upperJaw", CubeListBuilder.create().addBox("upperlip", -6.0F, -1.0F, -24.0F, 12, 5, 16, 176, 44), PartPose.offset(0.0F, 4.0F, -8.0F));
         headDef.addOrReplaceChild("jaw", CubeListBuilder.create().addBox("jaw", -6.0F, 0.0F, -16.0F, 12, 4, 16, 176, 65), PartPose.offset(0.0F, 4.0F, -8.0F));
         PartDefinition leftWing = bodyDef.addOrReplaceChild("left_wing", CubeListBuilder.create().mirror().addBox("bone", 0.0F, -4.0F, -4.0F, 56, 8, 8, 112, 88).addBox("skin", 0.0F, 0.0F, 2.0F, 56, 0, 56, -56, 88), PartPose.offset(12.0F, 5.0F, 2.0F));
         leftWing.addOrReplaceChild("left_wing_tip", CubeListBuilder.create().mirror().addBox("bone", 0.0F, -2.0F, -2.0F, 56, 4, 4, 112, 136).addBox("skin", 0.0F, 0.0F, 2.0F, 56, 0, 56, -56, 144), PartPose.offset(56.0F, 0.0F, 0.0F));
