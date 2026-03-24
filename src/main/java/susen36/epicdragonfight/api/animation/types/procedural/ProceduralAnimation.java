@@ -3,13 +3,14 @@ package susen36.epicdragonfight.api.animation.types.procedural;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 
+import com.mojang.math.Axis;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.animation.JointTransform;
@@ -74,8 +75,8 @@ public interface ProceduralAnimation {
 				ikInfo.startpos = tipAnimation.getKeyframes()[0].transform().translation();
 				ikInfo.endpos = ikInfo.startpos;
 			}
-			
-			ikInfo.startToEnd = ikInfo.endpos.copy();
+
+			ikInfo.startToEnd = new Vector3f(ikInfo.endpos);
 			ikInfo.startToEnd.sub(ikInfo.startpos);
 			ikInfo.startToEnd.mul(-1.0F, 1.0F, -1.0F);
 		}
@@ -98,7 +99,7 @@ public interface ProceduralAnimation {
 	
 	default Vector3f getRayCastedTipPosition(Vector3f clipStart, OpenMatrix4f toWorldCoord, EnderDragonPatch enderdragonpatch, float maxYDown, float leastHeight) {
 		Vector3f clipStartWorld = OpenMatrix4f.transform3v(toWorldCoord, clipStart, null);
-		BlockHitResult clipResult = enderdragonpatch.getOriginal().level.clip(new ClipContext(new Vec3(clipStartWorld.x, clipStartWorld.y, clipStartWorld.z), new Vec3(clipStartWorld.x, clipStartWorld.y - maxYDown, clipStartWorld.z), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, enderdragonpatch.getOriginal()));
+		BlockHitResult clipResult = enderdragonpatch.getOriginal().level().clip(new ClipContext(new Vec3(clipStartWorld.x, clipStartWorld.y, clipStartWorld.z), new Vec3(clipStartWorld.x, clipStartWorld.y - maxYDown, clipStartWorld.z), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, enderdragonpatch.getOriginal()));
 		float dy = (clipResult.getType() != HitResult.Type.MISS) ? (float)clipStartWorld.y - clipResult.getBlockPos().getY() - 1 : maxYDown;
 		return new Vector3f((float)clipStartWorld.x, (float)clipStartWorld.y - dy + leastHeight, (float)clipStartWorld.z);
 	}
@@ -106,12 +107,12 @@ public interface ProceduralAnimation {
 	default void correctRootRotation(JointTransform rootTransform, EnderDragonPatch enderdragonpatch, float partialTicks) {
 		float xRoot = enderdragonpatch.xRootO + (enderdragonpatch.xRoot - enderdragonpatch.xRootO) * partialTicks;
 		float zRoot = enderdragonpatch.zRootO + (enderdragonpatch.zRoot - enderdragonpatch.zRootO) * partialTicks;
-		Quaternion quat = Vector3f.ZP.rotationDegrees(zRoot);
-		quat.mul(Vector3f.XP.rotationDegrees(-xRoot));
+		Quaternionf quat = Axis.ZP.rotationDegrees(zRoot);
+		quat.mul(Axis.XP.rotationDegrees(-xRoot));
 		rootTransform.frontResult(JointTransform.getRotation(quat), OpenMatrix4f::mulAsOriginFront);
 	}
 	
-	default void applyFabrikToJoint(Vector3f recalculatedPosition, Pose pose, Armature armature, String startJoint, String endJoint, Quaternion tipRotation) {
+	default void applyFabrikToJoint(Vector3f recalculatedPosition, Pose pose, Armature armature, String startJoint, String endJoint, Quaternionf tipRotation) {
 		FABRIK fabrik = new FABRIK(pose, armature, startJoint, endJoint);
     	fabrik.run(recalculatedPosition, 10);
     	OpenMatrix4f tipRotationMatrix = OpenMatrix4f.fromQuaternion(tipRotation);
@@ -122,7 +123,7 @@ public interface ProceduralAnimation {
 	
 	default void startPartAnimation(IKInfo ikInfo, TipPointAnimation tipAnim, TransformSheet partAnimation, Vector3f targetpos) {
 		Vector3f footpos = tipAnim.getTipPosition(1.0F);
-		Vector3f worldStartToEnd = targetpos.copy();
+		Vector3f worldStartToEnd = new Vector3f(targetpos);
 		worldStartToEnd.sub(footpos);
 		partAnimation.correctAnimationByNewPosition(ikInfo.startpos, ikInfo.startToEnd, footpos, worldStartToEnd);
 		tipAnim.start(targetpos, partAnimation, 1.0F);

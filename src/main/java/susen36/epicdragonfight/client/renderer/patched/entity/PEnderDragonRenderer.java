@@ -3,9 +3,7 @@ package susen36.epicdragonfight.client.renderer.patched.entity;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -18,6 +16,9 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.model.ClientModel;
@@ -40,8 +41,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		poseStack.pushPose();
         this.mulPoseStack(poseStack, armature, entityIn, entitypatch, partialTicks);
 		OpenMatrix4f[] poses = this.getPoseMatrices(entitypatch, armature, partialTicks);
-		poses[0] = OpenMatrix4f.rotate(-90.0F, Vector3f.XP, poses[0], null);
-		
+		poses[0] = OpenMatrix4f.rotate(-90.0F, new Vector3f(1.0F, 0.0F, 0.0F), poses[0], null);
 		if (entityIn.dragonDeathTime > 0) {
 			poseStack.translate(entityIn.getRandom().nextGaussian() * 0.08D, 0.0D, entityIn.getRandom().nextGaussian() * 0.08D);
 			float deathTimeProgression = ((float) entityIn.dragonDeathTime + partialTicks) / 200.0F;
@@ -102,7 +102,6 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	public void mulPoseStack(PoseStack matStack, Armature armature, EnderDragon entityIn, EnderDragonPatch entitypatch, float partialTicks) {
 		OpenMatrix4f modelMatrix;
@@ -110,8 +109,8 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 		if (!entitypatch.isGroundPhase() || entitypatch.getOriginal().dragonDeathTime > 0) {
 			float f = (float)entityIn.getLatencyPos(7, partialTicks)[0];
 		    float f1 = (float)(entityIn.getLatencyPos(5, partialTicks)[1] - entityIn.getLatencyPos(10, partialTicks)[1]);
-		    float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F : Mth.rotWrap((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
-			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
+		    float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F  : (float) Mth.wrapDegrees((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
+			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, new Vector3f(0.0F, 0.0F, 1.0F));
 		} else {
 			modelMatrix = entitypatch.getModelMatrix(partialTicks).scale(-1.0F, 1.0F, -1.0F);
 		}
@@ -146,9 +145,9 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 
 		poseStack.pushPose();
 		poseStack.translate(0.0, -2.0, 0.0);
-		poseStack.mulPose(com.mojang.math.Vector3f.YP.rotationDegrees(interpolatedYaw));
-		poseStack.mulPose(com.mojang.math.Vector3f.ZP.rotationDegrees(-45.0F));
-		poseStack.mulPose(com.mojang.math.Vector3f.XP.rotationDegrees(0.0F));
+		poseStack.mulPose(Axis.YP.rotationDegrees(interpolatedYaw));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(-45.0F));
+		poseStack.mulPose(Axis.XP.rotationDegrees(0.0F));
 		poseStack.scale(interpolatedScale * 8.0F, interpolatedScale * 8.0F, interpolatedScale * 8.0F);
 
 		VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.forceField(EnderDragonRenderer.CRYSTAL_BEAM_LOCATION));
@@ -169,8 +168,8 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 			float u = uvs[uvIndex];
 			float v = uvs[uvIndex + 1];
 			
-			Vector4f posVec = new com.mojang.math.Vector4f(x, y, z, 1.0F);
-			posVec.transform(matrix4f);
+			Vector4f posVec = new Vector4f(x, y, z, 1.0F);
+			posVec.mul(matrix4f);
 			builder.vertex(posVec.x(), posVec.y(), posVec.z()).color(1.0F, 1.0F, 1.0F, 1.0F).uv(u, v).uv2(240).endVertex();
 		}
 

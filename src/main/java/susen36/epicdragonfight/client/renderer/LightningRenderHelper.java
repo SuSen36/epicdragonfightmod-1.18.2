@@ -4,12 +4,12 @@ import java.util.Random;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-
+import com.mojang.math.Axis;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 @OnlyIn(Dist.CLIENT)
 public class LightningRenderHelper {
@@ -36,12 +36,12 @@ public class LightningRenderHelper {
 		Random random = new Random(123);
 		
 		for (int i = 0; (float)i < density; ++i) {
-			poseStack.mulPose(Vector3f.XP.rotationDegrees(random.nextFloat() * 360.0F));
-			poseStack.mulPose(Vector3f.YP.rotationDegrees(random.nextFloat() * 360.0F));
-			poseStack.mulPose(Vector3f.ZP.rotationDegrees(random.nextFloat() * 360.0F));
-			poseStack.mulPose(Vector3f.XP.rotationDegrees(random.nextFloat() * 360.0F));
-			poseStack.mulPose(Vector3f.YP.rotationDegrees(random.nextFloat() * 360.0F));
-			poseStack.mulPose(Vector3f.ZP.rotationDegrees(random.nextFloat() * 360.0F + progression * 90.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(random.nextFloat() * 360.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(random.nextFloat() * 360.0F));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(random.nextFloat() * 360.0F));
+			poseStack.mulPose(Axis.XP.rotationDegrees(random.nextFloat() * 360.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(random.nextFloat() * 360.0F));
+			poseStack.mulPose(Axis.ZP.rotationDegrees(random.nextFloat() * 360.0F + progression * 90.0F));
 			float height = (random.nextFloat() * 20.0F + 5.0F + repeater * 10.0F) * size;
 			float width = (random.nextFloat() * 2.0F + 1.0F + repeater * 2.0F) * size;
 			float randomf = random.nextFloat();
@@ -59,21 +59,21 @@ public class LightningRenderHelper {
 			vertex2(vertexConsumer, matrix4f, height, width, rCol, gCol, bCol);
 		}
 	}
-	
+
 	public static void renderFlashingLight(VertexConsumer vertexConsumer, PoseStack poseStack, int rCol, int gCol, int bCol, int density, float size, float progression) {
 		double d1 = progression * 3.0F * Math.PI / 2.0D;
 		float sinDelta = Math.max((float) (d1 < Math.PI / 2.0D ? Math.sin(d1) : Math.sin((d1 + Math.PI / 2.0D) / 2.0D)), 0.0F);
 		float linearDelta = progression < 0.3F ? progression + 0.7F : 1.0F;
 		Random random = new Random(432L);
-		
+
 		for (int i = 0; i < density; ++i) {
 			poseStack.pushPose();
 			Vector3f randomAxis = new Vector3f(-0.5F + random.nextFloat(), 0.0F, -0.5F + random.nextFloat());
 			randomAxis.normalize();
 			float randomDegree = -120.0F + random.nextFloat() * 240.0F;
-			Quaternion randomRotation = new Quaternion(randomAxis, randomDegree, true);
+			Quaternionf randomRotation = rotationDegrees(randomAxis, randomDegree);
 			poseStack.mulPose(randomRotation);
-			poseStack.mulPose(Vector3f.YP.rotationDegrees(random.nextFloat() * 360.0F));
+			poseStack.mulPose(Axis.YP.rotationDegrees(random.nextFloat() * 360.0F));
 
 			float height = 14.0F * linearDelta * size;
 			float width = (0.3F + random.nextFloat()) * size;
@@ -92,4 +92,12 @@ public class LightningRenderHelper {
 			poseStack.popPose();
 		}
 	}
+
+	public static Quaternionf rotationDegrees(Vector3f axis, float degress) {
+		float angle = degress * (float) Math.PI / 180;
+		Quaternionf quat = new Quaternionf();
+		quat.setAngleAxis(angle, axis.x, axis.y, axis.z);
+		return quat;
+	}
+
 }

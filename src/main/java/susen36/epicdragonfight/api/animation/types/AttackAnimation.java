@@ -1,7 +1,7 @@
 package susen36.epicdragonfight.api.animation.types;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -11,6 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.PartEntity;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
@@ -166,8 +167,7 @@ public class AttackAnimation extends ActionAnimation {
 			if (flag) {
 				float pitch = entitypatch.getAttackDirectionPitch();
 				JointTransform chest = pose.getOrDefaultTransform("Chest");
-				chest.frontResult(JointTransform.getRotation(Vector3f.XP.rotationDegrees(-pitch)), OpenMatrix4f::mulAsOriginFront);
-
+				chest.frontResult(JointTransform.getRotation(Axis.XP.rotationDegrees(-pitch)), OpenMatrix4f::mulAsOriginFront);
 			}
 		});
 		

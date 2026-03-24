@@ -2,10 +2,10 @@ package susen36.epicdragonfight.api.utils.math;
 
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 
 import java.nio.FloatBuffer;
@@ -484,11 +484,11 @@ public class OpenMatrix4f {
 		return new Vector3f(matrix.m30, matrix.m31, matrix.m32);
 	}
 	
-	public Quaternion toQuaternion() {
+	public Quaternionf toQuaternion() {
 		return OpenMatrix4f.toQuaternion(this);
 	}
 	
-	public static Quaternion toQuaternion(OpenMatrix4f matrix) {
+	public static Quaternionf toQuaternion(OpenMatrix4f matrix) {
 		float w, x, y, z;
 		float diagonal = matrix.m00 + matrix.m11 + matrix.m22;
 		if (diagonal > 0) {
@@ -516,15 +516,15 @@ public class OpenMatrix4f {
 			y = (matrix.m12 + matrix.m21) / z4;
 			z = z4 / 4f;
 		}
-		return new Quaternion(x, y, z, w);
+		return new Quaternionf(x, y, z, w);
 	}
 	
-	public static OpenMatrix4f fromQuaternion(Quaternion quaternion) {
+	public static OpenMatrix4f fromQuaternion(Quaternionf quaternion) {
 		OpenMatrix4f matrix = new OpenMatrix4f();
-		float x = quaternion.i();
-		float y = quaternion.j();
-		float z = quaternion.k();
-		float w = quaternion.r();
+		float x = quaternion.x();
+		float y = quaternion.y();
+		float z = quaternion.z();
+		float w = quaternion.w();
 		float xy = x * y;
 		float xz = x * z;
 		float xw = x * w;

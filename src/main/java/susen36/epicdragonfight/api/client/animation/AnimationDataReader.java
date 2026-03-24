@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.api.client.animation;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -21,6 +22,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.LivingMotion;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
@@ -30,18 +32,22 @@ public class AnimationDataReader {
 	static final Gson GSON = (new GsonBuilder()).registerTypeAdapter(AnimationDataReader.class, new Deserializer()).create();
 	static final TypeToken<AnimationDataReader> TYPE = new TypeToken<AnimationDataReader>() {
 	};
-	
+
 	public static void readAndApply(StaticAnimation animation, Resource iresource) {
-		InputStream inputstream = iresource.getInputStream();
-        Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
-        AnimationDataReader propertySetter = GsonHelper.fromJson(GSON, reader, TYPE);
+		try (InputStream inputstream = iresource.open()) {
+			Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
+			AnimationDataReader propertySetter = GsonHelper.fromJson(GSON, reader, TYPE);
 
-        if (propertySetter != null && propertySetter.jointMaskEntry.isValid()) {
-            animation.addProperty(ClientAnimationProperties.JOINT_MASK, propertySetter.jointMaskEntry);
-        }
-
-        animation.addProperty(ClientAnimationProperties.PRIORITY, propertySetter.priority);
-        animation.addProperty(ClientAnimationProperties.LAYER_TYPE, propertySetter.layerType);
+			if (propertySetter != null) {
+				if (propertySetter.jointMaskEntry.isValid()) {
+					animation.addProperty(ClientAnimationProperties.JOINT_MASK, propertySetter.jointMaskEntry);
+				}
+				animation.addProperty(ClientAnimationProperties.PRIORITY, propertySetter.priority);
+				animation.addProperty(ClientAnimationProperties.LAYER_TYPE, propertySetter.layerType);
+			}
+		} catch (IOException e) {
+			EpicDragonFight.LOGGER.error("Failed to load animation data", e);
+		}
 	}
 	
 	private JointMaskEntry jointMaskEntry;

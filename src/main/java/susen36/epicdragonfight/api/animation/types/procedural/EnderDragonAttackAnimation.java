@@ -6,13 +6,13 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;
@@ -66,7 +66,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 		    	TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
 	    		JointTransform jt = tipAnim.getTipTransform(partialTicks);
 		    	Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jt.translation(), null);
-		    	Vector3f jointModelposMultiplied = jointModelpos.copy();
+		    	Vector3f jointModelposMultiplied = new Vector3f(jointModelpos);
 		    	jointModelposMultiplied.mul(-1.0F, 1.0F, -1.0F);
 		    	this.applyFabrikToJoint(jointModelposMultiplied, pose, this.getModel().getArmature(), ikInfo.startJoint, ikInfo.endJoint, jt.rotation());
 	    	}
@@ -97,7 +97,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 				firstTranslation.mul(-1.0F, 1.0F, -1.0F);
 				
 				if (!ikInfo.clipAnimation || ikInfo.touchingGround[0]) {
-					Vector3f firstTranslationAdded = firstTranslation.copy();
+					Vector3f firstTranslationAdded = new Vector3f(firstTranslation);
 					firstTranslationAdded.add(0.0F, 2.5F, 0.0F);
 					Vector3f rayResultPosition = this.getRayCastedTipPosition(firstTranslationAdded, toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight);
 					firstposeTransform.translation().set(rayResultPosition.x, rayResultPosition.y, rayResultPosition.z);
@@ -140,10 +140,10 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 					
 					if (startTime <= elapsedTime && elapsedTime < endTime) {
 						TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
-						Vector3f clipStart = ikInfo.endpos.copy();
+						Vector3f clipStart = new Vector3f(ikInfo.endpos);
 						clipStart.add(0.0F, 2.5F, 0.0F);
 						clipStart.mul(-1.0F, 1.0F, -1.0F);
-						Vector3f endposMultiplied = ikInfo.endpos.copy();
+						Vector3f endposMultiplied = new Vector3f(ikInfo.endpos);
 						endposMultiplied.mul(-1.0F, 1.0F, -1.0F);
 						Vector3f finalTargetpos = (!ikInfo.clipAnimation || ikInfo.touchingGround[ikInfo.touchingGround.length - 1]) ? 
 							this.getRayCastedTipPosition(clipStart, toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight) : 

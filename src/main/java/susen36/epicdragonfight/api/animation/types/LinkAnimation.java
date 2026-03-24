@@ -1,6 +1,6 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;

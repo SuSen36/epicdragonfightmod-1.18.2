@@ -2,9 +2,9 @@ package susen36.epicdragonfight.api.animation;
 
 import java.util.List;
 
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.EpicDragonFight;
@@ -69,7 +69,7 @@ public class TransformSheet {
         return MathUtils.lerpVector(this.keyframes[interpolInfo.prev].transform().translation(), this.keyframes[interpolInfo.next].transform().translation(), interpolInfo.zero2One);
 	}
 	
-	public Quaternion getInterpolatedRotation(float currentTime) {
+	public Quaternionf getInterpolatedRotation(float currentTime) {
 		InterpolationInfo interpolInfo = this.getInterpolationInfo(currentTime);
         return MathUtils.lerpQuaternion(this.keyframes[interpolInfo.prev].transform().rotation(), this.keyframes[interpolInfo.next].transform().rotation(), interpolInfo.zero2One);
 	}
@@ -85,30 +85,42 @@ public class TransformSheet {
 		Keyframe endKeyframe = keyframes[keyframes.length - 1];
 		float modifiedLength = (float) Math.sqrt(modifiedStartToEnd.dot(modifiedStartToEnd));
 		float pitchDeg = (float) Math.toDegrees(Mth.atan2(modifiedStartToEnd.y - startToEnd.y, modifiedLength));
-		Vector3f modifiedDir = modifiedStartToEnd.copy();
+		Vector3f modifiedDir = new Vector3f(modifiedStartToEnd);
 		modifiedDir.mul(1.0F, 0.0F, 1.0F);
 		modifiedDir.normalize();
-		Vector3f startDir = startToEnd.copy();
+		Vector3f startDir = new Vector3f(startToEnd);
 		startDir.mul(1.0F, 0.0F, 1.0F);
 		startDir.normalize();
 		float yawDeg = (float) Math.toDegrees(MathUtils.getAngleBetween(modifiedDir, startDir));
-		
+
 		for (Keyframe kf : keyframes) {
 			float lerp = (kf.time() - startKeyframe.time()) / (endKeyframe.time() - startKeyframe.time());
+
 			Vector3f line = MathUtils.lerpVector(new Vector3f(0F, 0F, 0F), startToEnd, lerp);
 			Vector3f modifiedLine = MathUtils.lerpVector(new Vector3f(0F, 0F, 0F), modifiedStartToEnd, lerp);
+
 			Vector3f keyTransform = kf.transform().translation();
-			Vector3f startToKeyTransform = keyTransform.copy();
+
+			Vector3f startToKeyTransform = new Vector3f(keyTransform);
+
 			startToKeyTransform.sub(startpos);
 			startToKeyTransform.mul(-1.0F, 1.0F, -1.0F);
-			Vector3f animOnLine = startToKeyTransform.copy();
+
+			Vector3f animOnLine = new Vector3f(startToKeyTransform);
 			animOnLine.sub(line);
-			OpenMatrix4f rotator = OpenMatrix4f.createRotatorDeg(pitchDeg, Vector3f.XP).mulFront(OpenMatrix4f.createRotatorDeg(yawDeg, Vector3f.YP));
+
+			OpenMatrix4f rotator = OpenMatrix4f.createRotatorDeg(pitchDeg, new Vector3f(1, 0, 0))
+					.mulFront(OpenMatrix4f.createRotatorDeg(yawDeg, new Vector3f(0, 1, 0)));
+
 			Vector3f transformedAnimOnLine = new Vector3f();
 			OpenMatrix4f.transform3v(rotator, animOnLine, transformedAnimOnLine);
-			Vector3f toNewKeyTransform = modifiedLine.copy();
+
+			Vector3f toNewKeyTransform = new Vector3f(modifiedLine);
 			toNewKeyTransform.add(transformedAnimOnLine);
-			keyTransform.set(modifiedStart.x + toNewKeyTransform.x, modifiedStart.y + toNewKeyTransform.y, modifiedStart.z + toNewKeyTransform.z);
+
+			keyTransform.set(modifiedStart.x + toNewKeyTransform.x(),
+					modifiedStart.y + toNewKeyTransform.y(),
+					modifiedStart.z + toNewKeyTransform.z());
 		}
 	}
 	

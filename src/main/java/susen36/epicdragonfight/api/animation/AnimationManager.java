@@ -75,23 +75,23 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 			});
 		});
 	}
-	
+
 	private void setAnimationProperties(ResourceManager resourceManager, StaticAnimation animation) {
-		if (resourceManager == null) {
-			return;
-		}
+		if (resourceManager == null) return;
+
 		ResourceLocation location = animation.getLocation();
 		String path = location.getPath();
-		int last = location.getPath().lastIndexOf('/');
+		int last = path.lastIndexOf('/');
+
 		if (last > 0) {
-			ResourceLocation dataLocation = new ResourceLocation(location.getNamespace(), String.format("%s/data%s.json", path.substring(0, last), path.substring(last)));
-			if (resourceManager.hasResource(dataLocation)) {
-				try {
-					AnimationDataReader.readAndApply(animation, resourceManager.getResource(dataLocation));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			ResourceLocation dataLocation = new ResourceLocation(
+					location.getNamespace(),
+					String.format("%s/data%s.json", path.substring(0, last), path.substring(last))
+			);
+
+			resourceManager.getResource(dataLocation).ifPresent(resource -> {
+                AnimationDataReader.readAndApply(animation, resource);
+            });
 		}
 	}
 	

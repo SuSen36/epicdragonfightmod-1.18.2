@@ -1,7 +1,7 @@
 package susen36.epicdragonfight.client.renderer.patched.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.chat.Component;
@@ -10,7 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderNameplateEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
@@ -33,16 +32,7 @@ public abstract class PatchedEntityRenderer<E extends Mob, T extends MobPatch<E>
 	}
 
 	public void render(E entityIn, T entitypatch, R renderer, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
-		try {
-			RenderNameplateEvent renderNameplateEvent = new RenderNameplateEvent(entityIn, entityIn.getDisplayName(), renderer, poseStack, buffer, packedLight, partialTicks);
-			MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-			
-			if (((boolean)shouldShowName.invoke(renderer, entityIn) || renderNameplateEvent.getResult() == Result.ALLOW) && renderNameplateEvent.getResult() != Result.DENY) {
-				renderNameTag.invoke(renderer, entityIn, renderNameplateEvent.getContent(), poseStack, buffer, packedLight);
-			}
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
+
 	}
 
 	public OpenMatrix4f[] getPoseMatrices(T entitypatch, Armature armature, float partialTicks) {
@@ -56,7 +46,7 @@ public abstract class PatchedEntityRenderer<E extends Mob, T extends MobPatch<E>
 	public void mulPoseStack(PoseStack poseStack, Armature armature, E entityIn, T entitypatch, float partialTicks) {
 		OpenMatrix4f modelMatrix = entitypatch.getModelMatrix(partialTicks);
         OpenMatrix4f transpose = modelMatrix.transpose(null);
-        poseStack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+        poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
         MathUtils.translateStack(poseStack, modelMatrix);
         MathUtils.rotateStack(poseStack, transpose);
         MathUtils.scaleStack(poseStack, transpose);

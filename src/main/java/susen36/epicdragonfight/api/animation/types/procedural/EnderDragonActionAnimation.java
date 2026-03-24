@@ -6,13 +6,13 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;
@@ -62,7 +62,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	    		TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
 	    		JointTransform jt = tipAnim.getTipTransform(partialTicks);
 		    	Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jt.translation(), null);
-		    	Vector3f jointModelposMultiplied = jointModelpos.copy();
+		    	Vector3f jointModelposMultiplied = new Vector3f(jointModelpos);
 		    	jointModelposMultiplied.mul(-1.0F, 1.0F, -1.0F);
 		    	this.applyFabrikToJoint(jointModelposMultiplied, pose, this.getModel().getArmature(), ikInfo.startJoint, ikInfo.endJoint, jt.rotation());
 	    	}
@@ -87,7 +87,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 				firstTranslation.mul(-1.0F, 1.0F, -1.0F);
 				
 				if (!ikInfo.clipAnimation || ikInfo.touchingGround[0]) {
-					Vector3f firstTranslationAdded = firstTranslation.copy();
+					Vector3f firstTranslationAdded = new Vector3f(firstTranslation);
 					firstTranslationAdded.add(0.0F, 2.5F, 0.0F);
 					Vector3f rayResultPosition = this.getRayCastedTipPosition(firstTranslationAdded, toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight);
 					firstposeTransform.translation().set(rayResultPosition.x, rayResultPosition.y, rayResultPosition.z);
@@ -125,7 +125,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 					
 					if (startTime <= elapsedTime && elapsedTime < endTime) {
 						TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
-						Vector3f clipStart = ikInfo.endpos.copy();
+						Vector3f clipStart = new Vector3f(ikInfo.endpos);
 						clipStart.add(0.0F, 2.5F, 0.0F);
 						clipStart.mul(-1.0F, 1.0F, -1.0F);
 						Vector3f finalTargetpos = this.getRayCastedTipPosition(clipStart, toWorld, enderdragonpatch, 8.0F, ikInfo.rayLeastHeight);
@@ -164,7 +164,7 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 				RenderingTool.drawQuad(poseStack, vertexBuilder, modeltargetpos, 0.5F, 1.0F, 0.0F, 0.0F);
 		       	Vector3f jointWorldPos = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint).getTipPosition(partialTicks);
 		       	Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jointWorldPos, null);
-		       	Vector3f jointModelposMultiplied = jointModelpos.copy();
+		       	Vector3f jointModelposMultiplied = new Vector3f(jointModelpos);
 		       	jointModelposMultiplied.mul(-1.0F, 1.0F, -1.0F);
 		       	RenderingTool.drawQuad(poseStack, vertexBuilder, jointModelposMultiplied, 0.4F, 0.0F, 0.0F, 1.0F);
 		       	

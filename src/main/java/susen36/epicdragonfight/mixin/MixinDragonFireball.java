@@ -38,7 +38,7 @@ public abstract class MixinDragonFireball extends AbstractHurtingProjectile {
 		DragonFireball fireball = (DragonFireball) (Object) this;
 
 		if (fireball.getOwner() != null && !entity.is(fireball.getOwner())) {
-			entity.hurt(DamageSource.indirectMagic(fireball, fireball.getOwner()), 4.0F);
+			entity.hurt(fireball.damageSources().indirectMagic(fireball, fireball.getOwner()), 4.0F);
 		}
 	}
 }

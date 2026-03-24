@@ -44,7 +44,7 @@ public abstract class MixinAreaEffectCloud {
         AreaEffectCloud self = (AreaEffectCloud) (Object) this;
         self.move(MoverType.SELF, self.getDeltaMovement());
 
-        if (!self.level.isClientSide) {
+        if (!self.level().isClientSide) {
             if (self.tickCount >= this.duration) {
                 self.discard();
                 return;

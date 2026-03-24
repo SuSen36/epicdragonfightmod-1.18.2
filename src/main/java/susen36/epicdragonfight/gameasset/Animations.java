@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.gameasset;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -11,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.TransformSheet;
@@ -110,7 +110,7 @@ public class Animations {
 						JointTransform jt0 = transform.getKeyframes()[0].transform();
 						JointTransform jt1 = transform.getKeyframes()[1].transform();
 						JointTransform jt2 = transform.getKeyframes()[2].transform();
-							OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(90F, Vector3f.XP);
+						OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(90F, new Vector3f(1.0F, 0.0F, 0.0F));
 						Vector3f jointCoord = OpenMatrix4f.transform3v(coordReverse, new Vector3f(jt0.translation().x, verticalDistance, horizontalDistance), null);
 						jt0.translation().set(jointCoord.x, jointCoord.y, jointCoord.z);
 						Vector3f jt1Translation = MathUtils.lerpVector(jt0.translation(), jt2.translation(), transform.getKeyframes()[1].time());
@@ -122,9 +122,9 @@ public class Animations {
 					entitypatch.playSound(SoundEvents.STONE_FALL, 0, 0);
 				}, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
 					LivingEntity original = entitypatch.getOriginal();
-					DamageSource damageSource = DamageSource.mobAttack(original);
+					DamageSource damageSource = original.damageSources().mobAttack(original);
 
-					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(8.0D, 0.0D, 8.0D))) {
+					for (Entity entity : original.level().getEntities(original, original.getBoundingBox().inflate(8.0D, 0.0D, 8.0D))) {
 						entity.hurt(damageSource, 6.0F);
 					}
 				}, Side.SERVER)});
@@ -178,7 +178,7 @@ public class Animations {
 			entitypatch.playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT), Event.create(1.26F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
-			for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(4.0D, 1.5D, 4.0D))) {
+			for (Entity entity : original.level().getEntities(original, original.getBoundingBox().inflate(4.0D, 1.5D, 4.0D))) {
 				original.doHurtTarget(entity);
 			}
 		}, Side.SERVER)});
@@ -200,11 +200,11 @@ public class Animations {
 			double d10 = target.getY(0.5D) - d7;
 			double d11 = target.getZ() - d8;
 			if (!original.isSilent()) {
-				original.level.levelEvent(null, 1017, original.blockPosition(), 0);
+				original.level().levelEvent(null, 1017, original.blockPosition(), 0);
 			}
-			DragonFireball dragonFireball = new DragonFireball(original.level, original, d9, d10, d11);
+			DragonFireball dragonFireball = new DragonFireball(original.level(), original, d9, d10, d11);
 			dragonFireball.moveTo(d6, d7, d8, 0.0F, 0.0F);
-			original.level.addFreshEntity(dragonFireball);
+			original.level().addFreshEntity(dragonFireball);
 		}, Side.SERVER)});
 		DRAGON_AIRSTRIKE = new StaticAnimation(0.35F, true, "dragon/airstrike", dragon)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
@@ -250,7 +250,7 @@ public class Animations {
 					}
 				}, Side.SERVER), Event.create(7.0F, (entitypatch) -> {
 					Entity original = entitypatch.getOriginal();
-					original.level.addParticle(ParticleTypes.EXPLOSION, original.getX(), original.getY() + 2.0D, original.getZ(), 0, 0, 0);
+					original.level().addParticle(ParticleTypes.EXPLOSION, original.getX(), original.getY() + 2.0D, original.getZ(), 0, 0, 0);
 				}, Side.CLIENT)});
 
 		DRAGON_NEUTRALIZED = new EnderDragonActionAnimation(0.1F, "dragon/neutralized", dragon, new IKInfo[]{

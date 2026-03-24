@@ -35,7 +35,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	public DragonGroundBattlePhase(EnderDragon dragon) {
 		super(dragon);
 		
-		if (!dragon.level.isClientSide()) {
+		if (!dragon.level().isClientSide()) {
 			this.combatBehaviors = MobCombatBehaviors.ENDER_DRAGON.build(this.dragonpatch);
 			NodeEvaluator nodeEvaluator = new WalkNodeEvaluator();
 			nodeEvaluator.setCanPassDoors(true);
@@ -127,17 +127,17 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	
 	private boolean checkTargetPath(LivingEntity target) {
 		BlockPos blockpos = this.dragon.blockPosition();
-		
-		while (this.dragon.level.getBlockState(blockpos).getMaterial().blocksMotion()) {
+
+		while (this.dragon.level().getBlockState(blockpos).blocksMotion()) {
 			blockpos = blockpos.above();
 		}
-		
-		while (!this.dragon.level.getBlockState(blockpos.below()).getMaterial().blocksMotion()) {
+
+		while (!this.dragon.level().getBlockState(blockpos.below()).blocksMotion()) {
 			blockpos = blockpos.below();
 		}
 		
         int sight = 60;
-        PathNavigationRegion pathnavigationregion = new PathNavigationRegion(this.dragon.level, blockpos.offset(-sight, -sight, -sight), blockpos.offset(sight, sight, sight));
+        PathNavigationRegion pathnavigationregion = new PathNavigationRegion(this.dragon.level(), blockpos.offset(-sight, -sight, -sight), blockpos.offset(sight, sight, sight));
         
         Path path = this.pathFinder.findPath(pathnavigationregion, this.dragon, ImmutableSet.of(target.blockPosition()), sight, 0, 1.0F);
         

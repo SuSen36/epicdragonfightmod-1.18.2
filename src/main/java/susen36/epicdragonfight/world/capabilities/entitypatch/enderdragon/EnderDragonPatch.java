@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
 
 import com.google.common.collect.Maps;
-import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
@@ -14,8 +13,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.LivingMotion;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.TransformSheet;
@@ -65,16 +65,16 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	
 	@SuppressWarnings("deprecation")
 	@Override
-	public void onJoinWorld(EnderDragon entityIn, EntityJoinWorldEvent event) {
+	public void onJoinWorld(EnderDragon entityIn, EntityJoinLevelEvent event) {
 		super.onJoinWorld(entityIn, event);
 		
 		DragonPhaseInstance currentPhase = this.original.phaseManager.getCurrentPhase();
 		EnderDragonPhase<?> startPhase = (currentPhase == null || !(currentPhase instanceof PatchedDragonPhase)) ? PatchedPhases.FLYING : this.original.phaseManager.getCurrentPhase().getPhase();
 		this.original.phaseManager = new PhaseManagerPatch(this.original);
 		this.original.phaseManager.setPhase(startPhase);
-		entityIn.maxUpStep = 1.0F;
+		entityIn.setMaxUpStep(1.0F);
 		
-		if (entityIn.level.isClientSide()) {
+		if (entityIn.level().isClientSide()) {
 			INSTANCE_CLIENT = this;
 		} else {
 			INSTANCE_SERVER = this;
@@ -119,7 +119,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	}
 
 	@Override
-	public void tick(LivingUpdateEvent event) {
+	public void tick(LivingEvent.LivingTickEvent event) {
 		super.tick(event);
 		
 		if (this.original.getPhaseManager().getCurrentPhase().isSitting()) {
@@ -128,7 +128,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	}
 
 	@Override
-	public void serverTick(LivingUpdateEvent event) {
+	public void serverTick(LivingEvent.LivingTickEvent event) {
 		super.serverTick(event);
 		this.original.hurtTime = 2;
 		this.original.getSensing().tick();
@@ -144,7 +144,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 		this.updateTipPoints();
 		Entity bodyPart = Objects.requireNonNull(this.original.getParts())[2];
 		AABB bodyBoundingBox = bodyPart.getBoundingBox();
-		List<Entity> list = this.original.level.getEntities(this.original, bodyBoundingBox, EntitySelector.pushableBy(this.original));
+		List<Entity> list = this.original.level().getEntities(this.original, bodyBoundingBox, EntitySelector.pushableBy(this.original));
 		if (!list.isEmpty()) {
             for (Entity entity : list) {
                 double d0 = entity.getX() - this.original.getX();
@@ -174,7 +174,7 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	}
 
 	@Override
-	public void clientTick(LivingUpdateEvent event) {
+	public void clientTick(LivingEvent.LivingTickEvent event) {
 		this.xRootO = this.xRoot;
 		this.zRootO = this.zRoot;
 		super.clientTick(event);
@@ -282,5 +282,4 @@ public class EnderDragonPatch extends MobPatch<EnderDragon> {
 	public void addTipPointAnimation(String jointName, Vector3f initpos, TransformSheet transformSheet, IKInfo ikSetter) {
 		this.tipPointAnimations.put(jointName, new TipPointAnimation(transformSheet, initpos, ikSetter));
 	}
-
 }

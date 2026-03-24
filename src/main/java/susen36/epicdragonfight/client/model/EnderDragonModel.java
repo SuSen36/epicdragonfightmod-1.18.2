@@ -2,7 +2,7 @@ package susen36.epicdragonfight.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -162,95 +162,12 @@ public class EnderDragonModel extends EntityModel<EnderDragon> {
     }
 
     public void setupAnim(EnderDragon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-        if (this.entity == null) {
-            return;
-        }
-        
-        float flapTime = Mth.lerp(this.partialTick, this.entity.oFlapTime, this.entity.flapTime);
-        this.jaw.xRot = (float)(Math.sin(flapTime * 6.2831855F) + 1.0) * 0.2F;
-        this.bobOffset = (float)(Math.sin(flapTime * 6.2831855F - 1.0F) + 1.0);
-        this.bobOffset = (this.bobOffset * this.bobOffset + this.bobOffset * 2.0F) * 0.05F;
-        
-        float posX = 0.0F;
-        float posY = 20.0F;
-        float posZ = -12.0F;
-        double[] neckBasePos = this.entity.getLatencyPos(6, this.partialTick);
-        this.bodyRot = Mth.rotWrap(this.entity.getLatencyPos(5, this.partialTick)[0] - this.entity.getLatencyPos(10, this.partialTick)[0]);
-        float headRotBase = Mth.rotWrap(this.entity.getLatencyPos(5, this.partialTick)[0] + (double)(this.bodyRot / 2.0F));
-        float animTime = flapTime * 6.2831855F;
-
-        ModelPart[] neckParts = new ModelPart[]{this.neck, this.neck2, this.neck3, this.neck4, this.neck5};
-        
-        for(int neckIndex = 0; neckIndex < 5; ++neckIndex) {
-            double[] neckLatencyPos = this.entity.getLatencyPos(5 - neckIndex, this.partialTick);
-            float neckWave = (float)Math.cos((float)neckIndex * 0.45F + animTime) * 0.15F;
-            neckParts[neckIndex].yRot = Mth.rotWrap(neckLatencyPos[0] - neckBasePos[0]) * 0.017453292F * 1.5F;
-            neckParts[neckIndex].xRot = neckWave + this.entity.getHeadPartYOffset(neckIndex, neckBasePos, neckLatencyPos) * 0.017453292F * 1.5F * 5.0F;
-            neckParts[neckIndex].zRot = -Mth.rotWrap(neckLatencyPos[0] - (double)headRotBase) * 0.017453292F * 1.5F;
-            if (neckIndex == 0) {
-                neckParts[neckIndex].y = posY;
-                neckParts[neckIndex].z = posZ;
-                neckParts[neckIndex].x = posX;
-            }
-            posY += Mth.sin(neckParts[neckIndex].xRot) * 10.0F;
-            posZ -= Mth.cos(neckParts[neckIndex].yRot) * Mth.cos(neckParts[neckIndex].xRot) * 10.0F;
-            posX -= Mth.sin(neckParts[neckIndex].yRot) * Mth.cos(neckParts[neckIndex].xRot) * 10.0F;
-        }
-
-        this.head.y = posY;
-        this.head.z = posZ;
-        this.head.x = posX;
-        double[] headLatencyPos = this.entity.getLatencyPos(0, this.partialTick);
-        this.head.yRot = Mth.rotWrap(headLatencyPos[0] - neckBasePos[0]) * 0.017453292F;
-        this.head.xRot = Mth.rotWrap((double)this.entity.getHeadPartYOffset(6, neckBasePos, headLatencyPos)) * 0.017453292F * 1.5F * 5.0F;
-        this.head.zRot = -Mth.rotWrap(headLatencyPos[0] - (double)headRotBase) * 0.017453292F;
-
-
-        float tailWave = -Mth.sin(flapTime * 6.2831855F) * 0.0F;
-        animTime = flapTime * 6.2831855F;
-        posY = 10.0F;
-        posZ = 60.0F;
-        posX = 0.0F;
-        neckBasePos = this.entity.getLatencyPos(11, this.partialTick);
-
-        ModelPart[] tailParts = new ModelPart[]{this.neckTail1, this.neckTail2, this.neckTail3, this.neckTail4, this.neckTail5, this.neckTail6, this.neckTail7, this.neckTail8, this.neckTail9, this.neckTail10, this.neckTail11, this.neckTail12};
-
-        for(int tailIndex = 0; tailIndex < 12; ++tailIndex) {
-            headLatencyPos = this.entity.getLatencyPos(12 + tailIndex, this.partialTick);
-            tailWave += Mth.sin((float)tailIndex * 0.45F + animTime) * 0.05F;
-            tailParts[tailIndex].yRot = (Mth.rotWrap(headLatencyPos[0] - neckBasePos[0]) * 1.5F + 180.0F) * 0.017453292F;
-            tailParts[tailIndex].xRot = tailWave + (float)(headLatencyPos[1] - neckBasePos[1]) * 0.017453292F * 1.5F * 5.0F;
-            tailParts[tailIndex].zRot = Mth.rotWrap(headLatencyPos[0] - (double)headRotBase) * 0.017453292F * 1.5F;
-            if (tailIndex == 0) {
-                tailParts[tailIndex].y = posY;
-                tailParts[tailIndex].z = posZ;
-                tailParts[tailIndex].x = posX;
-            }
-            posY += Mth.sin(tailParts[tailIndex].xRot) * 10.0F;
-            posZ -= Mth.cos(tailParts[tailIndex].yRot) * Mth.cos(tailParts[tailIndex].xRot) * 10.0F;
-            posX -= Mth.sin(tailParts[tailIndex].yRot) * Mth.cos(tailParts[tailIndex].xRot) * 10.0F;
-        }
-    }
-    
-    private boolean isFlying(EnderDragon entity) {
-        EnderDragonPatch patch = EnderDragonPatch.INSTANCE_CLIENT;
-        if (patch != null && patch.getOriginal() == entity) {
-            return !patch.isGroundPhase();
-        }
-        return !entity.isOnGround();
-    }
-    
-    private boolean isWalking(float limbSwingAmount) {
-        return limbSwingAmount > 0.01F;
-    }
-    
-    private void setupFlyAnim(float flapTime) {
     }
 
     public void renderToBuffer(PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         poseStack.pushPose();
         poseStack.translate(0.0, this.bobOffset - 2.0F, -3.0);
-        poseStack.mulPose(Vector3f.XP.rotationDegrees(this.bobOffset * 2.0F));
+        poseStack.mulPose(Axis.XP.rotationDegrees(this.bobOffset * 2.0F));
         
         this.head.render(poseStack, buffer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, alpha);
         
@@ -261,7 +178,7 @@ public class EnderDragonModel extends EntityModel<EnderDragon> {
         
         poseStack.pushPose();
         poseStack.translate(0.0, 1.0, 0.0);
-        poseStack.mulPose(Vector3f.ZP.rotationDegrees(-this.bodyRot * 1.5F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(-this.bodyRot * 1.5F));
         poseStack.translate(0.0, -1.0, 0.0);
         this.body.zRot = 0.0F;
         this.body.render(poseStack, buffer, packedLight, packedOverlay, 1.0F, 1.0F, 1.0F, alpha);

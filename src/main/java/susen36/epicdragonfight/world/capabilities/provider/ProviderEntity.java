@@ -42,20 +42,15 @@ public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<MobP
 	public static void registerEntityPatchesClient() {
 		CAPABILITIES.put(EntityType.PLAYER, (entityIn) -> () -> null);
 	}
-	
-	public static void clear() {
-		CUSTOM_CAPABILITIES.clear();
-	}
-	
+
 	public static Function<Entity, Supplier<MobPatch<?>>> get(String registryName) {
 		ResourceLocation rl = new ResourceLocation(registryName);
-		EntityType<?> entityType = ForgeRegistries.ENTITIES.getValue(rl);
+		EntityType<?> entityType = ForgeRegistries.ENTITY_TYPES.getValue(rl);
 		return CAPABILITIES.get(entityType);
 	}
 	
 	private MobPatch<?> capability;
-	private LazyOptional<MobPatch<?>> optional = LazyOptional.of(this);
-	
+
 	public ProviderEntity(Entity entity) {
 		Function<Entity, Supplier<MobPatch<?>>> provider = CUSTOM_CAPABILITIES.getOrDefault(entity.getType(), CAPABILITIES.get(entity.getType()));
 		

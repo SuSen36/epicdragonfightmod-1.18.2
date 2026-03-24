@@ -2,8 +2,8 @@ package susen36.epicdragonfight.api.animation.types.procedural;
 
 import java.util.List;
 
-import com.mojang.math.Vector3f;
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Vector3f;
 
 public class IKInfo {
 	public final String startJoint;

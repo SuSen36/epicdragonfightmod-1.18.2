@@ -31,11 +31,11 @@ public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
 	}
 	
 	protected static boolean isInEndSpikes(LivingEntity entity) {
-		BlockPos blockpos = entity.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
-		return blockpos.distSqr(new Vec3i(entity.getX(), blockpos.getY(), entity.getZ())) < 2000.0D;
+		BlockPos blockpos = entity.level().getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
+		return blockpos.distSqr(new Vec3i((int) entity.getX(), blockpos.getY(), (int) entity.getZ())) < 2000.0D;
 	}
 	
 	protected List<Player> getPlayersNearbyWithin(double within) {
-		return this.dragon.level.getNearbyPlayers(EnderDragonPatch.DRAGON_TARGETING, this.dragon, this.dragon.getBoundingBox().inflate(within, within, within));
+		return this.dragon.level().getNearbyPlayers(EnderDragonPatch.DRAGON_TARGETING, this.dragon, this.dragon.getBoundingBox().inflate(within, within, within));
 	}
 }

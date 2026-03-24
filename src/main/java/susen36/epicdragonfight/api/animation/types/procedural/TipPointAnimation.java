@@ -1,6 +1,6 @@
 package susen36.epicdragonfight.api.animation.types.procedural;
 
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.TransformSheet;
@@ -45,22 +45,23 @@ public class TipPointAnimation {
 			this.animation.readFrom(animation);
 		}
 	}
-	
+
 	public void newTargetPosition(Vector3f targetpos) {
-		Vector3f dv = targetpos.copy();
+		Vector3f dv = new Vector3f(targetpos);
 		dv.sub(this.targetpos);
 
 		this.targetpos = targetpos;
 		Keyframe[] keyframes = this.animation.getKeyframes();
 		float curTime = this.getTime(1.0F);
 		int startFrame = 0;
-		
-		while (keyframes[startFrame].time() < curTime) {
+
+		while (startFrame < keyframes.length && keyframes[startFrame].time() < curTime) {
 			startFrame++;
 		}
-		
+
 		for (int i = startFrame; i < keyframes.length; i++) {
-			keyframes[i].transform().translation().add(dv.copy());
+			Vector3f translation = keyframes[i].transform().translation();
+			translation.add(dv);
 		}
 	}
 	

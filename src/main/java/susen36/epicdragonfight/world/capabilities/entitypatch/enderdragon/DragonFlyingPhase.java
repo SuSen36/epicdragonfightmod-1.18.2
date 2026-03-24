@@ -56,7 +56,7 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 			
 			for (Player player : players) {
 				if (isValidTarget(player)) {
-					if (!this.executeAirstrike && this.dragon.getRandom().nextFloat() > this.dragon.getDragonFight().getCrystalsAlive() * 0.1F) {
+					if (!this.executeAirstrike && this.dragon.getDragonFight() != null && this.dragon.getRandom().nextFloat() > this.dragon.getDragonFight().getCrystalsAlive() * 0.1F) {
 						if (isInEndSpikes(player)) {
 							this.executeAirstrike = true;
 						}

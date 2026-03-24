@@ -1,8 +1,9 @@
 package susen36.epicdragonfight.api.utils.math;
 
 import com.google.common.collect.Lists;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import net.minecraft.util.Mth;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.animation.JointTransform;
@@ -42,37 +43,40 @@ public class FABRIK {
 			this.addChainInternal(pose, result, nextJoint, remainPath);
 		}
 	}
-	
+
 	public void run(Vector3f target, int iteration) {
-		this.target.set(target.x, target.y, target.z);
+		this.target.set(target);
 
 		for (int i = 0; i < iteration; i++) {
 			this.backward();
 			this.forward();
 		}
-
-		Quaternion parentQuaternion = Quaternion.ONE.copy();
+		Quaternionf parentQuaternion = new Quaternionf();
 
 		for (Chain chain : this.chains) {
-			Vector3f tailToHead = chain.tailToHead.copy();
-			tailToHead.transform(parentQuaternion);
+			Vector3f tailToHead = new Vector3f(chain.tailToHead);
+			tailToHead.rotate(parentQuaternion);
 
-			Vector3f tailToNewHead = chain.head.copy();
+			Vector3f tailToNewHead = new Vector3f(chain.head);
 			tailToNewHead.sub(chain.tail);
 
-			Vector3f axis = tailToNewHead.copy();
+			Vector3f axis = new Vector3f(tailToNewHead);
 			axis.cross(tailToHead);
-			axis.normalize();
+
+			if (axis.lengthSquared() > 1.0E-7F) {
+				axis.normalize();
+			} else {
+				axis.set(1, 0, 0);
+			}
 
 			float dot = tailToNewHead.dot(tailToHead);
-			float lens = (float) Math.sqrt(tailToNewHead.dot(tailToNewHead) * tailToHead.dot(tailToHead));
-			float radian = (float) Math.acos(Math.max(-1.0f, Math.min(1.0f, dot / lens)));
+			float lens = (float) Math.sqrt(tailToNewHead.lengthSquared() * tailToHead.lengthSquared());
+			float radian = (float) Math.acos(Mth.clamp(dot / lens, -1.0f, 1.0f));
 
-			Quaternion rotationQuat = new Quaternion(axis, radian, false);
+			Quaternionf rotationQuat = new Quaternionf().rotationAxis(radian, axis);
 
-			Vector3f invAxis = axis.copy();
-			invAxis.mul(-1.0F);
-			parentQuaternion = new Quaternion(invAxis, radian, false);
+			Vector3f invAxis = new Vector3f(axis).mul(-1.0F);
+			parentQuaternion = new Quaternionf().rotationAxis(radian, invAxis);
 
 			JointTransform jt = this.pose.getOrDefaultTransform(chain.jointName);
 			jt.frontResult(JointTransform.getRotation(rotationQuat), OpenMatrix4f::mulAsOriginFront);
@@ -121,15 +125,10 @@ public class FABRIK {
 			this.jointName = jointName;
 			this.tail = tail;
 			this.head = head;
-
-			Vector3f diff = head.copy();
+			Vector3f diff = new Vector3f(head);
 			diff.sub(tail);
 			this.tailToHead = diff;
-
-			float dx = head.x() - tail.x();
-			float dy = head.y() - tail.y();
-			float dz = head.z() - tail.z();
-			this.length = (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
+			this.length = head.distance(tail);
 		}
 
 		public void forwardAlign(Vector3f newHeadPos) {
@@ -141,12 +140,17 @@ public class FABRIK {
 		}
 
 		private void correct(Vector3f start, Vector3f end, Vector3f newpos) {
-			start.set(newpos.x(), newpos.y(), newpos.z());
-			Vector3f startToEnd = end.copy(); startToEnd.sub(start);
-			float newLength = (float) Math.sqrt(startToEnd.dot(startToEnd));
-			float lengthRatio = this.length / newLength;
-			Vector3f startToEndScaled = startToEnd.copy(); startToEndScaled.mul(lengthRatio);
-			Vector3f finalPos = start.copy(); finalPos.add(startToEndScaled); end.set(finalPos.x(), finalPos.y(), finalPos.z());
+			start.set(newpos);
+
+			Vector3f startToEnd = new Vector3f(end).sub(start);
+			float currentDistance = startToEnd.length();
+
+			if (currentDistance > 1.0E-7F) {
+				float lengthRatio = this.length / currentDistance;
+
+				startToEnd.mul(lengthRatio);
+				end.set(start).add(startToEnd);
+			}
 		}
 	}
 }

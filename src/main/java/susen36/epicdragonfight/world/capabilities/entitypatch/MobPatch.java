@@ -17,8 +17,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.LivingMotion;
@@ -53,11 +53,11 @@ public abstract class MobPatch<T extends Mob> {
 		this.currentlyAttackedEntity = new ArrayList<>();
 	}
 	
-	public void onJoinWorld(T entityIn, EntityJoinWorldEvent event) {
+	public void onJoinWorld(T entityIn, EntityJoinLevelEvent event) {
 		this.initialized = true;
 		this.initAttributes();
 		
-		if (!entityIn.level.isClientSide() && !this.original.isNoAi()) {
+		if (!entityIn.level().isClientSide() && !this.original.isNoAi()) {
 			this.initAI();
 		}
 	}
@@ -71,7 +71,7 @@ public abstract class MobPatch<T extends Mob> {
 	}
 	
 	public boolean isLogicalClient() {
-		return this.original.level.isClientSide();
+		return this.original.level().isClientSide();
 	}
 	
 	public double getAngleTo(Entity entityIn) {
@@ -115,14 +115,14 @@ public abstract class MobPatch<T extends Mob> {
 		}
 	}
 	
-	protected void clientTick(LivingUpdateEvent event) {
+	protected void clientTick(LivingEvent.LivingTickEvent event) {
 	}
 	
-	protected void serverTick(LivingUpdateEvent event) {
+	protected void serverTick(LivingEvent.LivingTickEvent event) {
 
 	}
 	
-	public void tick(LivingUpdateEvent event) {
+	public void tick(LivingEvent.LivingTickEvent event) {
 		this.animator.tick();
 		
 		if (this.isLogicalClient()) {
@@ -197,9 +197,9 @@ public abstract class MobPatch<T extends Mob> {
 		float pitch = (this.original.getRandom().nextFloat() * 2.0F - 1.0F) * (pitchModifierMax - pitchModifierMin);
 		
 		if (!this.isLogicalClient()) {
-			this.original.level.playSound(null, this.original.getX(), this.original.getY(), this.original.getZ(), sound, this.original.getSoundSource(), volume, 1.0F + pitch);
+			this.original.level().playSound(null, this.original.getX(), this.original.getY(), this.original.getZ(), sound, this.original.getSoundSource(), volume, 1.0F + pitch);
 		} else {
-			this.original.level.playLocalSound(this.original.getX(), this.original.getY(), this.original.getZ(), sound, this.original.getSoundSource(), volume, 1.0F + pitch, false);
+			this.original.level().playLocalSound(this.original.getX(), this.original.getY(), this.original.getZ(), sound, this.original.getSoundSource(), volume, 1.0F + pitch, false);
 		}
 	}
 	
@@ -271,7 +271,7 @@ public abstract class MobPatch<T extends Mob> {
 	}
 	
 	public void setAttakTargetSync(LivingEntity entityIn) {
-		if (!this.original.level.isClientSide()) {
+		if (!this.original.level().isClientSide()) {
 			this.original.setTarget(entityIn);
 		}
 	}

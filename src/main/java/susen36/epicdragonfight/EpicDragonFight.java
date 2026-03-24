@@ -12,7 +12,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.DataSerializerEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.*;
@@ -53,11 +52,10 @@ public class EpicDragonFight {
     	bus.addListener(this::doServerStuff);
     	bus.addListener(DragonFightCapabilities::registerCapabilities);
     	bus.addListener(Animations::registerAnimations);
-    	bus.addGenericListener(DataSerializerEntry.class, DraagonFightDataSerializers::register);
+    	DraagonFightDataSerializers.ENTITY_DATA_SERIALIZER.register(bus);
 
         MinecraftForge.EVENT_BUS.register(EntityEvents.class);
         MinecraftForge.EVENT_BUS.register(CapabilityEvent.class);
-        
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {

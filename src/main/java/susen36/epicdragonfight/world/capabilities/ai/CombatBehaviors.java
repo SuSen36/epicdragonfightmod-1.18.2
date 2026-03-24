@@ -137,7 +137,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 	}
 	
 	public static <T extends MobPatch<?>> Builder<T> builder() {
-		return new Builder<T>();
+		return new Builder<>();
 	}
 	
 	public static class Builder<T extends MobPatch<?>> {
@@ -149,7 +149,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 		
 		public CombatBehaviors<T> build(T mobpatch) {
-			return new CombatBehaviors<T>(this, mobpatch);
+			return new CombatBehaviors<>(this, mobpatch);
 		}
 	}
 	
@@ -208,7 +208,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 		
 		public static <T extends MobPatch<?>> Builder<T> builder() {
-			return new Builder<T>();
+			return new Builder<>();
 		}
 		
 		public static class Builder<T extends MobPatch<?>> {
@@ -304,32 +304,32 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 				return this;
 			}
 			public Builder<T> randomChance(float chance) {
-				this.predicate(new RandomChance<T>(chance));
+				this.predicate(new RandomChance<>(chance));
 				return this;
 			}
 			
 			public Builder<T> withinDistance(double minDistance, double maxDistance) {
-				this.predicate(new TargetWithinDistance<T>(minDistance * minDistance, maxDistance * maxDistance));
+				this.predicate(new TargetWithinDistance<>(minDistance * minDistance, maxDistance * maxDistance));
 				return this;
 			}
 			
 			public Builder<T> withinAngle(double minDegree, double maxDegree) {
-				this.predicate(new TargetWithinAngle<T>(minDegree, maxDegree));
+				this.predicate(new TargetWithinAngle<>(minDegree, maxDegree));
 				return this;
 			}
 			
 			public Builder<T> withinAngleHorizontal(double minDegree, double maxDegree) {
-				this.predicate(new TargetWithinAngle.Horizontal<T>(minDegree, maxDegree));
+				this.predicate(new TargetWithinAngle.Horizontal<>(minDegree, maxDegree));
 				return this;
 			}
 			
 			public Builder<T> health(float health, Health.Comparator comparator) {
-				this.predicate(new Health<T>(health, comparator));
+				this.predicate(new Health<>(health, comparator));
 				return this;
 			}
 			
 			public Builder<T> custom(Function<T, Boolean> customPredicate) {
-				this.predicate(new CustomPredicate<T>(customPredicate));
+				this.predicate(new CustomPredicate<>(customPredicate));
 				return this;
 			}
 			
@@ -339,7 +339,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 			}
 			
 			public Behavior<T> build() {
-				return new Behavior<T>(this);
+				return new Behavior<>(this);
 			}
 		}
 	}
@@ -427,21 +427,18 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 		
 		public boolean test(T mobpatch) {
-			switch (this.comparator) {
-			case LESS_ABSOLUTE:
-				return this.value > mobpatch.getOriginal().getHealth();
-			case GREATER_ABSOLUTE:
-				return this.value < mobpatch.getOriginal().getHealth();
-			case LESS_RATIO:
-				return this.value > mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
-			case GREATER_RATIO:
-				return this.value < mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
-			}
-			
-			return true;
-		}
+            return switch (this.comparator) {
+                case LESS_ABSOLUTE -> this.value > mobpatch.getOriginal().getHealth();
+                case GREATER_ABSOLUTE -> this.value < mobpatch.getOriginal().getHealth();
+                case LESS_RATIO ->
+                        this.value > mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
+                case GREATER_RATIO ->
+                        this.value < mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
+            };
+
+        }
 		
-		public static enum Comparator {
+		public enum Comparator {
 			GREATER_ABSOLUTE, LESS_ABSOLUTE, GREATER_RATIO, LESS_RATIO
 		}
 	}

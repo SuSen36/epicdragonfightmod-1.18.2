@@ -8,7 +8,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
-import com.mojang.math.Vector3f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -17,6 +16,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.ArrayUtils;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.animation.JointTransform;
@@ -29,20 +30,14 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.client.model.Mesh;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import com.mojang.math.Vector4f;
 
-import java.io.BufferedInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.FloatBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class JsonModelLoader {
-	public static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
+	public static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, new Vector3f(1.0F,0.0F,0.0F ));
 	
 	private static int[] toIntArray(JsonArray array) {
 		List<Integer> result = Lists.newArrayList();
@@ -63,24 +58,33 @@ public class JsonModelLoader {
 	}
 	
 	private JsonObject rootJson;
-	
+
 	public JsonModelLoader(ResourceManager resourceManager, ResourceLocation resourceLocation) {
 		try {
+			InputStream is;
 			if (resourceManager == null) {
 				Class<?> modClass = ModList.get().getModObjectById(resourceLocation.getNamespace()).get().getClass();
-				BufferedInputStream inputstream = new BufferedInputStream(modClass.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
-				Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
-				JsonReader in = new JsonReader(reader);
-				in.setLenient(true);
-				this.rootJson = Streams.parse(in).getAsJsonObject();	
+				String path = "/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath();
+				is = modClass.getResourceAsStream(path);
 			} else {
-				Resource resource = resourceManager.getResource(resourceLocation);
-				JsonReader in = new JsonReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
-				in.setLenient(true);
-				this.rootJson = Streams.parse(in).getAsJsonObject();
+				is = resourceManager.getResource(resourceLocation).map(res -> {
+					try {
+						return res.open();
+					} catch (IOException e) {
+						return null;
+					}
+				}).orElse(null);
+			}
+
+			if (is != null) {
+				try (is; Reader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+					JsonReader in = new JsonReader(reader);
+					in.setLenient(true);
+					this.rootJson = Streams.parse(in).getAsJsonObject();
+				}
 			}
 		} catch (Exception e) {
-			EpicDragonFight.LOGGER.info("Can't read " + resourceLocation.toString() + " because " + e);
+			EpicDragonFight.LOGGER.error("Can't read " + resourceLocation, e);
 		}
 	}
 	

@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,12 +12,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import com.mojang.math.Vector4f;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 
@@ -85,11 +85,11 @@ public class ActionAnimation extends MainFrameAnimation {
 		if (state.inaction()) {
 			LivingEntity livingentity = entitypatch.getOriginal();
 			Vector3f vec3 = this.getCoordVector(entitypatch, animation);
-			BlockPos blockpos = new BlockPos(livingentity.getX(), livingentity.getBoundingBox().minY - 1.0D, livingentity.getZ());
-			BlockState blockState = livingentity.level.getBlockState(blockpos);
+			BlockPos blockpos = BlockPos.containing(livingentity.getX(), livingentity.getBoundingBox().minY - 1.0D, livingentity.getZ());
+			BlockState blockState = livingentity.level().getBlockState(blockpos);
 			AttributeInstance movementSpeed = livingentity.getAttribute(Attributes.MOVEMENT_SPEED);
 			boolean soulboost = blockState.is(BlockTags.SOUL_SPEED_BLOCKS) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SOUL_SPEED, livingentity) > 0;
-			double speedFactor = soulboost ? 1.0D : livingentity.level.getBlockState(blockpos).getBlock().getSpeedFactor();
+			double speedFactor = soulboost ? 1.0D : livingentity.level().getBlockState(blockpos).getBlock().getSpeedFactor();
 			double moveMultiplier = this.getProperty(ActionAnimationProperty.AFFECT_SPEED).orElse(false) ? (movementSpeed.getValue() / movementSpeed.getBaseValue()) : 1.0F;
 			livingentity.move(MoverType.SELF, new Vec3(vec3.x * moveMultiplier, vec3.y, vec3.z * moveMultiplier * speedFactor));
 		}

@@ -1,6 +1,6 @@
 package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
 
-import com.mojang.math.Vector3f;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -14,6 +14,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.Animator;
 
 import susen36.epicdragonfight.api.utils.math.MathUtils;
@@ -32,7 +33,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 	public void begin() {
 		this.startpos = this.dragon.position();
 		this.isActuallyAttacking = false;
-		this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.dragon.getSoundSource(), 5.0F, 0.8F + this.dragon.getRandom().nextFloat() * 0.3F, false);
+		this.dragon.level().playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.dragon.getSoundSource(), 5.0F, 0.8F + this.dragon.getRandom().nextFloat() * 0.3F, false);
 	}
 	
 	@Override
@@ -41,7 +42,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 		
 		if (this.dragonpatch.isLogicalClient()) {
 			Minecraft.getInstance().getSoundManager().stop(SoundEvents.ENDER_DRAGON_GROWL.getLocation(), SoundSource.HOSTILE);
-			this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_SHOOT, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
+			this.dragon.level().playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_SHOOT, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
 		}
 	}
 	
@@ -53,40 +54,31 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 		
 		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
 		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);
-		@SuppressWarnings("deprecation")
-		float f2 = Mth.rotWrap((this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));
-		OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
+		float f2 = Mth.wrapDegrees((float)(this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, new Vector3f(0.0F, 0.0F, 1.0F));
 		mouthpos.mulFront(modelMatrix);
 		
 		if (this.dragon.getTarget() != null) {
 			Vec3 vec31 = this.dragon.getTarget().position().add(0.0D, 12.0D, 0.0D);
 			
 			if (!this.isActuallyAttacking && vec31.subtract(this.dragon.position()).lengthSqr() < 900.0F) {
-				this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
+				this.dragon.level().playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
 				this.isActuallyAttacking = true;
 			}
 		}
 
 		if (this.isActuallyAttacking) {
 			for (int i = 0; i < 60; i++) {
-				// 初始化粒子方向向量
 				Vector3f particleDelta = new Vector3f(0.0F, -1.0F, 0.0F);
 
 				float xDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
 				float zDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
-
-				// 计算速度缩放因子
 				float speed = Math.min((60.0F - (Math.abs(xDeg) + Math.abs(zDeg))) / 20.0F, 1.0F);
 
-				// 执行矩阵变换（旋转粒子喷射方向）
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(xDeg, Vector3f.XP), particleDelta, particleDelta);
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(zDeg, Vector3f.ZP), particleDelta, particleDelta);
-
-				// 修复点：将 scale 替换为 mul
+				particleDelta.rotateX((float)Math.toRadians(xDeg));
+				particleDelta.rotateZ((float)Math.toRadians(zDeg));
 				particleDelta.mul(speed);
 
-				// 生成粒子：确保坐标和速度分量访问正确
-				this.dragon.level.addAlwaysVisibleParticle(
+				this.dragon.level().addAlwaysVisibleParticle(
 						ParticleTypes.DRAGON_BREATH,
 						mouthpos.m30 + (float)dragonpos.x,
 						mouthpos.m31 + (float)dragonpos.y,
@@ -156,7 +148,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 					if (this.isActuallyAttacking) {
 						if (this.dragon.tickCount % 5 == 0) {
 							Vec3 createpos = this.dragon.position().add(this.dragon.getLookAngle().scale(-4.5D));
-							AreaEffectCloud breatharea = new AreaEffectCloud(this.dragon.level, createpos.x, createpos.y, createpos.z);
+							AreaEffectCloud breatharea = new AreaEffectCloud(this.dragon.level(), createpos.x, createpos.y, createpos.z);
 							breatharea.setOwner(this.dragon);
 							breatharea.setWaitTime(0);
 							breatharea.setRadius(0.5F);
@@ -165,7 +157,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 							breatharea.setParticle(ParticleTypes.DRAGON_BREATH);
 							breatharea.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
 							breatharea.setDeltaMovement(0, -1, 0);
-							this.dragon.level.addFreshEntity(breatharea);
+							this.dragon.level().addFreshEntity(breatharea);
 						}
 					}
 				} else {

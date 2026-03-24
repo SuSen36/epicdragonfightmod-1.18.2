@@ -6,13 +6,14 @@ import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
-import com.mojang.math.Vector3f;
+
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;
@@ -60,7 +61,7 @@ public class EnderDragonDynamicActionAnimation extends ActionAnimation implement
 		    	TipPointAnimation tipAnim = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint);
 	    		JointTransform jt = tipAnim.getTipTransform(partialTicks);
 		    	Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jt.translation(), null);
-				Vector3f fabrikPos = jointModelpos.copy();
+				Vector3f fabrikPos = new Vector3f(jointModelpos);
 				fabrikPos.mul(-1.0F, 1.0F, -1.0F);
 
 				this.applyFabrikToJoint(fabrikPos, pose, this.getModel().getArmature(), ikInfo.startJoint, ikInfo.endJoint, jt.rotation());
@@ -85,15 +86,15 @@ public class EnderDragonDynamicActionAnimation extends ActionAnimation implement
 
 				for (int i = 0; i < keyframes.length; i++) {
 					Keyframe kf = keyframes[i];
-					Vector3f dynamicpos = movementAnimation.getInterpolatedTranslation(kf.time()).copy(); dynamicpos.sub(startpos);
-					OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP), dynamicpos, dynamicpos); dynamicpos.mul(-1.0F, 1.0F, -1.0F);
+					Vector3f dynamicpos = new Vector3f(movementAnimation.getInterpolatedTranslation(kf.time())); dynamicpos.sub(startpos);
+					OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(-90.0F, new Vector3f(1.0F, 0.0F, 0.0F)), dynamicpos, dynamicpos); dynamicpos.mul(-1.0F, 1.0F, -1.0F);
 					Vector3f finalTargetpos;
 
 					if (!ikInfo.clipAnimation || ikInfo.touchingGround[i]) {
-						Vector3f clipStart = kf.transform().translation().copy(); clipStart.mul(-1.0F, 1.0F, -1.0F); clipStart.add(dynamicpos); clipStart.add(0.0F, 2.5F, 0.0F);
+						Vector3f clipStart = new Vector3f(kf.transform().translation()); clipStart.mul(-1.0F, 1.0F, -1.0F); clipStart.add(dynamicpos); clipStart.add(0.0F, 2.5F, 0.0F);
 						finalTargetpos = this.getRayCastedTipPosition(clipStart, toWorld, enderdragonpatch, 2.5F, ikInfo.rayLeastHeight);
 					} else {
-						Vector3f start = kf.transform().translation().copy(); start.mul(-1.0F, 1.0F, -1.0F); start.add(dynamicpos);
+						Vector3f start = new Vector3f(kf.transform().translation()); start.mul(-1.0F, 1.0F, -1.0F); start.add(dynamicpos);
 						finalTargetpos = OpenMatrix4f.transform3v(toWorld, start, null);
 					}
 
@@ -157,8 +158,7 @@ public class EnderDragonDynamicActionAnimation extends ActionAnimation implement
 				Vector3f jointWorldPos = enderdragonpatch.getTipPointAnimation(ikInfo.endJoint).getTipPosition(partialTicks);
 				Vector3f jointModelpos = OpenMatrix4f.transform3v(toModelPos, jointWorldPos, null);
 
-				// 修复：不能在参数里写 mul，需先 copy 并运算
-				Vector3f jointModelposCopy = jointModelpos.copy();
+				Vector3f jointModelposCopy = new Vector3f(jointModelpos);
 				jointModelposCopy.mul(-1.0F, 1.0F, -1.0F);
 				RenderingTool.drawQuad(poseStack, vertexBuilder, jointModelposCopy, 0.4F, 0.0F, 0.0F, 1.0F);
 
