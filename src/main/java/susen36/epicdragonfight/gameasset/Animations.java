@@ -25,7 +25,6 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event.Side;
 import susen36.epicdragonfight.api.animation.types.procedural.*;
 
 import susen36.epicdragonfight.api.client.model.ClientModel;
-import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
@@ -56,11 +55,7 @@ public class Animations {
 	public static StaticAnimation DRAGON_NEUTRALIZED;
 	public static StaticAnimation DRAGON_NEUTRALIZED_RECOVERY;
 
-	public static void registerAnimations(AnimationRegistryEvent event) {
-		event.getRegistryMap().put(EpicDragonFight.MODID, Animations::build);
-	}
-
-	private static void build() {
+	public static void build() {
 		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? EnderDragonPatch.CLIENT_MODEL : Models.LOGICAL_SERVER.dragon;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "dragon/idle", dragon);

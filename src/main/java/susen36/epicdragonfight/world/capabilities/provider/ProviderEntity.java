@@ -12,7 +12,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.common.util.NonNullSupplier;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.registries.ForgeRegistries;
-import susen36.epicdragonfight.api.forgeevent.EntityPatchRegistryEvent;
 import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
 import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
 import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
@@ -33,9 +32,6 @@ public class ProviderEntity implements ICapabilityProvider, NonNullSupplier<MobP
 			}
 			return () -> null;
 		});
-	    EntityPatchRegistryEvent entitypatchRegistryEvent = new EntityPatchRegistryEvent(registry);
-		ModLoader.get().postEvent(entitypatchRegistryEvent);
-
 		CAPABILITIES.putAll(registry);
 	}
 	
