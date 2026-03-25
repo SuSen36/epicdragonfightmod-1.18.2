@@ -31,5 +31,5 @@ public class DragoFightNetworkManager {
 		INSTANCE.registerMessage(id++, SPPlayAnimation.class, SPPlayAnimation::toBytes, SPPlayAnimation::fromBytes, SPPlayAnimation::handle);
 		INSTANCE.registerMessage(id++, SPPlayAnimationAndSetTarget.class, SPPlayAnimationAndSetTarget::toBytes, SPPlayAnimationAndSetTarget::fromBytes, SPPlayAnimationAndSetTarget::handle);
 		INSTANCE.registerMessage(id++, SPPlayAnimationAndSyncTransform.class, SPPlayAnimationAndSyncTransform::toBytes, SPPlayAnimationAndSyncTransform::fromBytes, SPPlayAnimationAndSyncTransform::handle);
-		}
+	}
 }

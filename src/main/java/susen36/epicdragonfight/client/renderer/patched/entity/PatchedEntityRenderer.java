@@ -13,7 +13,7 @@ import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.lang.reflect.Method;
 

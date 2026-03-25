@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -21,8 +21,8 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
-import susen36.epicdragonfight.world.entitypatch.ai.CombatBehaviors;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.List;
 

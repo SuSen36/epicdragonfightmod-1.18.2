@@ -1,12 +1,12 @@
 package susen36.epicdragonfight.gameasset;
 
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.world.entitypatch.enderdragon.DragonFlyingPhase;
-import susen36.epicdragonfight.world.entitypatch.enderdragon.PatchedPhases;
-import susen36.epicdragonfight.world.entitypatch.ai.CombatBehaviors;
-import susen36.epicdragonfight.world.entitypatch.ai.CombatBehaviors.Behavior;
-import susen36.epicdragonfight.world.entitypatch.ai.CombatBehaviors.BehaviorSeries;
-import susen36.epicdragonfight.world.entitypatch.ai.CombatBehaviors.Health.Comparator;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.enderdragon.DragonFlyingPhase;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
+import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.Behavior;
+import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.BehaviorSeries;
+import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.Health.Comparator;
 
 public class MobCombatBehaviors {
 	public static final CombatBehaviors.Builder<IDragonPatch> ENDER_DRAGON = CombatBehaviors.<IDragonPatch>builder()

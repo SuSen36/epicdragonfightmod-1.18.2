@@ -16,7 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import susen36.epicdragonfight.events.EntityEvents;
 import susen36.epicdragonfight.gameasset.Models;

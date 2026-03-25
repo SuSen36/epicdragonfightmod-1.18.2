@@ -5,7 +5,7 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class ServerAnimator extends Animator {
 	public static Animator getAnimator(IDragonPatch entitypatch) {

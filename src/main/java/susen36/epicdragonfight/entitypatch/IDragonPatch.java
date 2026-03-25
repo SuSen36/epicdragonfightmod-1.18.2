@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.entitypatch;
+package susen36.epicdragonfight.entitypatch;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;

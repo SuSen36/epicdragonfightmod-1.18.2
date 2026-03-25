@@ -8,7 +8,7 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.Layer.Priority;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class LayerOffAnimation extends DynamicAnimation {
 	private DynamicAnimation lastAnimation;

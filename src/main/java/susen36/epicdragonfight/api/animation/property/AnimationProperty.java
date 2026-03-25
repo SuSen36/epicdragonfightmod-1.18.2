@@ -4,7 +4,7 @@ import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public abstract class AnimationProperty<T> {
 	public static class StaticAnimationProperty<T> extends AnimationProperty<T> {

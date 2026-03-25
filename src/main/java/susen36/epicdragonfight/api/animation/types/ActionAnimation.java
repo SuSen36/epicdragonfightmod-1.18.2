@@ -20,7 +20,7 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAn
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Models;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.Map;
 

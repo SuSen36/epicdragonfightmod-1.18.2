@@ -8,7 +8,7 @@ import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.HashMap;
 import java.util.Map;

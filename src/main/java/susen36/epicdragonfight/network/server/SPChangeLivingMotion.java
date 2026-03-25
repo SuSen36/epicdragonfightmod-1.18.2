@@ -10,7 +10,7 @@ import susen36.epicdragonfight.api.animation.LivingMotion;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.List;
 import java.util.function.Supplier;

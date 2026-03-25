@@ -14,7 +14,7 @@ import susen36.epicdragonfight.api.animation.types.LayerOffAnimation;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 @OnlyIn(Dist.CLIENT)
 public class Layer {

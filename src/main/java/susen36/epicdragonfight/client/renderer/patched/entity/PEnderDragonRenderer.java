@@ -27,9 +27,9 @@ import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.world.entitypatch.enderdragon.DragonCrystalLinkPhase;
-import susen36.epicdragonfight.world.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.enderdragon.DragonCrystalLinkPhase;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 @OnlyIn(Dist.CLIENT)
 public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, IDragonPatch, EnderDragonRenderer> {

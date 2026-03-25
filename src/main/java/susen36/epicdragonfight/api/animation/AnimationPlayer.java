@@ -3,7 +3,7 @@ package susen36.epicdragonfight.api.animation;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class AnimationPlayer {
 	private float elapsedTime;

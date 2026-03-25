@@ -4,7 +4,7 @@ import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.Pose;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.Map;
 

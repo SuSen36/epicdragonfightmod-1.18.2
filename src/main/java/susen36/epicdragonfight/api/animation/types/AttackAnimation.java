@@ -15,7 +15,7 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class AttackAnimation extends ActionAnimation {
 	protected static final ActionAnimationCoordSetter COMMON_COORD_SETTER = (self, entitypatch, transformSheet) -> {

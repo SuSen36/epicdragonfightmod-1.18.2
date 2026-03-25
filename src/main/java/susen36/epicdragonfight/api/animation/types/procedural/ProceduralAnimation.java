@@ -20,7 +20,7 @@ import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.FABRIK;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public interface ProceduralAnimation {
 	default void setIKInfo(IKInfo[] ikInfos, Map<String, TransformSheet> src, Map<String, TransformSheet> dest, Armature armature, boolean correctY, boolean correctZ) {

@@ -26,8 +26,8 @@ import susen36.epicdragonfight.api.animation.types.procedural.*;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.world.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 import java.util.function.Consumer;
 

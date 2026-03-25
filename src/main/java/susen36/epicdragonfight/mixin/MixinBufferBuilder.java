@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormatElement;
 import com.mojang.blaze3d.vertex.VertexSorting;
 
 import it.unimi.dsi.fastutil.ints.IntConsumer;
@@ -25,14 +24,10 @@ public abstract class MixinBufferBuilder {
 	@Shadow private int renderedBufferCount;
 	@Shadow private int nextElementByte;
 	@Shadow private int vertices;
-	@Shadow private VertexFormatElement currentElement;
-	@Shadow private int elementIndex;
 	@Shadow private VertexFormat format;
 	@Shadow private VertexFormat.Mode mode;
-	@Shadow private boolean building;
 	@Shadow private Vector3f[] sortingPoints;
 	@Shadow private VertexSorting sorting;
-	@Shadow private boolean indexOnly;
 
 	@Shadow
 	protected abstract void putSortedQuadIndices(VertexFormat.IndexType indexType);
@@ -69,8 +64,6 @@ public abstract class MixinBufferBuilder {
 		}
 	}
 
-	@Shadow
-	private void ensureCapacity(int size) {throw new AbstractMethodError("Shadow");}
 	@Shadow
 	private IntConsumer intConsumer(int int1, VertexFormat.IndexType indexType) {throw new AbstractMethodError("Shadow");}
 
@@ -112,15 +105,12 @@ public abstract class MixinBufferBuilder {
 			}
 		}
 
-		switch (longest) {
-			case 0:
-				return new Vector3f((x1 + x2) * 0.5F, (y1 + y2) * 0.5F, (z1 + z2) * 0.5F);
-			case 1:
-				return new Vector3f((x2 + x3) * 0.5F, (y2 + y3) * 0.5F, (z2 + z3) * 0.5F);
-			case 2:
-				return new Vector3f((x3 + x1) * 0.5F, (y3 + y1) * 0.5F, (z3 + z1) * 0.5F);
-		}
+        return switch (longest) {
+            case 0 -> new Vector3f((x1 + x2) * 0.5F, (y1 + y2) * 0.5F, (z1 + z2) * 0.5F);
+            case 1 -> new Vector3f((x2 + x3) * 0.5F, (y2 + y3) * 0.5F, (z2 + z3) * 0.5F);
+            case 2 -> new Vector3f((x3 + x1) * 0.5F, (y3 + y1) * 0.5F, (z3 + z1) * 0.5F);
+            default -> null;
+        };
 
-		return null;
-	}
+    }
 }

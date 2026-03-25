@@ -24,7 +24,7 @@ import susen36.epicdragonfight.api.utils.math.FABRIK;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.RenderingTool;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class EnderDragonActionAnimation extends ActionAnimation implements ProceduralAnimation {
 	private final IKInfo[] ikInfos;

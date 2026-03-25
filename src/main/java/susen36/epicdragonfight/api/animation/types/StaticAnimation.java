@@ -18,7 +18,7 @@ import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
 import susen36.epicdragonfight.api.model.JsonModelLoader;
 import susen36.epicdragonfight.api.model.Model;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.List;
 import java.util.Map;

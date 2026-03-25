@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import net.minecraft.world.entity.boss.enderdragon.phases.AbstractDragonPhaseIns
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
 	protected final IDragonPatch dragonpatch;

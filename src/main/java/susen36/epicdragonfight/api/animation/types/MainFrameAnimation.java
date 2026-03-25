@@ -5,7 +5,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.model.Model;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class MainFrameAnimation extends StaticAnimation {
 	public MainFrameAnimation(float convertTime, String path, Model model) {

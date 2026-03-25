@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 
 import net.minecraft.client.Minecraft;

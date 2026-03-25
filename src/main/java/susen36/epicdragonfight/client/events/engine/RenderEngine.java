@@ -8,7 +8,7 @@ import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.client.forgeevent.RenderEnderDragonEvent;
 import susen36.epicdragonfight.client.renderer.patched.entity.PEnderDragonRenderer;
 import susen36.epicdragonfight.client.renderer.patched.entity.PatchedEntityRenderer;
-import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 @OnlyIn(Dist.CLIENT)
 public class RenderEngine {
