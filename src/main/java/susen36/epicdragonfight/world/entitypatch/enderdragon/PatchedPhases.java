@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.world.entitypatch.enderdragon;
 
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 

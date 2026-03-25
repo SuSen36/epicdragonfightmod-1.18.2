@@ -20,7 +20,7 @@ import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.FABRIK;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 public interface ProceduralAnimation {
 	default void setIKInfo(IKInfo[] ikInfos, Map<String, TransformSheet> src, Map<String, TransformSheet> dest, Armature armature, boolean correctY, boolean correctZ) {
@@ -97,16 +97,16 @@ public interface ProceduralAnimation {
 		}
 	}
 	
-	default Vector3f getRayCastedTipPosition(Vector3f clipStart, OpenMatrix4f toWorldCoord, EnderDragonPatch enderdragonpatch, float maxYDown, float leastHeight) {
+	default Vector3f getRayCastedTipPosition(Vector3f clipStart, OpenMatrix4f toWorldCoord, IDragonPatch enderdragonpatch, float maxYDown, float leastHeight) {
 		Vector3f clipStartWorld = OpenMatrix4f.transform3v(toWorldCoord, clipStart, null);
 		BlockHitResult clipResult = enderdragonpatch.getOriginal().level().clip(new ClipContext(new Vec3(clipStartWorld.x, clipStartWorld.y, clipStartWorld.z), new Vec3(clipStartWorld.x, clipStartWorld.y - maxYDown, clipStartWorld.z), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, enderdragonpatch.getOriginal()));
 		float dy = (clipResult.getType() != HitResult.Type.MISS) ? (float)clipStartWorld.y - clipResult.getBlockPos().getY() - 1 : maxYDown;
 		return new Vector3f((float)clipStartWorld.x, (float)clipStartWorld.y - dy + leastHeight, (float)clipStartWorld.z);
 	}
 	
-	default void correctRootRotation(JointTransform rootTransform, EnderDragonPatch enderdragonpatch, float partialTicks) {
-		float xRoot = enderdragonpatch.xRootO + (enderdragonpatch.xRoot - enderdragonpatch.xRootO) * partialTicks;
-		float zRoot = enderdragonpatch.zRootO + (enderdragonpatch.zRoot - enderdragonpatch.zRootO) * partialTicks;
+	default void correctRootRotation(JointTransform rootTransform, IDragonPatch enderdragonpatch, float partialTicks) {
+		float xRoot = enderdragonpatch.getXRootO() + (enderdragonpatch.getXRoot() - enderdragonpatch.getXRootO()) * partialTicks;
+		float zRoot = enderdragonpatch.getZRootO() + (enderdragonpatch.getZRoot() - enderdragonpatch.getZRootO()) * partialTicks;
 		Quaternionf quat = Axis.ZP.rotationDegrees(zRoot);
 		quat.mul(Axis.XP.rotationDegrees(-xRoot));
 		rootTransform.frontResult(JointTransform.getRotation(quat), OpenMatrix4f::mulAsOriginFront);

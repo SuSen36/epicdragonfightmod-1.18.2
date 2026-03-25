@@ -1,17 +1,18 @@
-package susen36.epicdragonfight.world.capabilities.ai;
+package susen36.epicdragonfight.world.entitypatch.ai;
 
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch.AnimationPacketProvider;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch.AnimationPacketProvider;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class CombatBehaviors<T extends MobPatch<?>> {
+public class CombatBehaviors<T extends IDragonPatch> {
 	private final List<BehaviorSeries<T>> behaviorSeriesList = Lists.newArrayList();
 	private final T mobpatch;
 	private int currentBehaviorPointer;
@@ -136,11 +137,11 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 	}
 	
-	public static <T extends MobPatch<?>> Builder<T> builder() {
+	public static <T extends IDragonPatch> Builder<T> builder() {
 		return new Builder<>();
 	}
 	
-	public static class Builder<T extends MobPatch<?>> {
+	public static class Builder<T extends IDragonPatch> {
 		private List<BehaviorSeries.Builder<T>> behaviorSeriesList = Lists.newArrayList();
 		
 		public Builder<T> newBehaviorSeries(BehaviorSeries.Builder<T> builder) {
@@ -153,7 +154,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 	}
 	
-	public static class BehaviorSeries<T extends MobPatch<?>> {
+	public static class BehaviorSeries<T extends IDragonPatch> {
 		private final List<Behavior<T>> behaviors = Lists.newArrayList();
 		private final boolean looping;
 		private final boolean canBeInterrupted;
@@ -207,11 +208,11 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 			}
 		}
 		
-		public static <T extends MobPatch<?>> Builder<T> builder() {
+		public static <T extends IDragonPatch> Builder<T> builder() {
 			return new Builder<>();
 		}
 		
-		public static class Builder<T extends MobPatch<?>> {
+		public static class Builder<T extends IDragonPatch> {
 			private List<Behavior.Builder<T>> behaviors = Lists.newArrayList();
 			private boolean looping = false;
 			private boolean canBeInterrupted = true;
@@ -258,7 +259,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 	}
 	
-	public static class Behavior<T extends MobPatch<?>> {
+	public static class Behavior<T extends IDragonPatch> {
 		private Consumer<T> behavior;
 		private final List<BehaviorPredicate<T>> predicates;
 		
@@ -282,11 +283,11 @@ public class CombatBehaviors<T extends MobPatch<?>> {
         	mobpatch.updateEntityState();
 		}
 		
-		public static <T extends MobPatch<?>> Builder<T> builder() {
+		public static <T extends IDragonPatch> Builder<T> builder() {
 			return new Builder<T>();
 		}
 		
-		public static class Builder<T extends MobPatch<?>> {
+		public static class Builder<T extends IDragonPatch> {
 			private Consumer<T> behavior;
 			private List<BehaviorPredicate<T>> predicate = Lists.newArrayList();
 			private AnimationPacketProvider packetProvider = SPPlayAnimation::new;
@@ -344,11 +345,11 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 	}
 	
-	public static abstract class BehaviorPredicate<T extends MobPatch<?>> {
+	public static abstract class BehaviorPredicate<T extends IDragonPatch> {
 		public abstract boolean test(T mobpatch);
 	}
 	
-	public static class CustomPredicate<T extends MobPatch<?>> extends BehaviorPredicate<T> {
+	public static class CustomPredicate<T extends IDragonPatch> extends BehaviorPredicate<T> {
 		Function<T, Boolean> test;
 		
 		public CustomPredicate(Function<T, Boolean> test) {
@@ -360,7 +361,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 		}
 	}
 	
-	public static class RandomChance<T extends MobPatch<?>> extends BehaviorPredicate<T> {
+	public static class RandomChance<T extends IDragonPatch> extends BehaviorPredicate<T> {
 		private final float chance;
 		
 		public RandomChance(float chance) {
@@ -373,7 +374,7 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 	}
 
 	
-	public static class TargetWithinDistance<T extends MobPatch<?>> extends BehaviorPredicate<T> {
+	public static class TargetWithinDistance<T extends IDragonPatch> extends BehaviorPredicate<T> {
 		private final double minDistance;
 		private final double maxDistance;
 		
@@ -381,14 +382,14 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 			this.minDistance = minDistance;
 			this.maxDistance = maxDistance;
 		}
-		
+
 		public boolean test(T mobpatch) {
-			double distanceSqr = mobpatch.getOriginal().distanceToSqr(mobpatch.getTarget());
-			return this.minDistance < distanceSqr && distanceSqr < this.maxDistance;
+			LivingEntity target = mobpatch.getOriginal().getTarget();
+			return target != null && mobpatch.getOriginal().distanceToSqr(target) > this.minDistance && mobpatch.getOriginal().distanceToSqr(target) < this.maxDistance;
 		}
 	}
 	
-	public static class TargetWithinAngle<T extends MobPatch<?>> extends BehaviorPredicate<T> {
+	public static class TargetWithinAngle<T extends IDragonPatch> extends BehaviorPredicate<T> {
 		protected final double minDegree;
 		protected final double maxDegree;
 		
@@ -396,28 +397,30 @@ public class CombatBehaviors<T extends MobPatch<?>> {
 			this.minDegree = minDegree;
 			this.maxDegree = maxDegree;
 		}
-		
+
 		public boolean test(T mobpatch) {
-			Entity target = mobpatch.getTarget();
-			double degree = mobpatch.getAngleTo(target);
-			return this.minDegree < degree && degree < this.maxDegree;
+			Entity target = mobpatch.getOriginal().getTarget();
+			return target != null && (this.minDegree < mobpatch.getAngleTo(target) && mobpatch.getAngleTo(target) < this.maxDegree);
 		}
 		
-		public static class Horizontal<T extends MobPatch<?>> extends TargetWithinAngle<T> {
+		public static class Horizontal<T extends IDragonPatch> extends TargetWithinAngle<T> {
 			public Horizontal(double minDegree, double maxDegree) {
 				super(minDegree, maxDegree);
 			}
 			
 			@Override
 			public boolean test(T mobpatch) {
-				Entity target = mobpatch.getTarget();
-				double degree = mobpatch.getAngleToHorizontal(target);
-				return this.minDegree < degree && degree < this.maxDegree;
+				Entity target = mobpatch.getOriginal().getTarget();
+                double degree = 0;
+                if (target != null) {
+                    degree = mobpatch.getAngleToHorizontal(target);
+                }
+                return this.minDegree < degree && degree < this.maxDegree;
 			}
 		}
 	}
 	
-	public static class Health<T extends MobPatch<?>> extends BehaviorPredicate<T> {
+	public static class Health<T extends IDragonPatch> extends BehaviorPredicate<T> {
 		private final float value;
 		private final Comparator comparator;
 		

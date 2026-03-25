@@ -5,10 +5,10 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 public class ServerAnimator extends Animator {
-	public static Animator getAnimator(MobPatch<?> entitypatch) {
+	public static Animator getAnimator(IDragonPatch entitypatch) {
 		return new ServerAnimator(entitypatch);
 	}
 	
@@ -17,7 +17,7 @@ public class ServerAnimator extends Animator {
 	private LinkAnimation linkAnimation;
 	public boolean pause = false;
 	
-	public ServerAnimator(MobPatch<?> entitypatch) {
+	public ServerAnimator(IDragonPatch entitypatch) {
 		this.entitypatch = entitypatch;
 		this.linkAnimation = new LinkAnimation();
 		this.animationPlayer = new AnimationPlayer();

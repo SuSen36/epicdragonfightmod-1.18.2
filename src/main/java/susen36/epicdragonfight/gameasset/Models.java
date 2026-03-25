@@ -19,16 +19,13 @@ public abstract class Models<T extends Model> {
 		this.dragon = register(new ResourceLocation(EpicDragonFight.MODID, "entity/dragon"));
 		}
 		
-		@Override
-		public Model register(ResourceLocation rl) {
+		private Model register(ResourceLocation rl) {
 			Model model = new Model(rl);
 			this.models.put(rl, model);
 			return model;
 		}
 	}
-	
-	public abstract T register(ResourceLocation rl);
-	
+
 	public T get(ResourceLocation location) {
 		return this.models.get(location);
 	}

@@ -11,7 +11,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Vector3f;
-import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
@@ -24,13 +23,11 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event.Side;
 import susen36.epicdragonfight.api.animation.types.procedural.*;
 
-import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.world.entitypatch.enderdragon.PatchedPhases;
 
 import java.util.function.Consumer;
 
@@ -56,7 +53,7 @@ public class Animations {
 	public static StaticAnimation DRAGON_NEUTRALIZED_RECOVERY;
 
 	public static void build() {
-		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? EnderDragonPatch.CLIENT_MODEL : Models.LOGICAL_SERVER.dragon;
+		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? IDragonPatch.CLIENT_MODEL : Models.LOGICAL_SERVER.dragon;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "dragon/idle", dragon);
 		DRAGON_WALK = new EnderDraonWalkAnimation(0.35F, "dragon/walk", dragon,
@@ -79,10 +76,8 @@ public class Animations {
 		})
 				.addProperty(ActionAnimationProperty.STOP_MOVEMENT, true)
 				.addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.25F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.05F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.45F, (entitypatch) -> {
-					if (entitypatch instanceof EnderDragonPatch dragonPatch) {
-						dragonPatch.setFlyingPhase();
-					}
+				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.25F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.05F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.45F, (dragonPatch) -> {
+					dragonPatch.setFlyingPhase();
 				}, Side.BOTH)});
 
 		DRAGON_FLY_TO_GROUND = new EnderDragonDynamicActionAnimation(0.35F, "dragon/fly_to_ground", dragon, new IKInfo[]{
@@ -96,25 +91,23 @@ public class Animations {
 				.addProperty(ActionAnimationProperty.MOVE_ON_LINK, false)
 				.addProperty(ActionAnimationProperty.MOVE_TIME, new ActionTime[]{ActionTime.crate(0.0F, 1.35F)})
 				.addProperty(ActionAnimationProperty.COORD_SET_BEGIN, (self, entitypatch, transformSheet) -> {
-					if (entitypatch instanceof EnderDragonPatch dragonPatch) {
-						TransformSheet transform = self.getTransfroms().get("root").copyAll();
-						Vec3 dragonpos = entitypatch.getOriginal().position();
-						Vec3 targetpos = dragonPatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.LANDING).getLandingPosition();
-						float horizontalDistance = (float) dragonpos.subtract(0, dragonpos.y, 0).distanceTo(targetpos.subtract(0, targetpos.y, 0));
-						float verticalDistance = (float) Math.abs(dragonpos.y - targetpos.y);
-						JointTransform jt0 = transform.getKeyframes()[0].transform();
-						JointTransform jt1 = transform.getKeyframes()[1].transform();
-						JointTransform jt2 = transform.getKeyframes()[2].transform();
-						OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(90F, new Vector3f(1.0F, 0.0F, 0.0F));
-						Vector3f jointCoord = OpenMatrix4f.transform3v(coordReverse, new Vector3f(jt0.translation().x, verticalDistance, horizontalDistance), null);
-						jt0.translation().set(jointCoord.x, jointCoord.y, jointCoord.z);
-						Vector3f jt1Translation = MathUtils.lerpVector(jt0.translation(), jt2.translation(), transform.getKeyframes()[1].time());
-						jt1.translation().set(jt1Translation.x, jt1Translation.y, jt1Translation.z);
-						transformSheet.readFrom(transform);
-					}
+					TransformSheet transform = self.getTransfroms().get("root").copyAll();
+					Vec3 dragonpos = entitypatch.getOriginal().position();
+					Vec3 targetpos = entitypatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.LANDING).getLandingPosition();
+					float horizontalDistance = (float) dragonpos.subtract(0, dragonpos.y, 0).distanceTo(targetpos.subtract(0, targetpos.y, 0));
+					float verticalDistance = (float) Math.abs(dragonpos.y - targetpos.y);
+					JointTransform jt0 = transform.getKeyframes()[0].transform();
+					JointTransform jt1 = transform.getKeyframes()[1].transform();
+					JointTransform jt2 = transform.getKeyframes()[2].transform();
+					OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(90F, new Vector3f(1.0F, 0.0F, 0.0F));
+					Vector3f jointCoord = OpenMatrix4f.transform3v(coordReverse, new Vector3f(jt0.translation().x, verticalDistance, horizontalDistance), null);
+					jt0.translation().set(jointCoord.x, jointCoord.y, jointCoord.z);
+					Vector3f jt1Translation = MathUtils.lerpVector(jt0.translation(), jt2.translation(), transform.getKeyframes()[1].time());
+					jt1.translation().set(jt1Translation.x, jt1Translation.y, jt1Translation.z);
+					transformSheet.readFrom(transform);
 				})
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
-					entitypatch.playSound(SoundEvents.STONE_FALL, 0, 0);
+					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL, 0, 0);
 				}, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
 					LivingEntity original = entitypatch.getOriginal();
 					DamageSource damageSource = original.damageSources().mobAttack(original);
@@ -130,10 +123,10 @@ public class Animations {
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(1, 4), 0.1344F, 0, new boolean[]{true, false, true})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
-					entitypatch.playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+					entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT), Event.create(0.76F, (entitypatch) -> {
 					LivingEntity original = entitypatch.getOriginal();
-					Entity target = entitypatch.getTarget();
+					Entity target = entitypatch.getOriginal().getTarget();
 					if(target != null && original.distanceTo(target)<=8) {
 						original.doHurtTarget(target);
 					}
@@ -145,7 +138,7 @@ public class Animations {
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, null, 0.1344F, 0, new boolean[]{})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.76F, (entitypatch) -> {
 					LivingEntity original = entitypatch.getOriginal();
-					Entity target = entitypatch.getTarget();
+					Entity target = entitypatch.getOriginal().getTarget();
 					if(target != null && original.distanceTo(target)<=8) {
 						original.doHurtTarget(target);
 					}
@@ -157,7 +150,7 @@ public class Animations {
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, null, 0.1344F, 0, new boolean[]{})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.66F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
-			Entity target = entitypatch.getTarget();
+			Entity target = entitypatch.getOriginal().getTarget();
 			if(target != null && original.distanceTo(target)<=8) {
 				original.doHurtTarget(target);
 			}
@@ -170,7 +163,7 @@ public class Animations {
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(3, 8), 0.1344F, 0, new boolean[]{false, false, false, false, true})
 		}).addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
 		   .addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.2F, (entitypatch) -> {
-			entitypatch.playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT), Event.create(1.26F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
 			for (Entity entity : original.level().getEntities(original, original.getBoundingBox().inflate(4.0D, 1.5D, 4.0D))) {
@@ -185,7 +178,8 @@ public class Animations {
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(0, 5), 0.1344F, 0, new boolean[]{true, true, true, true, true})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
-			Entity target = entitypatch.getTarget();
+			Entity target = entitypatch.getOriginal().getTarget();
+			if(target == null)return;
 			Vec3 pos = original.getParts()[0].position();
 			Vec3 toTarget = target.position().subtract(original.position()).normalize().scale(original.getBbWidth() * 0.5D);
 			double d6 = (float) (pos.x + toTarget.x);
@@ -226,8 +220,7 @@ public class Animations {
 		})
 				.addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.15F, (entitypatch) -> {
-					entitypatch.playSound(SoundEvents.STONE_FALL, 0, 0);
-
+					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL, 0, 0);
 				}, Side.CLIENT)});
 
 		DRAGON_CRYSTAL_LINK = new EnderDragonActionAnimation(0.5F, "dragon/crystal_link", dragon, new IKInfo[]{
@@ -239,10 +232,7 @@ public class Animations {
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(7.0F, (entitypatch) -> {
 					entitypatch.getOriginal().playSound(SoundEvents.ENDER_DRAGON_GROWL, 7.0F, 0.8F + entitypatch.getOriginal().getRandom().nextFloat() * 0.3F);
 					entitypatch.getOriginal().heal(50.0F);
-
-					if (entitypatch instanceof EnderDragonPatch dragonPatch) {
-						dragonPatch.getOriginal().getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);
-					}
+					entitypatch.getOriginal().getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);
 				}, Side.SERVER), Event.create(7.0F, (entitypatch) -> {
 					Entity original = entitypatch.getOriginal();
 					original.level().addParticle(ParticleTypes.EXPLOSION, original.getX(), original.getY() + 2.0D, original.getZ(), 0, 0, 0);
@@ -264,18 +254,14 @@ public class Animations {
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, Pair.of(0, 5), 0.1344F, 0, new boolean[]{true, true, true, true, true}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(0, 4), 0.1344F, 0, new boolean[]{true, true, true, true})
 		})
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.6F, (entitypatch) -> {
-					if (entitypatch instanceof EnderDragonPatch dragonPatch) {
-						dragonPatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.GROUND_BATTLE).fly();
-					}
+				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.6F, (dragonPatch) -> {
+					dragonPatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.GROUND_BATTLE).fly();
 				}, Side.SERVER)});
 	}
 
 	private static class ReuseableEvents {
-		private static final Consumer<MobPatch<?>> WING_FLAP = (entitypatch) -> {
-			if (entitypatch instanceof EnderDragonPatch dragonPatch) {
-				dragonPatch.getOriginal().onFlap();
-			}
+		private static final Consumer<IDragonPatch> WING_FLAP = (dragonPatch) -> {
+			dragonPatch.getOriginal().onFlap();
 		};
 	}
 }

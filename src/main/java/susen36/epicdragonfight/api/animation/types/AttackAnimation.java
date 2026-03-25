@@ -1,15 +1,11 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.PartEntity;
 import org.joml.Vector3f;
 import susen36.epicdragonfight.api.animation.*;
@@ -19,13 +15,11 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
-
-import javax.annotation.Nullable;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 public class AttackAnimation extends ActionAnimation {
 	protected static final ActionAnimationCoordSetter COMMON_COORD_SETTER = (self, entitypatch, transformSheet) -> {
-		LivingEntity attackTarget = entitypatch.getTarget();
+		LivingEntity attackTarget = entitypatch.getOriginal().getTarget();
 		
 		if (!self.getRealAnimation().getProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE).orElse(false) && attackTarget != null) {
 			TransformSheet transform = self.getTransfroms().get("root").copyAll();
@@ -97,7 +91,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 	
 	@Override
-	public void tick(MobPatch<?> entitypatch) {
+	public void tick(IDragonPatch entitypatch) {
 		super.tick(entitypatch);
 		
 		if (!entitypatch.isLogicalClient()) {
@@ -109,10 +103,10 @@ public class AttackAnimation extends ActionAnimation {
 			Phase phase = this.getPhaseByTime(elapsedTime);
 			
 			if (state.getLevel() == 1 && !state.turningLocked()) {
-				if (entitypatch instanceof MobPatch) {
+				if (entitypatch instanceof IDragonPatch) {
 					((Mob)entitypatch.getOriginal()).getNavigation().stop();
 					entitypatch.getOriginal().attackAnim = 2;
-					LivingEntity target = entitypatch.getTarget();
+					LivingEntity target = entitypatch.getOriginal().getTarget();
 					
 					if (target != null) {
 						entitypatch.rotateTo(target, entitypatch.getYRotLimit(), false);
@@ -121,20 +115,17 @@ public class AttackAnimation extends ActionAnimation {
 			} else if (prevState.attacking() || state.attacking() || (prevState.getLevel() < 2 && state.getLevel() > 2)) {
 				if (!prevState.attacking()) {
 				//	entitypatch.playSound(this.getSwingSound(entitypatch, phase), 0.0F, 0.0F);
-					entitypatch.currentlyAttackedEntity.clear();
+					entitypatch.getCurrentlyAttackedEntity().clear();
 				}
 			}
 		}
 	}
 	
 	@Override
-	public void end(MobPatch<?> entitypatch, boolean isEnd) {
+	public void end(IDragonPatch entitypatch, boolean isEnd) {
 		super.end(entitypatch, isEnd);
-		entitypatch.currentlyAttackedEntity.clear();
-
+		entitypatch.getCurrentlyAttackedEntity().clear();
 	}
-	
-
 	
 	@Override
 	protected void onLoaded() {
@@ -160,7 +151,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 
 	@Override
-	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
 		Pose pose = super.getPoseByTime(entitypatch, time, partialTicks);
 		
 		this.getProperty(AttackAnimationProperty.ROTATE_X).ifPresent((flag) -> {
@@ -175,7 +166,7 @@ public class AttackAnimation extends ActionAnimation {
 	}
 	
 	@Override
-	public float getPlaySpeed(MobPatch<?> entitypatch) {
+	public float getPlaySpeed(IDragonPatch entitypatch) {
 		if (this.getProperty(StaticAnimationProperty.PLAY_SPEED).isPresent()) {
 			return super.getPlaySpeed(entitypatch);
 		}

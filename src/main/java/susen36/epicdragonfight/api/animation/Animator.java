@@ -7,7 +7,7 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 import java.util.Map;
 
@@ -16,7 +16,7 @@ public abstract class Animator {
 	protected Pose currentPose = new Pose();
 	protected final Map<LivingMotion, StaticAnimation> livingAnimations = Maps.newHashMap();
 	
-	protected MobPatch<?> entitypatch;
+	protected IDragonPatch entitypatch;
 	
 	public abstract void playAnimation(StaticAnimation nextAnimation, float convertTimeModifier);
 	public abstract void tick();

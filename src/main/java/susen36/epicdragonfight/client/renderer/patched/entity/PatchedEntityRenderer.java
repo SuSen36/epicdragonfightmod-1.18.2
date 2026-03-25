@@ -6,23 +6,19 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class PatchedEntityRenderer<E extends Mob, T extends MobPatch<E>, R extends EntityRenderer<E>> {
+public abstract class PatchedEntityRenderer<E extends Mob, T extends IDragonPatch, R extends EntityRenderer<E>> {
 	protected static Method shouldShowName;
 	protected static Method renderNameTag;
 	

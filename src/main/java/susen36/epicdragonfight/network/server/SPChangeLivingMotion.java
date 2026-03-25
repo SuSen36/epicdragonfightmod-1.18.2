@@ -10,8 +10,7 @@ import susen36.epicdragonfight.api.animation.LivingMotion;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -70,24 +69,21 @@ public class SPChangeLivingMotion {
 			if (mc.level == null) return;
 
 			Entity entity = mc.level.getEntity(msg.entityId);
-			if (entity != null) {
-				entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).ifPresent(cap -> {
-					MobPatch<?> entitypatch = (MobPatch<?>) cap;
-					ClientAnimator animator = entitypatch.getClientAnimator();
+			if (entity instanceof IDragonPatch dragonPatch) {
+				ClientAnimator animator = dragonPatch.getClientAnimator();
 
-					if (animator != null) {
-						animator.resetMotions();
-						animator.resetCompositeMotion();
+				if (animator != null) {
+					animator.resetMotions();
+					animator.resetCompositeMotion();
 
-						for (int i = 0; i < msg.count; i++) {
-							animator.addLivingAnimation(msg.motionList.get(i), msg.animationList.get(i));
-						}
-
-						if (msg.setChangesAsDefault) {
-							animator.setCurrentMotionsAsDefault();
-						}
+					for (int i = 0; i < msg.count; i++) {
+						animator.addLivingAnimation(msg.motionList.get(i), msg.animationList.get(i));
 					}
-				});
+
+					if (msg.setChangesAsDefault) {
+						animator.setCurrentMotionsAsDefault();
+					}
+				}
 			}
 		});
 		ctx.get().setPacketHandled(true);

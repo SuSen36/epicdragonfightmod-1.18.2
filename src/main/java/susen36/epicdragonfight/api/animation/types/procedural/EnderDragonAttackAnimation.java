@@ -25,8 +25,7 @@ import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.RenderingTool;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 public class EnderDragonAttackAnimation extends AttackAnimation implements ProceduralAnimation {
 	private final IKInfo[] ikInfos;
@@ -48,11 +47,11 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
 		Pose pose = super.getPoseByTime(entitypatch, time, partialTicks);
 		
-		if (entitypatch instanceof EnderDragonPatch) {
-			EnderDragonPatch enderdragonpatch = (EnderDragonPatch)entitypatch;
+		if (entitypatch instanceof IDragonPatch) {
+			IDragonPatch enderdragonpatch = (IDragonPatch)entitypatch;
 	    	float x = (float)entitypatch.getOriginal().getX();
 	    	float y = (float)entitypatch.getOriginal().getY();
 	    	float z = (float)entitypatch.getOriginal().getZ();
@@ -76,15 +75,15 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public void begin(MobPatch<?> entitypatch) {
+	public void begin(IDragonPatch entitypatch) {
 		ActionAnimationCoordSetter movementAnimationSetter = this.getProperty(ActionAnimationProperty.COORD_SET_BEGIN).orElse((self, entitypatch$2, transformSheet) -> {
 			transformSheet.readFrom(self.getTransfroms().get("root"));
 		});
 		
 		entitypatch.getAnimator().getPlayerFor(this).setActionAnimationCoord(this, entitypatch, movementAnimationSetter);
 		
-		if (entitypatch instanceof EnderDragonPatch) {
-			EnderDragonPatch enderdragonpatch = (EnderDragonPatch)entitypatch;
+		if (entitypatch instanceof IDragonPatch) {
+			IDragonPatch enderdragonpatch = (IDragonPatch)entitypatch;
 			Vec3 entitypos = enderdragonpatch.getOriginal().position();
 			OpenMatrix4f toWorld = OpenMatrix4f.mul(OpenMatrix4f.createTranslation((float)entitypos.x, (float)entitypos.y, (float)entitypos.z), enderdragonpatch.getModelMatrix(1.0F), null);
 			enderdragonpatch.resetTipAnimations();
@@ -123,11 +122,11 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public void tick(MobPatch<?> entitypatch) {
+	public void tick(IDragonPatch entitypatch) {
 		super.tick(entitypatch);
 		
-		if (entitypatch instanceof EnderDragonPatch) {
-			EnderDragonPatch enderdragonpatch = (EnderDragonPatch)entitypatch;
+		if (entitypatch instanceof IDragonPatch) {
+			IDragonPatch enderdragonpatch = (IDragonPatch)entitypatch;
 			Vec3 entitypos = enderdragonpatch.getOriginal().position();
 			OpenMatrix4f toWorld = OpenMatrix4f.mul(OpenMatrix4f.createTranslation((float)entitypos.x, (float)entitypos.y, (float)entitypos.z), enderdragonpatch.getModelMatrix(1.0F), null);
 			float elapsedTime = entitypatch.getAnimator().getPlayerFor(this).getElapsedTime();
@@ -162,11 +161,11 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, MobPatch<?> entitypatch, float playTime, float partialTicks) {
+	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, IDragonPatch entitypatch, float playTime, float partialTicks) {
 		super.renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks);
 		
-		if (entitypatch instanceof EnderDragonPatch) {
-			EnderDragonPatch enderdragonpatch = ((EnderDragonPatch)entitypatch);
+		if (entitypatch instanceof IDragonPatch) {
+			IDragonPatch enderdragonpatch = ((IDragonPatch)entitypatch);
 			OpenMatrix4f modelmat = enderdragonpatch.getModelMatrix(partialTicks);
 			LivingEntity originalEntity = entitypatch.getOriginal();
 			Vec3 entitypos = originalEntity.position();

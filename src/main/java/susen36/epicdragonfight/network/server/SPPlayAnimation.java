@@ -6,8 +6,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 import java.util.function.Supplier;
 
@@ -17,7 +16,7 @@ public class SPPlayAnimation {
 	protected int entityId;
 	protected float convertTimeModifier;
 
-	public SPPlayAnimation(StaticAnimation animation, float convertTimeModifier, MobPatch<?> entitypatch) {
+	public SPPlayAnimation(StaticAnimation animation, float convertTimeModifier, IDragonPatch entitypatch) {
 		this(animation.getNamespaceId(), animation.getId(), entitypatch.getOriginal().getId(), convertTimeModifier);
 	}
 	
@@ -32,14 +31,8 @@ public class SPPlayAnimation {
 		Minecraft mc = Minecraft.getInstance();
 		Entity entity = mc.player.level().getEntity(this.entityId);
 		
-		if (entity == null) {
-			return;
-		}
-		
-		MobPatch<?> entitypatch = (MobPatch<?>)entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY, null).orElse(null);
-		
-		if (entitypatch != null) {
-			entitypatch.getAnimator().playAnimation(this.namespaceId, this.animationId, this.convertTimeModifier);
+		if (entity instanceof IDragonPatch dragonPatch) {
+			dragonPatch.getAnimator().playAnimation(this.namespaceId, this.animationId, this.convertTimeModifier);
 		}
 	}
 	

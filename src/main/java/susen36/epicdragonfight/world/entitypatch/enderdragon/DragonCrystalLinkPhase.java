@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.world.entitypatch.enderdragon;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -8,7 +8,6 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
@@ -78,7 +77,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		if (!this.dragonpatch.isLogicalClient()) {
 			this.dragon.level().explode((Entity)null, (double)blockpos.getX(), (double)blockpos.getY(), (double)blockpos.getZ(), 6.0F, false, Level.ExplosionInteraction.MOB);
 		} else {
-			this.dragonpatch.shieldEndEffectAge = 0;
+			this.dragonpatch.setShieldEndEffectAge(0);
 		}
 	}
 

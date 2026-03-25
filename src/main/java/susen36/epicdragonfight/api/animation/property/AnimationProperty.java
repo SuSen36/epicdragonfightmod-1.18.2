@@ -4,7 +4,7 @@ import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
 public abstract class AnimationProperty<T> {
 	public static class StaticAnimationProperty<T> extends AnimationProperty<T> {
@@ -59,7 +59,7 @@ public abstract class AnimationProperty<T> {
 	
 	@FunctionalInterface
 	public interface ActionAnimationCoordSetter {
-		public void set(DynamicAnimation self, MobPatch<?> entitypatch, TransformSheet transformSheet);
+		public void set(DynamicAnimation self, IDragonPatch entitypatch, TransformSheet transformSheet);
 	}
 	
 	public static class AttackAnimationProperty<T> extends AnimationProperty<T> {

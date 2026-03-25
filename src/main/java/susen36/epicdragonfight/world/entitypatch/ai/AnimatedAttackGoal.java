@@ -1,12 +1,12 @@
-package susen36.epicdragonfight.world.capabilities.ai;
+package susen36.epicdragonfight.world.entitypatch.ai;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import susen36.epicdragonfight.api.animation.types.EntityState;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
 
-public class AnimatedAttackGoal<T extends MobPatch<?>> extends Goal {
+public class AnimatedAttackGoal<T extends IDragonPatch> extends Goal {
 	protected final T mobpatch;
 	protected final CombatBehaviors<T> combatBehaviors;
 	
@@ -22,7 +22,7 @@ public class AnimatedAttackGoal<T extends MobPatch<?>> extends Goal {
 	
 	@Override
 	public void tick() {
-		if (this.mobpatch.getTarget() != null) {
+		if (this.mobpatch.getOriginal().getTarget() != null) {
 			EntityState state = this.mobpatch.getEntityState();
 			this.combatBehaviors.tick();
 			
@@ -47,7 +47,7 @@ public class AnimatedAttackGoal<T extends MobPatch<?>> extends Goal {
 	}
 	
 	private boolean checkTargetValid() {
-		LivingEntity livingentity = this.mobpatch.getTarget();
+		LivingEntity livingentity = this.mobpatch.getOriginal().getTarget();
 		
 		if (livingentity == null) {
 			return false;

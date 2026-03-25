@@ -27,15 +27,15 @@ import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.DragonCrystalLinkPhase;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.world.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.world.entitypatch.enderdragon.DragonCrystalLinkPhase;
+import susen36.epicdragonfight.world.entitypatch.enderdragon.PatchedPhases;
 
 @OnlyIn(Dist.CLIENT)
-public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, EnderDragonPatch, EnderDragonRenderer> {
+public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, IDragonPatch, EnderDragonRenderer> {
 	
 	@Override
-	public void render(EnderDragon entityIn, EnderDragonPatch entitypatch, EnderDragonRenderer renderer, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
+	public void render(EnderDragon entityIn, IDragonPatch entitypatch, EnderDragonRenderer renderer, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
 		ClientModel model = entitypatch.getClientModel();
 		Armature armature = model.getArmature();
 		poseStack.pushPose();
@@ -92,8 +92,8 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 			this.renderForceField(entityIn, (DragonCrystalLinkPhase)currentPhase, buffer, poseStack, partialTicks);
 		}
 		
-		if (entitypatch.shieldEndEffectAge < 10) {
-			float progression = ((float)entitypatch.shieldEndEffectAge + partialTicks) / 10.0F;
+		if (entitypatch.getShieldEndEffectAge() < 10) {
+			float progression = ((float)entitypatch.getShieldEndEffectAge() + partialTicks) / 10.0F;
 			VertexConsumer lightningBuffer = buffer.getBuffer(RenderType.lightning());
 			
 			poseStack.pushPose();
@@ -103,7 +103,7 @@ public class PEnderDragonRenderer extends PatchedEntityRenderer<EnderDragon, End
 	}
 	
 	@Override
-	public void mulPoseStack(PoseStack matStack, Armature armature, EnderDragon entityIn, EnderDragonPatch entitypatch, float partialTicks) {
+	public void mulPoseStack(PoseStack matStack, Armature armature, EnderDragon entityIn, IDragonPatch entitypatch, float partialTicks) {
 		OpenMatrix4f modelMatrix;
 		
 		if (!entitypatch.isGroundPhase() || entitypatch.getOriginal().dragonDeathTime > 0) {
