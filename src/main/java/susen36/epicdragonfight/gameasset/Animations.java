@@ -6,6 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -123,20 +124,14 @@ public class Animations {
 					}
 				}, Side.SERVER)});
 
-		DRAGON_ATTACK1 = new EnderDragonAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "right_front_foot", "dragon/attack1", dragon, new IKInfo[]{
+		DRAGON_ATTACK1 = new TailSweepAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "right_front_foot", "dragon/attack1", dragon, new IKInfo[]{
 				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(2, 4), 0.12F, 0, new boolean[]{true, true}),
 				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(0, 5), 0.12F, 0, new boolean[]{false, false, false, false, true}),
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(1, 4), 0.1344F, 0, new boolean[]{true, false, true})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
 					entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
-		}, Side.CLIENT), Event.create(0.76F, (entitypatch) -> {
-					LivingEntity original = entitypatch.getOriginal();
-					Entity target = entitypatch.getOriginal().getTarget();
-					if(target != null && original.distanceTo(target)<=8) {
-						original.doHurtTarget(target);
-					}
-		}, Side.SERVER)});
+		}, Side.CLIENT)});
 
 		DRAGON_ATTACK2 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "right_front_foot", "dragon/attack2", dragon, new IKInfo[]{
 				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(1, 4), 0.12F, 0, new boolean[]{true, true, true}),

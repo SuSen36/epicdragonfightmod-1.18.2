@@ -26,7 +26,7 @@ import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.function.Function;
 
-@Mod("epicdragonfight")
+@Mod(EpicDragonFight.MODID)
 public class EpicDragonFight {
 	public static final String MODID = "epicdragonfight";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
