@@ -7,16 +7,16 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.Map;
 
 public abstract class Animator {
 	protected Pose prevPose = new Pose();
 	protected Pose currentPose = new Pose();
-	protected final Map<LivingMotion, StaticAnimation> livingAnimations = Maps.newHashMap();
+	protected final Map<LivingMotions, StaticAnimation> livingAnimations = Maps.newHashMap();
 	
-	protected MobPatch<?> entitypatch;
+	protected IDragonPatch entitypatch;
 	
 	public abstract void playAnimation(StaticAnimation nextAnimation, float convertTimeModifier);
 	public abstract void tick();
@@ -38,7 +38,7 @@ public abstract class Animator {
 	}
 
 
-	public void addLivingAnimation(LivingMotion livingMotion, StaticAnimation animation) {
+	public void addLivingAnimation(LivingMotions livingMotion, StaticAnimation animation) {
 		this.livingAnimations.put(livingMotion, animation);
 	}
 
@@ -52,15 +52,15 @@ public abstract class Animator {
 	}
 	
 	/** Get binded position of joint **/
-	public static OpenMatrix4f getBindedJointTransformByIndex(Pose pose, Armature armature, int pathIndex) {
+	public static OpenMatrix4f getBindedJointTransformByIndex(Pose pose, Armature armature, long pathIndex) {
 		armature.initializeTransform();
 		return getBindedJointTransformByIndexInternal(pose, armature.getJointHierarcy(), new OpenMatrix4f(), pathIndex);
 	}
-	
-	private static OpenMatrix4f getBindedJointTransformByIndexInternal(Pose pose, Joint joint, OpenMatrix4f parentTransform, int pathIndex) {
+
+	private static OpenMatrix4f getBindedJointTransformByIndexInternal(Pose pose, Joint joint, OpenMatrix4f parentTransform, long pathIndex) {
 		JointTransform jt = pose.getOrDefaultTransform(joint.getName());
 		OpenMatrix4f result = jt.getAnimationBindedMatrix(joint, parentTransform);
-		int nextIndex = pathIndex % 10;
-		return nextIndex > 0 ? getBindedJointTransformByIndexInternal(pose, joint.getSubJoints().get(nextIndex - 1), result, pathIndex / 10) : result;
+		long nextIndex = pathIndex % 10;
+		return nextIndex > 0 ? getBindedJointTransformByIndexInternal(pose, joint.getSubJoints().get((int)(nextIndex - 1)), result, pathIndex / 10) : result;
 	}
 }

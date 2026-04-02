@@ -9,7 +9,7 @@ import java.util.Map;
 public class Armature {
 	private final Map<Integer, Joint> jointById;
 	private final Map<String, Joint> jointByName;
-	private final Map<String, Integer> pathIndexMap;
+	private final Map<String, Long> pathIndexMap;
 	private final Joint jointHierarcy;
 	private final int jointNumber;
 
@@ -38,20 +38,19 @@ public class Armature {
 		return this.jointByName.get(name);
 	}
 
-	
-	public int searchPathIndex(String joint) {
+	public long searchPathIndex(String joint) {
 		if (this.pathIndexMap.containsKey(joint)) {
 			return this.pathIndexMap.get(joint);
 		} else {
 			String pathIndex = this.jointHierarcy.searchPath(new String(""), joint);
-			int pathIndex2Int = 0;
+			long pathIndex2Long = 0;
 			if (pathIndex == null) {
 				throw new IllegalArgumentException("failed to get joint path index for " + joint);
 			} else {
-				pathIndex2Int = (pathIndex.length() == 0) ? -1 : Integer.parseInt(pathIndex);
-				this.pathIndexMap.put(joint, pathIndex2Int);
+				pathIndex2Long = (pathIndex.length() == 0) ? -1 : Long.parseLong(pathIndex);
+				this.pathIndexMap.put(joint, pathIndex2Long);
 			}
-			return pathIndex2Int;
+			return pathIndex2Long;
 		}
 	}
 	

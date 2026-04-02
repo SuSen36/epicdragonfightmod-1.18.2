@@ -1,5 +1,5 @@
 package susen36.epicdragonfight.api.animation;
 
-public enum LivingMotions implements LivingMotion {
+public enum LivingMotions {
 	IDLE, WALK, FLY, CHASE, DEATH, NONE
 }

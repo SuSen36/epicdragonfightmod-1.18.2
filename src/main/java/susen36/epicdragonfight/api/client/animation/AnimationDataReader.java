@@ -21,7 +21,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.GsonHelper;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import susen36.epicdragonfight.api.animation.LivingMotion;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 
@@ -72,7 +71,7 @@ public class AnimationDataReader {
 					if (livingMotionName.equals("ALL")) {
 						builder.defaultMask(mask);
 					} else {
-						LivingMotion livingMotion = LivingMotions.valueOf(livingMotionName.toUpperCase());
+						LivingMotions livingMotion = LivingMotions.valueOf(livingMotionName.toUpperCase());
 						builder.mask(livingMotion, mask);
 					}
 				});

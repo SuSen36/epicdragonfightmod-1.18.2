@@ -6,12 +6,10 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.animation.LivingMotion;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -20,7 +18,7 @@ public class SPChangeLivingMotion {
 	private int entityId;
 	private int count;
 	private boolean setChangesAsDefault;
-	private List<LivingMotion> motionList = Lists.newArrayList();
+	private List<LivingMotions> motionList = Lists.newArrayList();
 	private List<StaticAnimation> animationList = Lists.newArrayList();
 
 	private SPChangeLivingMotion(int entityId, int count, boolean setChangesAsDefault) {
@@ -28,11 +26,10 @@ public class SPChangeLivingMotion {
 		this.count = count;
 		this.setChangesAsDefault = setChangesAsDefault;
 	}
-	
 
 	public static SPChangeLivingMotion fromBytes(FriendlyByteBuf buf) {
 		SPChangeLivingMotion msg = new SPChangeLivingMotion(buf.readInt(), buf.readInt(), buf.readBoolean());
-		List<LivingMotion> motionList = Lists.newArrayList();
+		List<LivingMotions> motionList = Lists.newArrayList();
 		List<StaticAnimation> animationList = Lists.newArrayList();
 		
 		for (int i = 0; i < msg.count; i++) {
@@ -54,8 +51,8 @@ public class SPChangeLivingMotion {
 		buf.writeInt(msg.count);
 		buf.writeBoolean(msg.setChangesAsDefault);
 		
-		for (LivingMotion motion : msg.motionList) {
-			buf.writeInt(((LivingMotions) motion).ordinal());
+		for (LivingMotions motion : msg.motionList) {
+			buf.writeInt(motion.ordinal());
 		}
 		
 		for (StaticAnimation anim : msg.animationList) {
@@ -70,24 +67,21 @@ public class SPChangeLivingMotion {
 			if (mc.level == null) return;
 
 			Entity entity = mc.level.getEntity(msg.entityId);
-			if (entity != null) {
-				entity.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).ifPresent(cap -> {
-					MobPatch<?> entitypatch = (MobPatch<?>) cap;
-					ClientAnimator animator = entitypatch.getClientAnimator();
+			if (entity instanceof IDragonPatch entitypatch) {
+				ClientAnimator animator = entitypatch.getClientAnimator();
 
-					if (animator != null) {
-						animator.resetMotions();
-						animator.resetCompositeMotion();
+				if (animator != null) {
+					animator.resetMotions();
+					animator.resetCompositeMotion();
 
-						for (int i = 0; i < msg.count; i++) {
-							animator.addLivingAnimation(msg.motionList.get(i), msg.animationList.get(i));
-						}
-
-						if (msg.setChangesAsDefault) {
-							animator.setCurrentMotionsAsDefault();
-						}
+					for (int i = 0; i < msg.count; i++) {
+						animator.addLivingAnimation(msg.motionList.get(i), msg.animationList.get(i));
 					}
-				});
+
+					if (msg.setChangesAsDefault) {
+						animator.setCurrentMotionsAsDefault();
+					}
+				}
 			}
 		});
 		ctx.get().setPacketHandled(true);

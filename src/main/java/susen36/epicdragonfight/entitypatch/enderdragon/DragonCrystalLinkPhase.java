@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -75,9 +75,9 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		this.linkingCrystal = null;
 		
 		if (!this.dragonpatch.isLogicalClient()) {
-			this.dragon.level.explode((Entity)null, blockpos.getX(), blockpos.getY(), blockpos.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
+			this.dragon.level.explode(null, blockpos.getX(), blockpos.getY(), blockpos.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
 		} else {
-			this.dragonpatch.shieldEndEffectAge = 0;
+			this.dragonpatch.setShieldEndEffectAge(0);
 		}
 	}
 

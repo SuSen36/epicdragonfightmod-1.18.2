@@ -17,7 +17,6 @@ public class SPPlayAnimationAndSetTarget extends SPPlayAnimation {
 		this.targetId = targetId;
 	}
 
-
 	@Override
 	public void onArrive() {
 		super.onArrive();
@@ -45,9 +44,7 @@ public class SPPlayAnimationAndSetTarget extends SPPlayAnimation {
 	}
 
 	public static void handle(SPPlayAnimationAndSetTarget msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(()->{
-			msg.onArrive();
-		});
+		ctx.get().enqueueWork(msg::onArrive);
 		ctx.get().setPacketHandled(true);
 	}
 }

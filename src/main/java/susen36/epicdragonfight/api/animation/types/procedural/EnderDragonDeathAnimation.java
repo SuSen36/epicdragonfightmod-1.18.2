@@ -4,7 +4,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.types.LongHitAnimation;
 import susen36.epicdragonfight.api.model.Model;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class EnderDragonDeathAnimation extends LongHitAnimation {
 	public EnderDragonDeathAnimation(float convertTime, String path, Model model) {
@@ -18,7 +18,7 @@ public class EnderDragonDeathAnimation extends LongHitAnimation {
 	}
 	
 	@Override
-	protected void modifyPose(Pose pose, MobPatch<?> entitypatch, float time) {
+	protected void modifyPose(Pose pose, IDragonPatch entitypatch, float time) {
 		
 	}
 }

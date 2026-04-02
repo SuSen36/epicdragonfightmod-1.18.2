@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import java.util.List;
 
@@ -10,14 +10,14 @@ import net.minecraft.world.entity.boss.enderdragon.phases.AbstractDragonPhaseIns
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
-import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
-	protected final EnderDragonPatch dragonpatch;
+	protected final IDragonPatch dragonpatch;
 	
 	public PatchedDragonPhase(EnderDragon dragon) {
 		super(dragon);
-		this.dragonpatch = (EnderDragonPatch)dragon.getCapability(DragonFightCapabilities.CAPABILITY_ENTITY).orElse(null);
+		this.dragonpatch = dragon instanceof IDragonPatch patch ? patch : null;
 	}
 	
 	@Override
@@ -36,6 +36,6 @@ public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
 	}
 	
 	protected List<Player> getPlayersNearbyWithin(double within) {
-		return this.dragon.level.getNearbyPlayers(EnderDragonPatch.DRAGON_TARGETING, this.dragon, this.dragon.getBoundingBox().inflate(within, within, within));
+		return this.dragon.level.getNearbyPlayers(IDragonPatch.DRAGON_TARGETING, this.dragon, this.dragon.getBoundingBox().inflate(within, within, within));
 	}
 }

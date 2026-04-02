@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -19,9 +19,10 @@ import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
-import susen36.epicdragonfight.world.capabilities.ai.CombatBehaviors;
+import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	private PathFinder pathFinder;
 	private int aggroCounter;
 	private int noPathWarningCounter;
-	CombatBehaviors<EnderDragonPatch> combatBehaviors;
+	CombatBehaviors<IDragonPatch> combatBehaviors;
 	
 	public DragonGroundBattlePhase(EnderDragon dragon) {
 		super(dragon);
@@ -60,7 +61,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 				
 				if (this.combatBehaviors.hasActivatedMove()) {
 					if (state.canBasicAttack()) {
-						CombatBehaviors.Behavior<EnderDragonPatch> result = this.combatBehaviors.tryProceed();
+						CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.tryProceed();
 						
 						if (result != null) {
 							result.execute(this.dragonpatch);
@@ -68,7 +69,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 					}
 				} else {
 					if (!state.inaction()) {
-						CombatBehaviors.Behavior<EnderDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
+						CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
 						
 						if (result != null) {
 							result.execute(this.dragonpatch);

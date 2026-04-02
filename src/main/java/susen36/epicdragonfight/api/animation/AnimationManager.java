@@ -36,13 +36,13 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 		Map<String, Runnable> registryMap = Maps.newHashMap();
 		ModLoader.get().postEvent(new AnimationRegistryEvent(registryMap));
 		
-		registryMap.entrySet().forEach((entry) -> {
-			this.modid = entry.getKey();
-			this.namespaceHash = this.modid.hashCode();
-			this.animationById.put(this.namespaceHash, Maps.newHashMap());
-			this.counter = 0;
-			entry.getValue().run();
-		});
+		registryMap.forEach((key, value) -> {
+            this.modid = key;
+            this.namespaceHash = this.modid.hashCode();
+            this.animationById.put(this.namespaceHash, Maps.newHashMap());
+            this.counter = 0;
+            value.run();
+        });
 	}
 	
 	public void loadAnimationsInit(ResourceManager resourceManager) {

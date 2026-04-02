@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -56,7 +56,7 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 			
 			for (Player player : players) {
 				if (isValidTarget(player)) {
-					if (!this.executeAirstrike && this.dragon.getRandom().nextFloat() > this.dragon.getDragonFight().getCrystalsAlive() * 0.1F) {
+					if (!this.executeAirstrike && this.dragon.getRandom().nextFloat() > (this.dragon.getDragonFight() != null ? this.dragon.getDragonFight().getCrystalsAlive() : 0) * 0.1F) {
 						if (isInEndSpikes(player)) {
 							this.executeAirstrike = true;
 						}
@@ -112,12 +112,12 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 		if (this.currentPath != null && !this.currentPath.isDone()) {
 			Vec3i vec3i = this.currentPath.getNextNodePos();
 			this.currentPath.advance();
-			double d0 = (double) vec3i.getX();
-			double d1 = (double) vec3i.getZ();
+			double d0 = vec3i.getX();
+			double d1 = vec3i.getZ();
 			double d2;
 			
 			do {
-				d2 = (double) ((float) vec3i.getY() + this.dragon.getRandom().nextFloat() * 20.0F);
+				d2 = (float) vec3i.getY() + this.dragon.getRandom().nextFloat() * 20.0F;
 			} while (d2 < (double) vec3i.getY());
 			
 			this.targetLocation = new Vec3(d0, d2, d1);

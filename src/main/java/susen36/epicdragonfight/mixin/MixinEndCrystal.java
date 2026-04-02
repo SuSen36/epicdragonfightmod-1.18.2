@@ -1,5 +1,9 @@
 package susen36.epicdragonfight.mixin;
 
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.level.dimension.end.EndDragonFight;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -7,30 +11,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.DragonCrystalLinkPhase;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.entitypatch.enderdragon.DragonCrystalLinkPhase;
 
-@Mixin(value = EndCrystal.class)
+@Mixin(EndCrystal.class)
 public abstract class MixinEndCrystal {
-	@Inject(at = @At(value = "HEAD"), method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z", cancellable = true)
+	@Inject(at = @At(value = "HEAD"), method = "hurt", cancellable = true)
 	private void epicfight_hurt(DamageSource damagesource, float amount, CallbackInfoReturnable<Boolean> info) {
 		EndCrystal self = (EndCrystal)((Object)this);
-		
-		if (!self.level.isClientSide()) {
-			EnderDragonPatch dragonpatch = EnderDragonPatch.INSTANCE_SERVER;
-			
-			if (dragonpatch != null) {
-				DragonPhaseInstance currentPhase = dragonpatch.getOriginal().getPhaseManager().getCurrentPhase();
-				
-				if (currentPhase.getPhase() == PatchedPhases.CRYSTAL_LINK) {
-					DragonCrystalLinkPhase phase = (DragonCrystalLinkPhase)currentPhase;
-					
-					if (phase.getLinkingCrystal() == self) {
-						info.cancel();
-						info.setReturnValue(false);
-					}
+
+		if (self.level.isClientSide() || !(self.level instanceof ServerLevel serverLevel)) return;
+
+		EndDragonFight fight = serverLevel.dragonFight;
+
+		if (fight != null && fight.dragonUUID != null) {
+			Entity dragonEntity = serverLevel.getEntity(fight.dragonUUID);
+
+			if (dragonEntity instanceof EnderDragon dragon &&
+					dragon.getPhaseManager().getCurrentPhase() instanceof DragonCrystalLinkPhase linkPhase) {
+
+				if (linkPhase.getLinkingCrystal() == self) {
+					info.setReturnValue(false);
+					info.cancel();
 				}
 			}
 		}

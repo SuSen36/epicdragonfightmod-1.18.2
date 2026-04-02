@@ -17,17 +17,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon.EnderDragonPatch;
-
-import susen36.epicdragonfight.events.CapabilityEvent;
 import susen36.epicdragonfight.events.EntityEvents;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DraagonFightDataSerializers;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
-import susen36.epicdragonfight.world.capabilities.DragonFightCapabilities;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
-import susen36.epicdragonfight.world.capabilities.provider.ProviderEntity;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.function.Function;
 
@@ -42,7 +37,7 @@ public class EpicDragonFight {
 	}
 	
 	public final AnimationManager animationManager;
-	private Function<MobPatch<?>, Animator> animatorProvider;
+	private Function<IDragonPatch, Animator> animatorProvider;
 	
     public EpicDragonFight() {
     	this.animationManager = new AnimationManager();
@@ -51,22 +46,17 @@ public class EpicDragonFight {
     	bus.addListener(this::doClientStuff);
     	bus.addListener(this::doCommonStuff);
     	bus.addListener(this::doServerStuff);
-    	bus.addListener(DragonFightCapabilities::registerCapabilities);
     	bus.addListener(Animations::registerAnimations);
     	bus.addGenericListener(DataSerializerEntry.class, DraagonFightDataSerializers::register);
-
         MinecraftForge.EVENT_BUS.register(EntityEvents.class);
-        MinecraftForge.EVENT_BUS.register(CapabilityEvent.class);
-        
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {
 		this.animatorProvider = ClientAnimator::getAnimator;
-		ProviderEntity.registerEntityPatchesClient();
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		EnderDragonPatch.CLIENT_MODEL.loadMeshAndProperties(resourceManager);
-		EnderDragonPatch.CLIENT_MODEL.loadArmatureData(resourceManager);
 		Models.LOGICAL_SERVER.loadArmatures(resourceManager);
+		Models.LOGICAL_CLIENT.loadMeshData(resourceManager);
+		Models.LOGICAL_CLIENT.copyArmaturesFromServer();
 		this.animationManager.loadAnimationsInit(resourceManager);
         ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);
     }
@@ -80,10 +70,9 @@ public class EpicDragonFight {
 	private void doCommonStuff(final FMLCommonSetupEvent event) {
 		event.enqueueWork(this.animationManager::registerAnimations);
 		event.enqueueWork(DragoFightNetworkManager::registerPackets);
-		event.enqueueWork(ProviderEntity::registerEntityPatches);
     }
 	
-	public static Animator getAnimator(MobPatch<?> entitypatch) {
+	public static Animator getAnimator(IDragonPatch entitypatch) {
 		return EpicDragonFight.getInstance().animatorProvider.apply(entitypatch);
 	}
 	

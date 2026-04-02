@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
-import susen36.epicdragonfight.api.animation.LivingMotion;
+import susen36.epicdragonfight.api.animation.LivingMotions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,22 +16,22 @@ import java.util.Map;
 public class JointMaskEntry {
 	public static final List<JointMask> WINGS = new ArrayList<> (Arrays.asList(JointMask.of("left_wing"), JointMask.of("right_wing")));
 	
-	private final Map<LivingMotion, List<JointMask>> masks = Maps.newHashMap();
+	private final Map<LivingMotions, List<JointMask>> masks = Maps.newHashMap();
 	private final List<JointMask> defaultMask;
 	
-	public JointMaskEntry(List<JointMask> defaultMask, List<Pair<LivingMotion, List<JointMask>>> masks) {
+	public JointMaskEntry(List<JointMask> defaultMask, List<Pair<LivingMotions, List<JointMask>>> masks) {
 		this.defaultMask = defaultMask;
 		
-		for (Pair<LivingMotion, List<JointMask>> mask : masks) {
+		for (Pair<LivingMotions, List<JointMask>> mask : masks) {
 			this.masks.put(mask.getLeft(), mask.getRight());
 		}
 	}
 	
-	public List<JointMask> getMask(LivingMotion livingmotion) {
+	public List<JointMask> getMask(LivingMotions livingmotion) {
 		return this.masks.getOrDefault(livingmotion, this.defaultMask);
 	}
 	
-	public boolean isMasked(LivingMotion livingmotion, String jointName) {
+	public boolean isMasked(LivingMotions livingmotion, String jointName) {
 		List<JointMask> masks = this.masks.getOrDefault(livingmotion, this.defaultMask);
 		
 		for (JointMask mask : masks) {
@@ -52,10 +52,10 @@ public class JointMaskEntry {
 	}
 	
 	public static class Builder {
-		private List<Pair<LivingMotion, List<JointMask>>> masks = Lists.newArrayList();
+		private List<Pair<LivingMotions, List<JointMask>>> masks = Lists.newArrayList();
 		private List<JointMask> defaultMask = null;
 		
-		public Builder mask(LivingMotion motion, List<JointMask> masks) {
+		public Builder mask(LivingMotions motion, List<JointMask> masks) {
 			this.masks.add(Pair.of(motion, masks));
 			return this;
 		}

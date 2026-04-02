@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.world.capabilities.entitypatch.enderdragon;
+package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
@@ -69,23 +69,18 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 
 		if (this.isActuallyAttacking) {
 			for (int i = 0; i < 60; i++) {
-				// 初始化粒子方向向量
 				Vector3f particleDelta = new Vector3f(0.0F, -1.0F, 0.0F);
 
 				float xDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
 				float zDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
 
-				// 计算速度缩放因子
 				float speed = Math.min((60.0F - (Math.abs(xDeg) + Math.abs(zDeg))) / 20.0F, 1.0F);
 
-				// 执行矩阵变换（旋转粒子喷射方向）
 				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(xDeg, Vector3f.XP), particleDelta, particleDelta);
 				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(zDeg, Vector3f.ZP), particleDelta, particleDelta);
 
-				// 修复点：将 scale 替换为 mul
 				particleDelta.mul(speed);
 
-				// 生成粒子：确保坐标和速度分量访问正确
 				this.dragon.level.addAlwaysVisibleParticle(
 						ParticleTypes.DRAGON_BREATH,
 						mouthpos.m30 + (float)dragonpos.x,

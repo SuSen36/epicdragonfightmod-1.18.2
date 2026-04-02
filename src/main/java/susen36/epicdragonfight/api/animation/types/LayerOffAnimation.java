@@ -8,7 +8,7 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.Layer.Priority;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class LayerOffAnimation extends DynamicAnimation {
 	private DynamicAnimation lastAnimation;
@@ -24,20 +24,20 @@ public class LayerOffAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public void end(MobPatch<?> entitypatch, boolean isEnd) {
+	public void end(IDragonPatch entitypatch, boolean isEnd) {
 		if (entitypatch.isLogicalClient()) {
 			entitypatch.getClientAnimator().baseLayer.disableLayer(this.layerPriority);
 		}
 	}
 	
 	@Override
-	public Pose getPoseByTime(MobPatch<?> entitypatch, float time, float partialTicks) {
+	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
 		Pose lowerLayerPose = entitypatch.getClientAnimator().getComposedLayerPoseBelow(this.layerPriority, Minecraft.getInstance().getFrameTime());
 		return Pose.interpolatePose(this.lastPose, lowerLayerPose, time / this.totalTime);
 	}
 	
 	@Override
-	public boolean isJointEnabled(MobPatch<?> entitypatch, String joint) {
+	public boolean isJointEnabled(IDragonPatch entitypatch, String joint) {
 		return this.lastPose.getJointTransformData().containsKey(joint);
 	}
 	
@@ -51,7 +51,7 @@ public class LayerOffAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public BindModifier getBindModifier(MobPatch<?> entitypatch, String joint) {
+	public BindModifier getBindModifier(IDragonPatch entitypatch, String joint) {
 		return this.lastAnimation.getBindModifier(entitypatch, joint);
 	}
 	

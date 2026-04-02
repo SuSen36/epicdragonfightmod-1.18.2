@@ -89,19 +89,6 @@ public class JsonModelLoader {
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public ClientModel.RenderProperties getRenderProperties() {
-		JsonObject properties = this.rootJson.getAsJsonObject("render_properties");
-		
-		if (properties != null) {
-			return ClientModel.RenderProperties.builder()
-					.transparency(properties.has("transparent") && properties.get("transparent").getAsBoolean())
-				.build();
-		} else {
-			return ClientModel.RenderProperties.builder().build();
-		}
-	}
-	
-	@OnlyIn(Dist.CLIENT)
 	public ResourceLocation getParent() {
 		return this.rootJson.has("parent") ? new ResourceLocation(this.rootJson.get("parent").getAsString()) : null;
 	}
@@ -207,15 +194,15 @@ public class JsonModelLoader {
 			for (Phase phase : ((AttackAnimation)animation).phases) {
 				Armature armature = animation.getModel().getArmature();
 				Joint joint = armature.getJointHierarcy();
-				int pathIndex = armature.searchPathIndex(phase.getColliderJointName());
-				
+				long pathIndex = armature.searchPathIndex(phase.getColliderJointName());
+
 				while (joint != null) {
 					allowedJoints.add(joint.getName());
-					int nextJoint = pathIndex % 10;
-					
+					long nextJoint = pathIndex % 10;
+
 					if (nextJoint > 0) {
 						pathIndex /= 10;
-						joint = joint.getSubJoints().get(nextJoint - 1);
+						joint = joint.getSubJoints().get((int)(nextJoint - 1));
 					} else {
 						joint = null;
 					}

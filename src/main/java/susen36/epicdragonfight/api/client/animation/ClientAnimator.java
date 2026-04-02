@@ -14,7 +14,7 @@ import susen36.epicdragonfight.api.client.animation.Layer.Priority;
 
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.world.capabilities.entitypatch.MobPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.Collections;
 import java.util.List;
@@ -22,18 +22,18 @@ import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientAnimator extends Animator {
-	public static Animator getAnimator(MobPatch<?> entitypatch) {
+	public static Animator getAnimator(IDragonPatch entitypatch) {
 		return entitypatch.isLogicalClient() ? new ClientAnimator(entitypatch) : ServerAnimator.getAnimator(entitypatch);
 	}
 
-	private final Map<LivingMotion, StaticAnimation> compositeLivingAnimations;
-	private final Map<LivingMotion, StaticAnimation> defaultLivingAnimations;
-	private final Map<LivingMotion, StaticAnimation> defaultCompositeLivingAnimations;
+	private final Map<LivingMotions, StaticAnimation> compositeLivingAnimations;
+	private final Map<LivingMotions, StaticAnimation> defaultLivingAnimations;
+	private final Map<LivingMotions, StaticAnimation> defaultCompositeLivingAnimations;
 	public final Layer.BaseLayer baseLayer;
-	private LivingMotion currentMotion;
-	private LivingMotion currentCompositeMotion;
+	private LivingMotions currentMotion;
+	private LivingMotions currentCompositeMotion;
 
-	public ClientAnimator(MobPatch<?> entitypatch) {
+	public ClientAnimator(IDragonPatch entitypatch) {
 		this.entitypatch = entitypatch;
 		this.currentMotion = LivingMotions.IDLE;
 		this.currentCompositeMotion = LivingMotions.IDLE;
@@ -60,7 +60,7 @@ public class ClientAnimator extends Animator {
 	}
 
 	@Override
-	public void addLivingAnimation(LivingMotion livingMotion, StaticAnimation animation) {
+	public void addLivingAnimation(LivingMotions livingMotion, StaticAnimation animation) {
 		Layer.LayerType layerType = animation.getLayerType();
 
 		switch (layerType) {
@@ -73,7 +73,7 @@ public class ClientAnimator extends Animator {
 		}
 	}
 
-	protected void addBaseLivingAnimation(LivingMotion livingMotion, StaticAnimation animation) {
+	protected void addBaseLivingAnimation(LivingMotions livingMotion, StaticAnimation animation) {
 		this.livingAnimations.put(livingMotion, animation);
 
 		if (livingMotion == this.currentMotion) {
@@ -85,7 +85,7 @@ public class ClientAnimator extends Animator {
 		}
 	}
 
-	protected void addCompositeLivingAnimation(LivingMotion livingMotion, StaticAnimation animation) {
+	protected void addCompositeLivingAnimation(LivingMotions livingMotion, StaticAnimation animation) {
 		if (animation != null) {
 			this.compositeLivingAnimations.put(livingMotion, animation);
 
@@ -112,11 +112,11 @@ public class ClientAnimator extends Animator {
 		this.defaultCompositeLivingAnimations.forEach(this.compositeLivingAnimations::put);
 	}
 
-	public StaticAnimation getLivingMotion(LivingMotion motion) {
+	public StaticAnimation getLivingMotion(LivingMotions motion) {
 		return this.livingAnimations.getOrDefault(motion, Animations.DUMMY_ANIMATION);
 	}
 
-	public StaticAnimation getCompositeLivingMotion(LivingMotion motion) {
+	public StaticAnimation getCompositeLivingMotion(LivingMotions motion) {
 		return this.compositeLivingAnimations.getOrDefault(motion, Animations.DUMMY_ANIMATION);
 	}
 
@@ -154,25 +154,25 @@ public class ClientAnimator extends Animator {
 
 		if (this.baseLayer.animationPlayer.isEnd() && this.baseLayer.nextAnimation == null && this.currentMotion != LivingMotions.DEATH) {
 			this.entitypatch.updateMotion(false);
-			this.baseLayer.playAnimation(this.getLivingMotion(this.entitypatch.currentLivingMotion), this.entitypatch, 0.0F);
+			this.baseLayer.playAnimation(this.getLivingMotion(this.entitypatch.getCurrentLivingMotion()), this.entitypatch, 0.0F);
 		}
 
-		if (!this.compareCompositeMotion(this.entitypatch.currentCompositeMotion)) {
-			if (this.compositeLivingAnimations.containsKey(this.entitypatch.currentCompositeMotion)) {
-				this.playAnimation(this.getCompositeLivingMotion(this.entitypatch.currentCompositeMotion), 0.0F);
+		if (!this.compareCompositeMotion(this.entitypatch.getCurrentCompositeMotion())) {
+			if (this.compositeLivingAnimations.containsKey(this.entitypatch.getCurrentCompositeMotion())) {
+				this.playAnimation(this.getCompositeLivingMotion(this.entitypatch.getCurrentCompositeMotion()), 0.0F);
 			} else {
 				this.getCompositeLayer(Layer.Priority.MIDDLE).off(this.entitypatch);
 			}
 		}
 
-		if (!this.compareMotion(this.entitypatch.currentLivingMotion)) {
-			if (this.livingAnimations.containsKey(this.entitypatch.currentLivingMotion)) {
-				this.baseLayer.playAnimation(this.getLivingMotion(this.entitypatch.currentLivingMotion), this.entitypatch, 0.0F);
+		if (!this.compareMotion(this.entitypatch.getCurrentLivingMotion())) {
+			if (this.livingAnimations.containsKey(this.entitypatch.getCurrentLivingMotion())) {
+				this.baseLayer.playAnimation(this.getLivingMotion(this.entitypatch.getCurrentLivingMotion()), this.entitypatch, 0.0F);
 			}
 		}
 
-		this.currentMotion = this.entitypatch.currentLivingMotion;
-		this.currentCompositeMotion = this.entitypatch.currentCompositeMotion;
+		this.currentMotion = this.entitypatch.getCurrentLivingMotion();
+		this.currentCompositeMotion = this.entitypatch.getCurrentLivingMotion();
 	}
 
 
@@ -256,7 +256,7 @@ public class ClientAnimator extends Animator {
 		}
 	}
 
-	public boolean compareMotion(LivingMotion motion) {
+	public boolean compareMotion(LivingMotions motion) {
 		boolean flag = this.currentMotion == motion;
 
 		if (flag) {
@@ -266,18 +266,18 @@ public class ClientAnimator extends Animator {
 		return flag;
 	}
 
-	public boolean compareCompositeMotion(LivingMotion motion) {
+	public boolean compareCompositeMotion(LivingMotions motion) {
 		return this.currentCompositeMotion == motion;
 	}
 
 	public void resetMotion() {
 		this.currentMotion = LivingMotions.IDLE;
-		this.entitypatch.currentLivingMotion = LivingMotions.IDLE;
+		this.entitypatch.setCurrentLivingMotion(LivingMotions.IDLE);
 	}
 
 	public void resetCompositeMotion() {
 		this.currentCompositeMotion = LivingMotions.NONE;
-		this.entitypatch.currentCompositeMotion = LivingMotions.NONE;
+		this.entitypatch.setCurrentCompositeMotion(LivingMotions.NONE);
 	}
 
 	@Override
@@ -291,7 +291,7 @@ public class ClientAnimator extends Animator {
 		return this.baseLayer.animationPlayer;
 	}
 
-	public MobPatch<?> getOwner() {
+	public IDragonPatch getOwner() {
 		return this.entitypatch;
 	}
 

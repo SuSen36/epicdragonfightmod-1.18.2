@@ -16,6 +16,10 @@ public class Model {
 		this.armature = loader.getArmature();
 	}
 	
+	public void setArmature(Armature armature) {
+		this.armature = armature;
+	}
+	
 	public ResourceLocation getLocation() {
 		return this.location;
 	}

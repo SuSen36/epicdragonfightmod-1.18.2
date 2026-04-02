@@ -3,7 +3,6 @@ package susen36.epicdragonfight.network.server;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 public class SPPlayAnimationAndSyncTransform extends SPPlayAnimationAndSetTarget {
 	protected double posX;
