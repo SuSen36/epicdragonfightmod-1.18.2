@@ -362,7 +362,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[0], "head", new Vector3f(0.0F, 0.0F, 0.0F)));
 		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[1], "neck3", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[2], "body", new Vector3f(0.0F, 0.0F, 0.0F)));
+		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[2], "body", new Vector3f(0.0F, -1.0F, 0.0F)));
 		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[3], "neck_tail_4", new Vector3f(0.0F, 0.0F, 0.0F)));
 		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[4], "neck_tail_8", new Vector3f(0.0F, 0.0F, 0.0F)));
 		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[5], "neck_tail_12", new Vector3f(0.0F, 0.0F, 0.0F)));

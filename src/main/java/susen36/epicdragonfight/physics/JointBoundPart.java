@@ -40,7 +40,7 @@ public class JointBoundPart {
 		if (this.pathIndex != -1) {
 			Vec3 worldPos = this.getJointWorldPosition(dragonPatch, armature);
 			if (worldPos != null) {
-				this.part.setPos(worldPos.x, worldPos.y, worldPos.z);
+				this.part.setPos(worldPos.x, worldPos.y - this.part.getBbHeight() * 0.5F, worldPos.z);
 			}
 		}
 	}
