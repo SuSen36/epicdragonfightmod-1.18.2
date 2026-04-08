@@ -56,10 +56,7 @@ public class SPPlayAnimation {
 	}
 	
 	public static void handle(SPPlayAnimation msg, Supplier<NetworkEvent.Context> ctx) {
-		ctx.get().enqueueWork(() -> {
-			msg.onArrive();
-		});
-		
+		ctx.get().enqueueWork(msg::onArrive);
 		ctx.get().setPacketHandled(true);
 	}
 }

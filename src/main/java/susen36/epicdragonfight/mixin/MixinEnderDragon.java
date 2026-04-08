@@ -226,7 +226,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	/**
 	 * @author SuSen
-	 * @reason 允许非玩家实体伤害龙,但非特定来源伤害衰减为25%。
+	 * @reason 允许非玩家实体伤害龙,但非特定来源伤害衰减为50%。
 	 */
 	@Overwrite
 	public boolean hurt(EnderDragonPart pPart, DamageSource pSource, float pDamage) {
@@ -236,12 +236,12 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		pDamage = this.phaseManager.getCurrentPhase().onHurt(pSource, pDamage);
 
 		if (pPart != this.head) {
-			pDamage = pDamage / 4.0F + Math.min(pDamage, 1.0F);
+			pDamage = pDamage / 2.0F + Math.min(pDamage, 1.0F);
 		}
 
 		boolean isAlwaysSource = pSource.getEntity() instanceof Player || pSource.isExplosion();
 		if (!isAlwaysSource) {
-			pDamage *= 0.25F;
+			pDamage *= 0.5F;
 		}
 
 		if (pDamage < 0.01F) {

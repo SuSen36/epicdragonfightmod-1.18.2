@@ -61,7 +61,7 @@ public abstract class MixinEnderDragonRenderer{
 		} else {
 			VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.animatedModel(EnderDragonRenderer.DRAGON_LOCATION));
 			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses);
-			VertexConsumer builder2 = buffer.getBuffer(DragonFightRenderTypes.eyes(new ResourceLocation("textures/entity/enderdragon/dragon_eyes.png")));
+			VertexConsumer builder2 = buffer.getBuffer(DragonFightRenderTypes.eyeGlow(new ResourceLocation("textures/entity/enderdragon/dragon_eyes.png")));
 			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, OverlayTexture.NO_OVERLAY,poses);
 		}
 

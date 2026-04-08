@@ -159,7 +159,6 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 							breatharea.setRadiusPerTick(0.2F);
 							breatharea.setParticle(ParticleTypes.DRAGON_BREATH);
 							breatharea.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
-							breatharea.setDeltaMovement(0, -1, 0);
 							this.dragon.level.addFreshEntity(breatharea);
 						}
 					}

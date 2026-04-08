@@ -66,7 +66,6 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 					} else if (isInEndSpikes(player)) {
 						this.dragon.getPhaseManager().setPhase(PatchedPhases.LANDING);
 					}
-					
 					return;
 				}
 			}

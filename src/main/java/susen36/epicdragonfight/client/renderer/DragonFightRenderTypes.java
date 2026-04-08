@@ -21,9 +21,9 @@ public class DragonFightRenderTypes extends RenderType {
 	
 	private static final Function<ResourceLocation, RenderType> ANIMATED_MODEL = Util.memoize((textureLocation) -> {
 		CompositeState state = CompositeState.builder()
-				.setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_SHADER)
+				.setShaderState(RENDERTYPE_ENTITY_CUTOUT_NO_CULL_SHADER)
 				.setTextureState(new TextureStateShard(textureLocation, false, false))
-				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				.setTransparencyState(NO_TRANSPARENCY)
 				.setCullState(NO_CULL)
 				.setLightmapState(LIGHTMAP)
 				.setOverlayState(OVERLAY)
@@ -63,17 +63,15 @@ public class DragonFightRenderTypes extends RenderType {
 				.createCompositeState(false)
 	);
 
-
-	private static final Function<ResourceLocation, RenderType> EYES = Util.memoize((textureLocation) -> {
+	private static final Function<ResourceLocation, RenderType> EYE_GLOW = Util.memoize((textureLocation) -> {
 		CompositeState state = CompositeState.builder()
 				.setShaderState(RenderStateShard.RENDERTYPE_EYES_SHADER)
 				.setTextureState(new TextureStateShard(textureLocation, false, false))
-				.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+				.setTransparencyState(ADDITIVE_TRANSPARENCY)
+				.setWriteMaskState(COLOR_WRITE)
 				.setCullState(NO_CULL)
-				.setLightmapState(LIGHTMAP)
-				.setOverlayState(OVERLAY)
-				.createCompositeState(true);
-		return create(EpicDragonFight.MODID + ":eyes", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, true, false, state);
+				.createCompositeState(false);
+		return create(EpicDragonFight.MODID + ":eye_glow", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, false, true, state);
 	});
 
 	private static final Function<ResourceLocation, RenderType> FORCE_FIELD = Util.memoize((textureLocation) -> {
@@ -87,14 +85,15 @@ public class DragonFightRenderTypes extends RenderType {
 				.createCompositeState(true);
 		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.TRIANGLES, 256, true, false, state);
 	});
+
 	public static RenderType animatedModel(ResourceLocation locationIn) {
 		return ANIMATED_MODEL.apply(locationIn);
 	}
 
-
-	public static RenderType eyes(ResourceLocation locationIn) {
-		return EYES.apply(locationIn);
+	public static RenderType eyeGlow(ResourceLocation locationIn) {
+		return EYE_GLOW.apply(locationIn);
 	}
+
 	public static RenderType dragonExplosionAlphaTriangles(ResourceLocation locationIn) {
 		return DRAGON_EXPLOSION_ALPHA_TRIANGLES.apply(locationIn);
 	}

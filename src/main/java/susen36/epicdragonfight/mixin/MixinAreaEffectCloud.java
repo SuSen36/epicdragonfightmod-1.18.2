@@ -33,6 +33,14 @@ public abstract class MixinAreaEffectCloud {
     @Shadow
     public abstract void setRadius(float p_19713_);
 
+    @Inject(method = "setOwner", at = @At("TAIL"))
+    private void epicfight_onSetOwner(LivingEntity owner, CallbackInfo ci) {
+        if (owner instanceof EnderDragon) {
+            this.getSelf().setDeltaMovement(0, -1, 0);
+            this.getSelf().noPhysics = false;
+        }
+    }
+
     @Inject(method = "tick", at = @At("HEAD"))
     private void epicfight_dragonBreathTick(CallbackInfo ci) {
         if (this.owner instanceof EnderDragon) {
@@ -41,7 +49,7 @@ public abstract class MixinAreaEffectCloud {
     }
 
     private void dragonBreathTick() {
-        AreaEffectCloud self = (AreaEffectCloud) (Object) this;
+        AreaEffectCloud self = this.getSelf();
         self.move(MoverType.SELF, self.getDeltaMovement());
 
         if (!self.level.isClientSide) {
@@ -54,12 +62,12 @@ public abstract class MixinAreaEffectCloud {
 
             if (this.radiusPerTick != 0.0F) {
                 f += this.radiusPerTick;
-                if (f < 0.5F) {
-                    self.discard();
-                }
-
-                this.setRadius(f);
+                this.setRadius(Math.min(f, 4.0F));
             }
         }
+    }
+
+    private AreaEffectCloud getSelf() {
+        return (AreaEffectCloud) (Object) this;
     }
 }
