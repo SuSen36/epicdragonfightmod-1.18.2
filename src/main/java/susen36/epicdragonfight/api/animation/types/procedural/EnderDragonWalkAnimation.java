@@ -15,11 +15,11 @@ import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
-public class EnderDraonWalkAnimation extends StaticAnimation implements ProceduralAnimation {
+public class EnderDragonWalkAnimation extends StaticAnimation implements ProceduralAnimation {
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransforms;
 
-	public EnderDraonWalkAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
+	public EnderDragonWalkAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
 		super(convertTime, true, path, model);
 		this.ikInfos = ikInfos;
 	}

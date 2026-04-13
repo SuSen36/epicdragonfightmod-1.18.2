@@ -7,9 +7,9 @@ import net.minecraft.world.entity.EntitySelector;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
-public class TailSweepAttackAnimation extends EnderDragonAttackAnimation {
+public class EnderDragonTailAttackAnimation extends EnderDragonAttackAnimation {
 
-	public TailSweepAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String rightFrontFoot, String path, Model dragon, IKInfo[] ikInfos) {
+	public EnderDragonTailAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String rightFrontFoot, String path, Model dragon, IKInfo[] ikInfos) {
 		super(convertTime, antic, preDelay, contact, recovery, rightFrontFoot, path, dragon, ikInfos);
 	}
 

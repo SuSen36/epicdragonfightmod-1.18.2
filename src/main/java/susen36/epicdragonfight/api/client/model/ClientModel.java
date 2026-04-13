@@ -28,7 +28,7 @@ public class ClientModel extends Model {
 		this.mesh = mesh;
 	}
 	
-	public boolean loadMeshAndProperties(ResourceManager resourceManager) {
+	public void loadMeshAndProperties(ResourceManager resourceManager) {
 		JsonModelLoader loader = new JsonModelLoader(resourceManager, this.getLocation());
 		
 		if (loader.isValidSource()) {
@@ -39,11 +39,9 @@ public class ClientModel extends Model {
 			} else {
 				throw new IllegalStateException("Parent models are not supported in this simplified implementation");
 			}
-			
-			return true;
+
 		}
-		
-		return false;
+
 	}
 	
 	public Mesh getMesh() {

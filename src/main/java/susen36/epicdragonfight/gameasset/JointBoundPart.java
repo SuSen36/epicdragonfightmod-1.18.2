@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.physics;
+package susen36.epicdragonfight.gameasset;
 
 import com.mojang.math.Vector3f;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -9,7 +9,6 @@ import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.Models;
 
 public class JointBoundPart {
 	public final EnderDragon dragon;

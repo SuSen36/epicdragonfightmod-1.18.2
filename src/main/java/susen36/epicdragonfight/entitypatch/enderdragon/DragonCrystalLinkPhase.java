@@ -71,9 +71,10 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 	@Override
 	public void end() {
 		BlockPos blockpos = this.linkingCrystal.blockPosition();
+		
 		this.dragon.nearestCrystal = null;
 		this.linkingCrystal = null;
-		
+
 		if (!this.dragonpatch.isLogicalClient()) {
 			this.dragon.level.explode(null, blockpos.getX(), blockpos.getY(), blockpos.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
 		} else {
@@ -98,7 +99,8 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 	public void doServerTick() {
 		this.chargingCount--;
 		this.dragon.ambientSoundTime = 0;
-		
+		this.dragon.nearestCrystal = this.linkingCrystal;
+
 		if (this.chargingCount > 0) {
 			this.dragon.setHealth(this.dragon.getHealth() + 0.5F);
 		}

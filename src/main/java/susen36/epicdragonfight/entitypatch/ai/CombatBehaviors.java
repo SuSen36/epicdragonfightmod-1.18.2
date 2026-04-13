@@ -165,7 +165,7 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		private boolean loopFinished;
 		
 		private BehaviorSeries(Builder<T> builder) {
-			builder.behaviors.stream().map((motionBuilder) -> motionBuilder.build()).forEach(this.behaviors::add);
+			builder.behaviors.stream().map(Behavior.Builder::build).forEach(this.behaviors::add);
 			this.looping = builder.looping;
 			this.canBeInterrupted = builder.canBeInterrupted;
 			this.weight = builder.weight;
@@ -303,6 +303,17 @@ public class CombatBehaviors<T extends IDragonPatch> {
 				
 				return this;
 			}
+			
+			public Builder<T> randomAnimationBehavior(StaticAnimation... animations) {
+				this.behavior = (mobpatch) -> {
+					if (animations.length == 0) return;
+					int randomIndex = mobpatch.getOriginal().getRandom().nextInt(animations.length);
+					mobpatch.playAnimationSynchronized(animations[randomIndex], 0.0F, this.packetProvider);
+				};
+				
+				return this;
+			}
+
 			public Builder<T> randomChance(float chance) {
 				this.predicate(new RandomChance<>(chance));
 				return this;
@@ -398,8 +409,11 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		
 		public boolean test(T mobpatch) {
 			Entity target = mobpatch.getOriginal().getTarget();
-			double degree = mobpatch.getAngleTo(target);
-			return this.minDegree < degree && degree < this.maxDegree;
+            double degree = 0;
+            if (target != null) {
+                degree = mobpatch.getAngleTo(target);
+            }
+            return this.minDegree < degree && degree < this.maxDegree;
 		}
 		
 		public static class Horizontal<T extends IDragonPatch> extends TargetWithinAngle<T> {
@@ -410,8 +424,11 @@ public class CombatBehaviors<T extends IDragonPatch> {
 			@Override
 			public boolean test(T mobpatch) {
 				Entity target = mobpatch.getOriginal().getTarget();
-				double degree = mobpatch.getAngleToHorizontal(target);
-				return this.minDegree < degree && degree < this.maxDegree;
+                double degree = 0;
+                if (target != null) {
+                    degree = mobpatch.getAngleToHorizontal(target);
+                }
+                return this.minDegree < degree && degree < this.maxDegree;
 			}
 		}
 	}
@@ -436,7 +453,7 @@ public class CombatBehaviors<T extends IDragonPatch> {
 			case GREATER_RATIO:
 				return this.value < mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
 			}
-			
+
 			return true;
 		}
 		

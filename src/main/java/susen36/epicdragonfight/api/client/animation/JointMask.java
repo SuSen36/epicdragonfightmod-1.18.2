@@ -20,7 +20,6 @@ public class JointMask {
 	public static interface BindModifier {
 		public void modify(ClientAnimator clientAnimator, Pose resultPose, Layer.Priority priority, Joint joint, Map<Layer.Priority, Pair<DynamicAnimation, Pose>> poses);
 	}
-	
 
 	public static JointMask of(String jointName, BindModifier bindModifier) {
 		return new JointMask(jointName, bindModifier);

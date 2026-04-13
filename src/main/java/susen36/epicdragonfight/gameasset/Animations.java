@@ -6,7 +6,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -32,7 +32,6 @@ import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class Animations {
 	public static StaticAnimation DUMMY_ANIMATION = new StaticAnimation();
@@ -42,10 +41,11 @@ public class Animations {
 	public static StaticAnimation DRAGON_DEATH;
 	public static StaticAnimation DRAGON_GROUND_TO_FLY;
 	public static StaticAnimation DRAGON_FLY_TO_GROUND;
+	public static StaticAnimation DRAGON_LEFT_TAIL_SWEEP;
+	public static StaticAnimation DRAGON_RIGHT_TAIL_SWEEP;
 	public static StaticAnimation DRAGON_ATTACK1;
 	public static StaticAnimation DRAGON_ATTACK2;
 	public static StaticAnimation DRAGON_ATTACK3;
-	public static StaticAnimation DRAGON_ATTACK4;
 	public static StaticAnimation DRAGON_FIREBALL;
 	public static StaticAnimation DRAGON_AIRSTRIKE;
 	public static StaticAnimation DRAGON_BACKJUMP_PREPARE;
@@ -63,7 +63,7 @@ public class Animations {
 		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.LOGICAL_CLIENT.dragon : Models.LOGICAL_SERVER.dragon;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "dragon/idle", dragon);
-		DRAGON_WALK = new EnderDraonWalkAnimation(0.35F, "dragon/walk", dragon,
+		DRAGON_WALK = new EnderDragonWalkAnimation(0.35F, "dragon/walk", dragon,
 				new IKInfo[] {
 						IKInfo.make("left_front_leg", "left_front_foot", "right_front_foot", Pair.of(0, 3), 0.12F, 0, new boolean[] {true, true, true}),
 						IKInfo.make("right_front_leg", "right_front_foot", "left_front_foot", Pair.of(2, 4), 0.12F, 2, new boolean[] {true, true}),
@@ -120,13 +120,13 @@ public class Animations {
 					DamageSource damageSource = DamageSource.mobAttack(original);
 
 					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(8.0D, 0.0D, 8.0D))) {
-						if (entity != original) {
+						if (entity != original && !(entity instanceof EnderDragonPart part && part.getParent() == original)) {
 							entity.hurt(damageSource, 6.0F);
 						}
 					}
 				}, Side.SERVER)});
 
-		DRAGON_ATTACK1 = new TailSweepAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "right_front_foot", "dragon/attack1", dragon, new IKInfo[]{
+		DRAGON_LEFT_TAIL_SWEEP = new EnderDragonTailAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "right_front_foot", "dragon/left_tail_sweep", dragon, new IKInfo[]{
 				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(2, 4), 0.12F, 0, new boolean[]{true, true}),
 				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(0, 3), 0.12F, 0, new boolean[]{false, false, false}),
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
@@ -135,7 +135,16 @@ public class Animations {
 					entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT)});
 
-		DRAGON_ATTACK2 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "right_front_foot", "dragon/attack2", dragon, new IKInfo[]{
+		DRAGON_RIGHT_TAIL_SWEEP = new EnderDragonTailAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "legft_front_foot", "dragon/right_tail_sweep", dragon, new IKInfo[]{
+				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(2, 4), 0.12F, 0, new boolean[]{true, true}),
+				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(0, 3), 0.12F, 0, new boolean[]{false, false, false}),
+				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
+				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(1, 2), 0.1344F, 0, new boolean[]{true})
+		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
+			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+		}, Side.CLIENT)});
+
+		DRAGON_ATTACK1 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "right_front_foot", "dragon/attack1", dragon, new IKInfo[]{
 				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(1, 4), 0.12F, 0, new boolean[]{true, true, true}),
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, null, 0.1344F, 0, new boolean[]{})
@@ -147,7 +156,7 @@ public class Animations {
 				}
 		}, Side.SERVER)});
 
-		DRAGON_ATTACK3 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "left_front_foot", "dragon/attack3", dragon, new IKInfo[]{
+		DRAGON_ATTACK2 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "left_front_foot", "dragon/attack2", dragon, new IKInfo[]{
 				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(1, 4), 0.12F, 0, new boolean[]{true, true, true}),
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, null, 0.1344F, 0, new boolean[]{})
@@ -159,7 +168,7 @@ public class Animations {
 			}
 		}, Side.SERVER)});
 
-		DRAGON_ATTACK4 = new EnderDragonAttackAnimation(0.35F, 0.5F, 1.15F, 1.26F, 1.9F, "root", "dragon/attack4", dragon, new IKInfo[]{
+		DRAGON_ATTACK3 = new EnderDragonAttackAnimation(0.35F, 0.5F, 1.15F, 1.26F, 1.9F, "root", "dragon/attack3", dragon, new IKInfo[]{
 				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(0, 6), 0.12F, 0, new boolean[]{false, false, false, false, true, true}),
 				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(0, 6), 0.12F, 0, new boolean[]{false, false, false, false, true, true}),
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, Pair.of(3, 8), 0.1344F, 0, new boolean[]{false, false, false, false, true}),
@@ -216,7 +225,7 @@ public class Animations {
 					DamageSource damageSource = DamageSource.mobAttack(original);
 
 					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(8.0D, 0.0D, 8.0D))) {
-						if (entity != original) {
+						if (entity != original && !(entity instanceof EnderDragonPart part && part.getParent() == original)) {
 							entity.hurt(damageSource, 8.0F);
 						}
 					}

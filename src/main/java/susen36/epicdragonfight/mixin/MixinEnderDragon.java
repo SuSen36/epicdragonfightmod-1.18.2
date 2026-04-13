@@ -43,7 +43,7 @@ import susen36.epicdragonfight.entitypatch.enderdragon.PhaseManagerPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
-import susen36.epicdragonfight.physics.JointBoundPart;
+import susen36.epicdragonfight.gameasset.JointBoundPart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,7 +199,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			}
 		}
 
-		if (this.getSelf().getPhaseManager().getCurrentPhase().isSitting()) {
+		if (this.getSelf().getPhaseManager().getCurrentPhase().isSitting() && this.getSelf().getPhaseManager().getCurrentPhase().getPhase() != PatchedPhases.CRYSTAL_LINK) {
 			this.getSelf().nearestCrystal = null;
 		}
 	}
@@ -233,6 +233,12 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		if (this.phaseManager.getCurrentPhase().getPhase() == EnderDragonPhase.DYING) {
 			return false;
 		}
+
+		Entity sourceEntity = pSource.getEntity();
+		if (sourceEntity == this.getSelf() || (sourceEntity instanceof EnderDragonPart dragonPart && dragonPart.getParent() == this.getSelf())) {
+			return false;
+		}
+
 		pDamage = this.phaseManager.getCurrentPhase().onHurt(pSource, pDamage);
 
 		if (pPart != this.head) {
