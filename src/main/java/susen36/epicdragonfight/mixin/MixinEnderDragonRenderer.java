@@ -106,7 +106,7 @@ public abstract class MixinEnderDragonRenderer{
 				poseStack.popPose();
 			}
 			if (currentPhase.getPhase() == PatchedPhases.CRYSTAL_LINK) {
-				this.renderForceField(entityIn, (DragonCrystalLinkPhase)currentPhase, buffer, poseStack, partialTicks);
+				this.renderForceField(entityIn, (DragonCrystalLinkPhase)currentPhase, buffer, poseStack, partialTicks, packedLight);
 			}
 		}
 
@@ -146,7 +146,7 @@ public abstract class MixinEnderDragonRenderer{
 		return OverlayTexture.pack(OverlayTexture.u(progression), OverlayTexture.v(entity.hurtTime > 5 || entity.deathTime > 0));
 	}
 
-	private void renderForceField(EnderDragon dragon, DragonCrystalLinkPhase phase, MultiBufferSource buffer, PoseStack poseStack, float partialTicks) {
+	private void renderForceField(EnderDragon dragon, DragonCrystalLinkPhase phase, MultiBufferSource buffer, PoseStack poseStack, float partialTicks, int packedLight) {
 		int chargingCount = phase.getChargingCount();
 		int age = DragonCrystalLinkPhase.CHARGING_TICK - chargingCount;
 
@@ -168,12 +168,12 @@ public abstract class MixinEnderDragonRenderer{
 		VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.forceField(EnderDragonRenderer.CRYSTAL_BEAM_LOCATION));
 
 		float uvOffset = (dragon.tickCount + partialTicks) * 0.02F;
-		this.renderSphereShield(poseStack, builder, uvOffset);
+		this.renderSphereShield(poseStack, builder, uvOffset, packedLight);
 
 		poseStack.popPose();
 	}
 
-	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset) {
+	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
 		Matrix4f matrix4f = poseStack.last().pose();
 		int segments = 24;
 		int rings = 16;
@@ -186,6 +186,9 @@ public abstract class MixinEnderDragonRenderer{
 			float y2 = (float)Math.cos(phi2) * radius;
 			float ringRadius1 = (float)Math.sin(phi1) * radius;
 			float ringRadius2 = (float)Math.sin(phi2) * radius;
+
+			float ringProgress1 = (float)ring / rings;
+			float ringProgress2 = (float)(ring + 1) / rings;
 
 			for (int seg = 0; seg < segments; seg++) {
 				float theta1 = (float)seg / segments * 2.0F * (float)Math.PI;
@@ -205,10 +208,13 @@ public abstract class MixinEnderDragonRenderer{
 				float v1 = (float)ring / rings + uvOffset;
 				float v2 = (float)(ring + 1) / rings + uvOffset;
 
-				builder.vertex(matrix4f, x1, y1, z1).color(1.0F, 1.0F, 1.0F, 1.0F).uv(u1, v1).uv2(240).endVertex();
-				builder.vertex(matrix4f, x2, y1, z2).color(1.0F, 1.0F, 1.0F, 1.0F).uv(u2, v1).uv2(240).endVertex();
-				builder.vertex(matrix4f, x3, y2, z3).color(1.0F, 1.0F, 1.0F, 1.0F).uv(u2, v2).uv2(240).endVertex();
-				builder.vertex(matrix4f, x4, y2, z4).color(1.0F, 1.0F, 1.0F, 1.0F).uv(u1, v2).uv2(240).endVertex();
+				int color1 = (int)(128 + ringProgress1 * 127);
+				int color2 = (int)(128 + ringProgress2 * 127);
+
+				builder.vertex(matrix4f, x1, y1, z1).color(color1, color1, color1, 255).uv(u1, v1).uv2(packedLight).endVertex();
+				builder.vertex(matrix4f, x2, y1, z2).color(color1, color1, color1, 255).uv(u2, v1).uv2(packedLight).endVertex();
+				builder.vertex(matrix4f, x3, y2, z3).color(color2, color2, color2, 255).uv(u2, v2).uv2(packedLight).endVertex();
+				builder.vertex(matrix4f, x4, y2, z4).color(color2, color2, color2, 255).uv(u1, v2).uv2(packedLight).endVertex();
 			}
 		}
 	}
