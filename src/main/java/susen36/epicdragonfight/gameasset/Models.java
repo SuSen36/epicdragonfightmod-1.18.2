@@ -23,7 +23,7 @@ public abstract class Models<T extends Model> {
 
 	public static class ServerModels extends Models<Model> {
 		public ServerModels() {
-		this.dragon = register(new ResourceLocation(EpicDragonFight.MODID, "entity/dragon"));
+			this.dragon = register(new ResourceLocation(EpicDragonFight.MODID, "dragon"));
 		}
 		
 		@Override
@@ -39,7 +39,7 @@ public abstract class Models<T extends Model> {
 		public final List<ClientModel> registeredModels = Lists.newArrayList();
 
 		public ClientModels() {
-			this.dragon = this.register(new ResourceLocation(EpicDragonFight.MODID, "entity/dragon"));
+			this.dragon = this.register(new ResourceLocation(EpicDragonFight.MODID, "dragon"));
 		}
 
 		public void loadMeshData(ResourceManager resourceManager) {
