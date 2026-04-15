@@ -204,6 +204,11 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		}
 	}
 
+	@Override
+	public EntityDimensions getDimensions(Pose pose) {
+		return EntityDimensions.scalable(3.75F, 4.25F);
+	}
+
 	@Inject(method = "tickDeath", at = @At("HEAD"))
 	private void onTickDeath(CallbackInfo ci) {
 		this.currentLivingMotion = LivingMotions.DEATH;

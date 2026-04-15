@@ -12,13 +12,13 @@ import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class JointBoundPart {
 	public final EnderDragon dragon;
-	public final PartEntity part;
+	public final PartEntity<?> part;
 	public final String jointName;
 	public final Vector3f offset;
 
 	private long pathIndex = -1;
 
-	public JointBoundPart(EnderDragon dragon, PartEntity part, String jointName, Vector3f offset) {
+	public JointBoundPart(EnderDragon dragon, PartEntity<?> part, String jointName, Vector3f offset) {
 		this.dragon = dragon;
 		this.part = part;
 		this.jointName = jointName;

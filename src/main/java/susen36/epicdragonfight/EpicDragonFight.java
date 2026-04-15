@@ -17,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.events.EntityEvents;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DraagonFightDataSerializers;
@@ -48,7 +47,6 @@ public class EpicDragonFight {
     	bus.addListener(this::doServerStuff);
     	bus.addListener(Animations::registerAnimations);
     	bus.addGenericListener(DataSerializerEntry.class, DraagonFightDataSerializers::register);
-        MinecraftForge.EVENT_BUS.register(EntityEvents.class);
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {

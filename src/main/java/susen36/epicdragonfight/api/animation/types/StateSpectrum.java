@@ -60,7 +60,7 @@ public class StateSpectrum {
 		}
 	}
 	
-	static class Blueprint {
+	public static class Blueprint {
 		StatesInTime currentState;
 		Set<StatesInTime> timePairs = Sets.newHashSet();
 		

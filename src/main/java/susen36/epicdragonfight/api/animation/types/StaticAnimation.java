@@ -185,7 +185,6 @@ public class StaticAnimation extends DynamicAnimation {
 	public Model getModel() {
 		return this.model;
 	}
-
 	
 	@Override
 	public float getPlaySpeed(IDragonPatch entitypatch) {
@@ -203,7 +202,6 @@ public class StaticAnimation extends DynamicAnimation {
 		return this;
 	}
 
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public <V> Optional<V> getProperty(AnimationProperty<V> propertyType) {
