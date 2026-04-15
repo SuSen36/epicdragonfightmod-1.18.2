@@ -78,10 +78,6 @@ public abstract class AnimationProperty<T> {
 		 */
 		public static final AttackAnimationProperty<Boolean> FIXED_MOVE_DISTANCE = new AttackAnimationProperty<Boolean> ();
 
-		/**
-		 * This property adds colliders when detecting hit entity by @MultiCollider.
-		 */
-		public static final AttackAnimationProperty<Integer> COLLIDER_ADDER = new AttackAnimationProperty<Integer> ();
 	}
 
 }

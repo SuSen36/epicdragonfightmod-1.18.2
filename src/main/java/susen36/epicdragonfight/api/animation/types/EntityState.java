@@ -70,12 +70,10 @@ public class EntityState {
 		return this.canBasicAttack;
 	}
 
-	
 	public boolean inaction() {
 		return this.inaction;
 	}
 
-	
 	public int getLevel() {
 		return this.phaseLevel;
 	}

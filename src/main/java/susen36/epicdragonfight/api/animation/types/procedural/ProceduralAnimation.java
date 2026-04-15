@@ -26,7 +26,7 @@ public interface ProceduralAnimation {
 		for (IKInfo ikInfo : ikInfos) {
 			ikInfo.pathToEndJoint = Lists.newArrayList();
 			Joint start = armature.searchJointByName(ikInfo.startJoint);
-			long pathToEnd = Long.parseLong(start.searchPath(new String(""), ikInfo.endJoint));
+			long pathToEnd = Long.parseLong(start.searchPath("", ikInfo.endJoint));
 			ikInfo.pathToEndJoint.add(start.getName());
 
 			while (pathToEnd > 0) {
