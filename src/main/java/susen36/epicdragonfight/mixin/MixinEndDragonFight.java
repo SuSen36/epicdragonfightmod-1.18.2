@@ -36,19 +36,9 @@ public abstract class MixinEndDragonFight {
     @Shadow
     private int crystalsAlive;
 
-    @Shadow protected abstract void updateCrystalCount();
-
-    @Shadow public abstract int getCrystalsAlive();
-
     @Unique
     private int getTotalCrystals() {
         return SpikeFeature.getSpikesForLevel(this.level).size();
-    }
-
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        this.dragonEvent = (ServerBossEvent)(new ServerBossEvent(new TranslatableComponent("entity.minecraft.end_crystal").append(": " + getCrystalsAlive() + "/" + getTotalCrystals()), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(false).setCreateWorldFog(false);
-        this.updateCrystalCount();
     }
 
     @Inject(method = "updateDragon", at = @At("HEAD"), cancellable = true)
