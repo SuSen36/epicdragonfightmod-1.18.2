@@ -5,14 +5,16 @@
   "package": "susen36.epicdragonfight.mixin",
   "client": [
     "MixinBufferBuilder",
-    "MixinEnderDragonRenderer",
-    "MixinEndCrystalRenderer"
+    "MixinEndCrystalRenderer",
+    "MixinEnderDragonRenderer"
   ],
   "mixins": [
     "MixinAreaEffectCloud",
     "MixinDragonFireball",
     "MixinEndCrystal",
+    "MixinEndDragonFight",
     "MixinEnderDragon",
+    "MixinSpikeFeature",
     "NaturalSpawnerMixin"
   ],
   "refmap": "epicdragonfight.mixins.refmap.json"

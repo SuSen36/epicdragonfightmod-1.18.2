@@ -2,6 +2,8 @@ package susen36.epicdragonfight.mixin;
 
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector3f;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -14,6 +16,7 @@ import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -51,6 +54,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.server.level.ServerBossEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.BossEvent;
+
+import javax.annotation.Nullable;
 
 @Mixin(EnderDragon.class)
 public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
@@ -58,7 +66,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Mutable
 	@Shadow @Final public EnderDragonPart head;
 	@Mutable
-	@Shadow private EnderDragonPart neck;
+	@Shadow @Final private EnderDragonPart neck;
 
 	@Shadow protected abstract boolean reallyHurt(DamageSource pDamageSource, float pAmount);
 
@@ -90,6 +98,8 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	public float zRootO;
 	public int shieldEndEffectAge = 10;
 	public LivingMotions prevMotion = LivingMotions.FLY;
+
+	private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(true).setCreateWorldFog(true);
 
 	private static final AttributeModifier LANDED_ARMOR_MODIFIER = new AttributeModifier(UUID.fromString("A1B2C3D4-E5F6-7890-ABCD-EF1234567890"), "Landed armor bonus", 5.0, AttributeModifier.Operation.ADDITION);
 
@@ -154,6 +164,16 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			}
 		} else {
 			this.hurtTime = 2;
+			this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
+			if (this.level instanceof ServerLevel serverLevel) {
+				EndDragonFight dragonFight = serverLevel.dragonFight();
+				if (dragonFight != null && this.getUUID().equals(dragonFight.dragonUUID)) {
+					this.bossEvent.setColor(net.minecraft.world.BossEvent.BossBarColor.PURPLE);
+				} else {
+					this.bossEvent.setColor(net.minecraft.world.BossEvent.BossBarColor.PINK);
+				}
+			}
+
 			this.getSensing().tick();
 			this.updateMotion(true);
 
@@ -298,6 +318,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@OnlyIn(Dist.CLIENT)
+	@Override
 	public void initAnimator(ClientAnimator clientAnimator) {
 		for (Map.Entry<LivingMotions, StaticAnimation> livingmotionEntry : this.livingMotions.entrySet()) {
 			clientAnimator.addLivingAnimation(livingmotionEntry.getKey(), livingmotionEntry.getValue());
@@ -305,6 +326,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		clientAnimator.setCurrentMotionsAsDefault();
 	}
 
+	@Override
 	public void updateMotion(boolean considerInaction) {
 		if (this.getHealth() <= 0.0F) {
 			currentLivingMotion = LivingMotions.DEATH;
@@ -327,6 +349,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		}
 	}
 
+	@Override
 	public void updateTipPoints() {
 		for (Map.Entry<String, TipPointAnimation> entry : this.tipPointAnimations.entrySet()) {
 			if (entry.getValue().isOnWorking()) {
@@ -359,6 +382,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		}
 	}
 
+	@Override
 	public void resetTipAnimations() {
 		this.tipPointAnimations.clear();
 	}
@@ -398,6 +422,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		ci.cancel();
 	}
 
+	@Override
 	public void setFlyingPhase() {
 		this.groundPhase = false;
 		this.horizontalCollision = false;
@@ -405,6 +430,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		this.updateArmorModifier();
 	}
 
+	@Override
 	public void setGroundPhase() {
 		this.groundPhase = true;
 		this.updateArmorModifier();
@@ -423,11 +449,31 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		}
 	}
 
+	@Override
+	public void startSeenByPlayer(ServerPlayer player) {
+		super.startSeenByPlayer(player);
+		this.bossEvent.addPlayer(player);
+	}
+
+	@Override
+	public void stopSeenByPlayer(ServerPlayer player) {
+		super.stopSeenByPlayer(player);
+		this.bossEvent.removePlayer(player);
+	}
+
+	@Override
+	public void setCustomName(@Nullable Component name) {
+		super.setCustomName(name);
+		this.bossEvent.setName(this.getDisplayName());
+	}
+
+	@Override
 	public boolean isGroundPhase() {
 		return this.groundPhase;
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <M extends Model> M getEntityModel(Models<M> modelDB) {
 		if (modelDB == null) {
 			return (M) Models.LOGICAL_SERVER.dragon;
@@ -441,30 +487,37 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@SuppressWarnings("unchecked")
+	@Override
 	public <A extends Animator> A getAnimator() {
 		return (A) this.animator;
 	}
 
+	@Override
 	public ClientAnimator getClientAnimator() {
 		return this.getAnimator();
 	}
 
+	@Override
 	public EntityState getEntityState() {
 		return this.state;
 	}
 
+	@Override
 	public void updateEntityState() {
 		this.state = this.animator.getEntityState();
 	}
 
+	@Override
 	public LivingMotions getCurrentLivingMotion() {
 		return this.currentLivingMotion;
 	}
 
+	@Override
 	public TipPointAnimation getTipPointAnimation(String jointName) {
 		return this.tipPointAnimations.get(jointName);
 	}
 
+	@Override
 	public void addTipPointAnimation(String jointName, Vector3f initpos, TransformSheet transformSheet, IKInfo ikSetter) {
 		this.tipPointAnimations.put(jointName, new TipPointAnimation(transformSheet, initpos, ikSetter));
 	}

@@ -155,7 +155,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 							breatharea.setOwner(this.dragon);
 							breatharea.setWaitTime(0);
 							breatharea.setRadius(0.5F);
-							breatharea.setDuration(20);
+							breatharea.setDuration(40);
 							breatharea.setRadiusPerTick(0.2F);
 							breatharea.setParticle(ParticleTypes.DRAGON_BREATH);
 							breatharea.addEffect(new MobEffectInstance(MobEffects.HARM, 1, 1));
