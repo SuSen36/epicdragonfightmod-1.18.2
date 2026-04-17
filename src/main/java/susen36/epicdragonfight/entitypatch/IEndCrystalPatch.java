@@ -7,5 +7,5 @@ public interface IEndCrystalPatch {
 
 	boolean hasShield();
 
-	void setHasShield(boolean shield);
+	void setShield(boolean shield);
 }

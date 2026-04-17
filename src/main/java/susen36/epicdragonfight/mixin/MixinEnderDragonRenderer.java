@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -17,6 +16,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -43,11 +43,12 @@ public abstract class MixinEnderDragonRenderer{
 		}
 	}
 
+	@Unique
 	private void render(EnderDragon entityIn, IDragonPatch entitypatch, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
 		ClientModel model = Models.LOGICAL_CLIENT.dragon;
 		Armature armature = model.getArmature();
 		poseStack.pushPose();
-		this.mulPoseStack(poseStack, armature, entityIn, entitypatch, partialTicks);
+		this.mulPoseStack(poseStack, entityIn, entitypatch, partialTicks);
 		OpenMatrix4f[] poses = this.getPoseMatrices(entitypatch, armature, partialTicks);
 		poses[0] = OpenMatrix4f.rotate(-90.0F, Vector3f.XP, poses[0], null);
 
@@ -113,7 +114,7 @@ public abstract class MixinEnderDragonRenderer{
 	}
 
 	@SuppressWarnings("deprecation")
-	private void mulPoseStack(PoseStack matStack, Armature armature, EnderDragon entityIn, IDragonPatch entitypatch, float partialTicks) {
+	private void mulPoseStack(PoseStack matStack, EnderDragon entityIn, IDragonPatch entitypatch, float partialTicks) {
 		OpenMatrix4f modelMatrix;
 
 		if (!entitypatch.isGroundPhase() || entitypatch.getOriginal().dragonDeathTime > 0) {

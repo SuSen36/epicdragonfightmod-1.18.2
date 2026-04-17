@@ -70,7 +70,7 @@ public class Animations {
 						IKInfo.make("left_hind_leg", "left_hind_foot", "right_hind_foot", Pair.of(2, 4), 0.1344F, 4, new boolean[] {true, true}),
 						IKInfo.make("right_hind_leg", "right_hind_foot", "left_hind_foot", Pair.of(0, 3), 0.1344F, 2, new boolean[] {true, true, true})
 				});
-		DRAGON_FLY = new StaticAnimation(0.35F, true, "fly", dragon)
+		DRAGON_FLY = new EnderDragonFlyingAnimation(0.35F, "fly", dragon)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.4F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
 
 		DRAGON_DEATH = new EnderDragonDeathAnimation(1.0F, "death", dragon);
@@ -193,7 +193,7 @@ public class Animations {
 			Entity target = entitypatch.getOriginal().getTarget();
 			Vec3 pos = original.getParts()[0].position();
 			if(target == null)return;
-			Vec3 toTarget = target.position().subtract(original.position()).normalize().scale(original.getBbWidth() * 0.5D);
+			Vec3 toTarget = target.position().subtract(original.position()).normalize().scale(0.5D);
 			double d6 = (float) (pos.x + toTarget.x);
 			double d7 = (float) (pos.y);
 			double d8 = (float) (pos.z + toTarget.z);
@@ -207,7 +207,7 @@ public class Animations {
 			dragonFireball.moveTo(d6, d7, d8, 0.0F, 0.0F);
 			original.level.addFreshEntity(dragonFireball);
 		}, Side.SERVER)});
-		DRAGON_AIRSTRIKE = new StaticAnimation(0.35F, true, "airstrike", dragon)
+		DRAGON_AIRSTRIKE = new EnderDragonFlyingAnimation(0.35F, "airstrike", dragon)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
 
 		DRAGON_BACKJUMP_PREPARE = new EnderDragonActionAnimation(0.35F, "backjump_prepare", dragon, new IKInfo[]{

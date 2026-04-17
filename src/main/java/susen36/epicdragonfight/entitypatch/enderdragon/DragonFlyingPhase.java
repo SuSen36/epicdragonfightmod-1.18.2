@@ -1,17 +1,23 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.phys.Vec3;
 
+import susen36.epicdragonfight.gameasset.Animations;
+
 import javax.annotation.Nullable;
-import java.util.List;
 
 public class DragonFlyingPhase extends PatchedDragonPhase {
+	
 	private Path currentPath;
 	private Vec3 targetLocation;
 	private boolean clockwise;
@@ -52,23 +58,39 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 	
 	private void findNewTarget() {
 		if (this.currentPath != null && this.currentPath.isDone()) {
-			List<Player> players = this.getPlayersNearbyWithin(100.0D);
-			
-			for (Player player : players) {
-				if (isValidTarget(player)) {
-					if (!this.executeAirstrike && this.dragon.getRandom().nextFloat() > (this.dragon.getDragonFight() != null ? this.dragon.getDragonFight().getCrystalsAlive() : 0) * 0.1F) {
-						if (isInEndSpikes(player)) {
-							this.executeAirstrike = true;
-						}
-						
-						this.dragonpatch.setAttakTargetSync(player);
-						this.dragon.getPhaseManager().setPhase(PatchedPhases.AIRSTRIKE);
-					} else if (isInEndSpikes(player)) {
-						this.dragon.getPhaseManager().setPhase(PatchedPhases.LANDING);
-					}
-					return;
-				}
+			int crystalsAlive = this.dragon.getDragonFight() != null ? this.dragon.getDragonFight().getCrystalsAlive() : 0;
+
+			LivingEntity target = this.getSelectedTarget();
+
+			if (target == null) {
+				return;
 			}
+
+			if (isInEndSpikes(target) && !target.isOnGround()) {
+				if (this.dragon.getRandom().nextInt(crystalsAlive / 2 + 2) == 0) {
+					this.dragon.getPhaseManager().setPhase(PatchedPhases.LANDING);
+				}
+				return;
+			}
+
+			BlockPos blockpos = this.dragon.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
+			double d0 = blockpos.distToCenterSqr(target.position()) / 512.0D;
+				
+				if (!isWithinAltarVerticalRange(target) && (this.dragon.getRandom().nextInt(Mth.abs((int)d0) + 2) == 0 || this.dragon.getRandom().nextFloat() < 0.05F + crystalsAlive * crystalsAlive * 0.007F)) {
+				this.dragonpatch.setAttakTargetSync(target);
+				this.dragon.getPhaseManager().setPhase(PatchedPhases.CHARGE);
+			}else if (isWithinAltarVerticalRange(target) &&!this.executeAirstrike && this.dragon.getRandom().nextFloat() > crystalsAlive * 0.15F) {
+					if (isInEndSpikes(target)) {
+						this.executeAirstrike = true;
+					}
+					this.dragonpatch.setAttakTargetSync(target);
+					this.dragon.getPhaseManager().setPhase(PatchedPhases.AIRSTRIKE);
+				} else {
+					//TODO:之后会做龙的飞行版的发射fireball
+					//this.dragonpatch.setAttakTargetSync(target);
+					//this.dragonpatch.getAnimator().playAnimation(Animations.DRAGON_FLYING_FIREBALL, 0);
+				}
+				return;
 		}
 		
 		if (this.currentPath == null || this.currentPath.isDone()) {
@@ -97,8 +119,7 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 				k = k + 12;
 			}
 			
-			this.currentPath = this.dragon.findPath(j, k, (Node)null);
-			
+			this.currentPath = this.dragon.findPath(j, k, null);
 			if (this.currentPath != null) {
 				this.currentPath.advance();
 			}

@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -19,6 +19,7 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.procedural.IKInfo;
 import susen36.epicdragonfight.api.animation.types.procedural.TipPointAnimation;
+
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
@@ -26,12 +27,10 @@ import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
 
-import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 
 public interface IDragonPatch {
-
-	TargetingConditions DRAGON_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight();
 
 	@NotNull
 	EnderDragon getOriginal();
@@ -55,7 +54,17 @@ public interface IDragonPatch {
 
     boolean isGroundPhase();
 
-    <M extends Model> M getEntityModel(Models<M> modelDB);
+	EnderDragonPart getHeadPart();
+
+	EnderDragonPart getBodyPart();
+
+	EnderDragonPart[] getTailParts();
+
+	EnderDragonPart[] getNeckParts();
+
+	EnderDragonPart[] getWingParts();
+
+	<M extends Model> M getEntityModel(Models<M> modelDB);
 
 	void updateEntityState();
 
@@ -68,11 +77,14 @@ public interface IDragonPatch {
 
 	<A extends Animator> A getAnimator();
 
-    ClientAnimator getClientAnimator();
+	@OnlyIn(Dist.CLIENT)
+	ClientAnimator getClientAnimator();
 
 	EntityState getEntityState();
 
     LivingMotions getCurrentLivingMotion();
+
+	Map<LivingMotions, StaticAnimation> getLivingMotions();
 
 	TipPointAnimation getTipPointAnimation(String jointName);
 

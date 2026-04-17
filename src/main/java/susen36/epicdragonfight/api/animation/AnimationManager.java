@@ -20,7 +20,7 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 	private String modid;
 	private int namespaceHash;
 	private int counter = 0;
-	
+
 	public StaticAnimation findAnimationById(int namespaceId, int animationId) {
 		if (this.animationById.containsKey(namespaceId)) {
 			Map<Integer, StaticAnimation> map = this.animationById.get(namespaceId);
@@ -31,11 +31,11 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 		throw new IllegalArgumentException("Unable to find animation. id: " + animationId + ", namespcae hash: " + namespaceId);
 	}
 
-	
+
 	public void registerAnimations() {
 		Map<String, Runnable> registryMap = Maps.newHashMap();
 		ModLoader.get().postEvent(new AnimationRegistryEvent(registryMap));
-		
+
 		registryMap.forEach((key, value) -> {
             this.modid = key;
             this.namespaceHash = this.modid.hashCode();
@@ -44,7 +44,7 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
             value.run();
         });
 	}
-	
+
 	public void loadAnimationsInit(ResourceManager resourceManager) {
 		this.animationById.values().forEach((map) -> {
 			map.values().forEach((animation) -> {
@@ -53,7 +53,7 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 			});
 		});
 	}
-	
+
 	@Override
 	protected Map<Integer, Map<Integer, StaticAnimation>> prepare(ResourceManager resourceManager, ProfilerFiller profilerIn) {
 		if (EpicDragonFight.isPhysicalClient()) {
@@ -63,10 +63,10 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 				});
 			});
 		}
-		
+
 		return this.animationById;
 	}
-	
+
 	@Override
 	protected void apply(Map<Integer, Map<Integer, StaticAnimation>> objectIn, ResourceManager resourceManager, ProfilerFiller profilerIn) {
 		objectIn.values().forEach((map) -> {
@@ -75,42 +75,40 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 			});
 		});
 	}
-	
+
 	private void setAnimationProperties(ResourceManager resourceManager, StaticAnimation animation) {
 		if (resourceManager == null) {
 			return;
 		}
+
 		ResourceLocation location = animation.getLocation();
 		String path = location.getPath();
 		int last = location.getPath().lastIndexOf('/');
+
 		if (last > 0) {
 			ResourceLocation dataLocation = new ResourceLocation(location.getNamespace(), String.format("%s/data%s.json", path.substring(0, last), path.substring(last)));
-			if (resourceManager.hasResource(dataLocation)) {
-				try {
-					AnimationDataReader.readAndApply(animation, resourceManager.getResource(dataLocation));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
+			if (resourceManager.getResource(dataLocation).isPresent()) {
+                AnimationDataReader.readAndApply(animation, resourceManager.getResource(dataLocation).get());
+            }
 		}
 	}
-	
+
 	public String getModid() {
 		return this.modid;
 	}
-	
+
 	public int getNamespaceHash() {
 		return this.namespaceHash;
 	}
-	
+
 	public int getIdCounter() {
 		return this.counter++;
 	}
-	
+
 	public Map<Integer, StaticAnimation> getIdMap() {
 		return this.animationById.get(this.namespaceHash);
 	}
-	
+
 	public Map<ResourceLocation, StaticAnimation> getNameMap() {
 		return this.animationByName;
 	}

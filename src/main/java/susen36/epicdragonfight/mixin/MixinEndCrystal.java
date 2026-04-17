@@ -43,7 +43,7 @@ public abstract class MixinEndCrystal implements IEndCrystalPatch {
 	}
 
 	@Override
-	public void setHasShield(boolean shield) {
+	public void setShield(boolean shield) {
 		getSelf().getEntityData().set(DATA_HAS_SHIELD, shield);
 	}
 
@@ -66,8 +66,7 @@ public abstract class MixinEndCrystal implements IEndCrystalPatch {
 				}
 			}
 		}
-
-		self.getEntityData().set(DATA_HAS_SHIELD, shouldHaveShield);
+		this.setShield(shouldHaveShield);
 	}
 
 	@Inject(at = @At(value = "HEAD"), method = "hurt", cancellable = true)

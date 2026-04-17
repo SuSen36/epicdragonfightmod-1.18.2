@@ -250,9 +250,9 @@ public class OpenMatrix4f {
 	}
 	
 	public static Vec3 transform(OpenMatrix4f matrix, Vec3 src) {
-		double x = matrix.m00 * src.x + matrix.m10 * src.y + matrix.m20 * src.z + matrix.m30 * 1.0F;
-		double y = matrix.m01 * src.x + matrix.m11 * src.y + matrix.m21 * src.z + matrix.m31 * 1.0F;
-		double z = matrix.m02 * src.x + matrix.m12 * src.y + matrix.m22 * src.z + matrix.m32 * 1.0F;
+		double x = matrix.m00 * src.x + matrix.m10 * src.y + matrix.m20 * src.z + matrix.m30;
+		double y = matrix.m01 * src.x + matrix.m11 * src.y + matrix.m21 * src.z + matrix.m31;
+		double z = matrix.m02 * src.x + matrix.m12 * src.y + matrix.m22 * src.z + matrix.m32;
 		
 		return new Vec3(x, y ,z);
 	}
@@ -382,7 +382,6 @@ public class OpenMatrix4f {
 			return null;
 		}
 	}
-
 	
 	public OpenMatrix4f translate(Vector3f vec) {
 		return translate(vec, this);

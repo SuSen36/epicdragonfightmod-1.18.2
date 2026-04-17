@@ -11,15 +11,17 @@ import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class JointBoundPart {
-	public final EnderDragon dragon;
 	public final PartEntity<?> part;
 	public final String jointName;
 	public final Vector3f offset;
 
 	private long pathIndex = -1;
 
-	public JointBoundPart(EnderDragon dragon, PartEntity<?> part, String jointName, Vector3f offset) {
-		this.dragon = dragon;
+	public JointBoundPart(PartEntity<?> part, String jointName) {
+		this(part,jointName,Vector3f.ZERO);
+	}
+
+	public JointBoundPart(PartEntity<?> part, String jointName, Vector3f offset) {
 		this.part = part;
 		this.jointName = jointName;
 		this.offset = offset;
@@ -34,21 +36,19 @@ public class JointBoundPart {
 
 		if (this.pathIndex == -1) {
 			this.pathIndex = armature.searchPathIndex(this.jointName);
-		}
-
-		if (this.pathIndex != -1) {
-			Vec3 worldPos = this.getJointWorldPosition(dragonPatch, armature);
+		}else if (this.pathIndex != -1) {
+			Vec3 worldPos = this.getJointWorldPosition(dragonPatch, armature, 1.0F);
 			if (worldPos != null) {
 				this.part.setPos(worldPos.x, worldPos.y - this.part.getBbHeight() * 0.5F, worldPos.z);
 			}
 		}
 	}
 
-	public Vec3 getJointWorldPosition(IDragonPatch dragonPatch, Armature armature) {
-		Pose pose = dragonPatch.getAnimator().getPose(1.0F);
+	public Vec3 getJointWorldPosition(IDragonPatch dragonPatch, Armature armature, float partialTicks) {
+		Pose pose = dragonPatch.getAnimator().getPose(partialTicks);
 		OpenMatrix4f jointTransform = Animator.getBindedJointTransformByIndex(pose, armature, this.pathIndex);
 
-		OpenMatrix4f modelMatrix = dragonPatch.getModelMatrix(1.0F);
+		OpenMatrix4f modelMatrix = dragonPatch.getModelMatrix(partialTicks);
 		OpenMatrix4f worldTransform = OpenMatrix4f.mul(modelMatrix, jointTransform, null);
 
 		Vector3f jointPos = worldTransform.toTranslationVector();
@@ -57,10 +57,11 @@ public class JointBoundPart {
 		float worldY = jointPos.y();
 		float worldZ = -jointPos.z();
 
+		EnderDragon dragon = dragonPatch.getOriginal();
 		return new Vec3(
-			this.dragon.getX() + worldX + this.offset.x(),
-			this.dragon.getY() + worldY + this.offset.y(),
-			this.dragon.getZ() + worldZ + this.offset.z()
+			dragon.getX() + worldX + this.offset.x(),
+			dragon.getY() + worldY + this.offset.y(),
+			dragon.getZ() + worldZ + this.offset.z()
 		);
 	}
 }

@@ -6,7 +6,8 @@
   "client": [
     "MixinBufferBuilder",
     "MixinEndCrystalRenderer",
-    "MixinEnderDragonRenderer"
+    "MixinEnderDragonRenderer",
+    "MixinEnderDragonClient"
   ],
   "mixins": [
     "MixinAreaEffectCloud",
@@ -14,8 +15,7 @@
     "MixinEndCrystal",
     "MixinEndDragonFight",
     "MixinEnderDragon",
-    "MixinSpikeFeature",
-    "NaturalSpawnerMixin"
+    "MixinSpikeFeature"
   ],
   "refmap": "epicdragonfight.mixins.refmap.json"
 }

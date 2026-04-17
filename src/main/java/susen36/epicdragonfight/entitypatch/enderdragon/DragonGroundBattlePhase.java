@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -10,7 +9,6 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.PathNavigationRegion;
 import net.minecraft.world.level.pathfinder.NodeEvaluator;
 import net.minecraft.world.level.pathfinder.Path;
@@ -27,10 +25,12 @@ import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
 import java.util.List;
 
 public class DragonGroundBattlePhase extends PatchedDragonPhase {
-	private List<Player> recognizedPlayers = Lists.newArrayList();
+	private static final int GROUND_BATTLE_MAX_TICKS = 600;
+	
 	private PathFinder pathFinder;
 	private int aggroCounter;
 	private int noPathWarningCounter;
+	private int groundBattleTickCounter;
 	CombatBehaviors<IDragonPatch> combatBehaviors;
 	
 	public DragonGroundBattlePhase(EnderDragon dragon) {
@@ -47,83 +47,74 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	@Override
 	public void begin() {
 		this.dragonpatch.setGroundPhase();
+		int crystalsAlive = this.dragon.getDragonFight() != null ? this.dragon.getDragonFight().getCrystalsAlive() : 0;
+		int crystalsDestroyed = 10 - crystalsAlive;
+		this.groundBattleTickCounter = GROUND_BATTLE_MAX_TICKS + crystalsDestroyed * 120;
 	}
 	
 	@Override
 	public void doServerTick() {
+		if (this.groundBattleTickCounter > 0) {
+			--this.groundBattleTickCounter;
+		}
+		
 		LivingEntity target = this.dragon.getTarget();
 		
-		if (target != null) {
-			if (isValidTarget(target) && isInEndSpikes(target)) {
-				EntityState state = this.dragonpatch.getEntityState();
-				this.combatBehaviors.tick();
-				--this.aggroCounter;
-				
-				if (this.combatBehaviors.hasActivatedMove()) {
-					if (state.canBasicAttack()) {
-						CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.tryProceed();
-						
-						if (result != null) {
-							result.execute(this.dragonpatch);
-						}
-					}
-				} else {
-					if (!state.inaction()) {
-						CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
-						
-						if (result != null) {
-							result.execute(this.dragonpatch);
-						} else {
-							if (this.dragon.tickCount % 20 == 0) {
-								if (!this.checkTargetPath(target)) {
-									if (this.noPathWarningCounter++ >= 3) {
-										this.fly();
-									}
-								} else {
-									this.noPathWarningCounter = 0;
-								}
-							}
-							
-							double dx = target.getX() - this.dragon.getX();
-							double dz = target.getZ() - this.dragon.getZ();
-							float yRot = 180.0F - (float) Math.toDegrees(Mth.atan2(dx, dz));
-							this.dragon.setYRot(MathUtils.rotlerp(this.dragon.getYRot(), yRot, 6.0F));
-							Vec3 forward = this.dragon.getForward().scale(-0.25F);
-							this.dragon.move(MoverType.SELF, forward);
-						}
-					} else {
-						if (this.aggroCounter < 0) {
-							this.aggroCounter = 200;
-							this.searchNearestTarget();
-						}
+		if (isValidTarget(target)) {
+			EntityState state = this.dragonpatch.getEntityState();
+			this.combatBehaviors.tick();
+			--this.aggroCounter;
+
+			if (this.combatBehaviors.hasActivatedMove()) {
+				if (state.canBasicAttack()) {
+					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.tryProceed();
+
+					if (result != null) {
+						result.execute(this.dragonpatch);
 					}
 				}
 			} else {
-				if (!this.dragonpatch.getEntityState().inaction()) {
-					this.searchNearestTarget();
+				if (!state.inaction()) {
+					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
+
+					if (result != null) {
+						result.execute(this.dragonpatch);
+					} else {
+						if (this.dragon.tickCount % 20 == 0) {
+							if (!this.checkTargetPath(target)) {
+								if (this.noPathWarningCounter++ >= 3) {
+									this.fly();
+								}
+							} else {
+								this.noPathWarningCounter = 0;
+							}
+						}
+
+						double dx = target.getX() - this.dragon.getX();
+						double dz = target.getZ() - this.dragon.getZ();
+						float yRot = 180.0F - (float) Math.toDegrees(Mth.atan2(dx, dz));
+						this.dragon.setYRot(MathUtils.rotlerp(this.dragon.getYRot(), yRot, 6.0F));
+						Vec3 forward = this.dragon.getForward().scale(-0.25F);
+						this.dragon.move(MoverType.SELF, forward);
+					}
+				} else {
+					if (this.aggroCounter < 0) {
+						this.aggroCounter = 200;
+						this.searchNearestTarget();
+					}
 				}
 			}
 		} else {
 			this.searchNearestTarget();
-			
 			if (this.dragon.getTarget() == null && !this.dragonpatch.getEntityState().inaction()) {
-				this.dragonpatch.playAnimationSynchronized(Animations.DRAGON_GROUND_TO_FLY, 0.0F);
-				this.dragon.getPhaseManager().setPhase(PatchedPhases.FLYING);
-				((DragonFlyingPhase)this.dragon.getPhaseManager().getCurrentPhase()).enableAirstrike();
+				this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_IDLE);
 			}
 		}
 	}
 	
 	@Override
 	public float onHurt(DamageSource damagesource, float amount) {
-
-			return super.onHurt(damagesource, amount*0.8F);
-		}
-
-	
-	private void refreshNearbyPlayers(double within) {
-		this.recognizedPlayers.clear();
-		this.recognizedPlayers.addAll(this.getPlayersNearbyWithin(within));
+		return super.onHurt(damagesource, amount * 0.8F);
 	}
 	
 	private boolean checkTargetPath(LivingEntity target) {
@@ -152,30 +143,13 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	}
 	
 	private void searchNearestTarget() {
-		this.refreshNearbyPlayers(60.0F);
-		
-		if (this.recognizedPlayers.size() > 0) {
-			int nearestPlayerIndex = 0;
-			double nearestDistance = this.recognizedPlayers.get(0).distanceToSqr(this.dragon);
-			
-			for (int i = 1; i < this.recognizedPlayers.size(); i++) {
-				double distance = this.recognizedPlayers.get(i).distanceToSqr(this.dragon);
-				
-				if (distance < nearestDistance) {
-					nearestPlayerIndex = i;
-					nearestDistance = distance;
-				}
-			}
-			
-			Player nearestPlayer = this.recognizedPlayers.get(nearestPlayerIndex);
-			
-			if (isValidTarget(nearestPlayer) && isInEndSpikes(nearestPlayer)) {
-				this.dragonpatch.setAttakTargetSync(nearestPlayer);
-				return;
-			}
+		LivingEntity target = this.getSelectedTarget();
+
+		if (target != null && isInEndSpikes(target)) {
+			this.dragonpatch.setAttakTargetSync(target);
+		} else {
+			this.dragonpatch.setAttakTargetSync(null);
 		}
-		
-		this.dragonpatch.setAttakTargetSync(null);
 	}
 	
 	public void fly() {

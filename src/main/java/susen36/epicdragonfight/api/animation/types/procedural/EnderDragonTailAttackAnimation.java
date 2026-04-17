@@ -25,8 +25,8 @@ public class EnderDragonTailAttackAnimation extends EnderDragonAttackAnimation {
 				Entity[] allParts = original.getParts();
 				EnderDragonPart[] tails = { (EnderDragonPart) allParts[3], (EnderDragonPart) allParts[4], (EnderDragonPart) allParts[5], (EnderDragonPart) allParts[allParts.length - 3], (EnderDragonPart) allParts[allParts.length - 2], (EnderDragonPart) allParts[allParts.length - 1] };
 				for (EnderDragonPart tail : tails) {
-					original.knockBack(original.level.getEntities(original, tail.getBoundingBox().inflate(2.5F), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
-					original.hurt(original.level.getEntities(original, tail.getBoundingBox().inflate(2.5F), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+					original.knockBack(original.level.getEntities(original, tail.getBoundingBox().inflate(2.0F), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
+					original.hurt(original.level.getEntities(original, tail.getBoundingBox().inflate(2.0F), EntitySelector.NO_CREATIVE_OR_SPECTATOR));
 				}
 			}
 		}

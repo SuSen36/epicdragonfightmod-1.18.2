@@ -1,15 +1,11 @@
 package susen36.epicdragonfight.mixin;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.network.protocol.game.ClientboundBossEventPacket;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import org.spongepowered.asm.mixin.*;
@@ -17,11 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
 
 @Mixin(EndDragonFight.class)
 public abstract class MixinEndDragonFight {
@@ -41,6 +33,12 @@ public abstract class MixinEndDragonFight {
         return SpikeFeature.getSpikesForLevel(this.level).size();
     }
 
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void epicfight_initBossBar(CallbackInfo ci) {
+        dragonEvent.setOverlay(BossEvent.BossBarOverlay.NOTCHED_10);
+        updateCrystalBossBar();
+    }
+
     @Inject(method = "updateDragon", at = @At("HEAD"), cancellable = true)
     private void onUpdateDragon(EnderDragon dragon, CallbackInfo ci) {
         updateCrystalBossBar();
@@ -49,7 +47,7 @@ public abstract class MixinEndDragonFight {
 
     @ModifyConstant(method = "tick", constant = @Constant(intValue = 100))
     private int epicfight_fasterCrystalScan(int original) {
-        return 20;
+        return 10;
     }
 
     @Unique
@@ -58,9 +56,9 @@ public abstract class MixinEndDragonFight {
         int alive = Mth.clamp(this.crystalsAlive, 0, total);
         this.dragonEvent.setProgress((float)alive / total);
 
-        Component name = new TranslatableComponent(
+        Component name = Component.translatable(
             "entity.minecraft.end_crystal"
-        ).append(": " + this.crystalsAlive + "/" + total);
+        ).append(": ").append(Component.literal(this.crystalsAlive + "/" + total));
         this.dragonEvent.setName(name);
     }
 }

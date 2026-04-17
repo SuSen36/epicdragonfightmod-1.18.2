@@ -39,9 +39,7 @@ public class ClientModel extends Model {
 			} else {
 				throw new IllegalStateException("Parent models are not supported in this simplified implementation");
 			}
-
 		}
-
 	}
 	
 	public Mesh getMesh() {

@@ -74,8 +74,8 @@ public class JsonModelLoader {
 				in.setLenient(true);
 				this.rootJson = Streams.parse(in).getAsJsonObject();	
 			} else {
-				Resource resource = resourceManager.getResource(resourceLocation);
-				JsonReader in = new JsonReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+				Resource resource = resourceManager.getResource(resourceLocation).get();
+				JsonReader in = new JsonReader(new InputStreamReader(resource.open(), StandardCharsets.UTF_8));
 				in.setLenient(true);
 				this.rootJson = Streams.parse(in).getAsJsonObject();
 			}

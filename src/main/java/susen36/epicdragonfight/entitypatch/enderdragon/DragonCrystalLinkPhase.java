@@ -4,10 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
@@ -61,7 +64,12 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 			}
 		} else {
 			if (!this.dragonpatch.isLogicalClient()) {
-				int healCorrection = this.getPlayersNearbyWithin(150.0D).size() - 1;
+				List<Player> nearbyPlayers = this.dragon.level.getNearbyPlayers(
+					TargetingConditions.forCombat().ignoreLineOfSight(), 
+					this.dragon, 
+					this.dragon.getBoundingBox().inflate(120.0F)
+				);
+				int healCorrection = nearbyPlayers.size() - 1;
 				float getHeal = HEAL_AMOUNT + 10.0F * healCorrection;
 				this.dragon.heal(getHeal);
 			}

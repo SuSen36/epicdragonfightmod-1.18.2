@@ -1,13 +1,11 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
-import java.util.List;
-
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.AbstractDragonPhaseInstance;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
@@ -27,15 +25,28 @@ public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
 	}
 	
 	protected static boolean isValidTarget(LivingEntity entity) {
-		return entity.canBeSeenAsEnemy();
+		return entity != null && entity.canBeSeenAsEnemy();
 	}
 	
 	protected static boolean isInEndSpikes(LivingEntity entity) {
 		BlockPos blockpos = entity.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
-		return blockpos.distSqr(new Vec3i(entity.getX(), blockpos.getY(), entity.getZ())) < 2000.0D;
+		double dx = entity.getX() - blockpos.getX();
+		double dz = entity.getZ() - blockpos.getZ();
+		return dx * dx + dz * dz < 400.0D && Math.abs(entity.getY() - blockpos.getY()) <= 10.0D;
+	}
+
+	protected static boolean isWithinAltarVerticalRange(LivingEntity entity) {
+		BlockPos blockpos = entity.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
+		double yDiff = entity.getY() - blockpos.getY();
+		return yDiff <= 12.0D;
 	}
 	
-	protected List<Player> getPlayersNearbyWithin(double within) {
-		return this.dragon.level.getNearbyPlayers(IDragonPatch.DRAGON_TARGETING, this.dragon, this.dragon.getBoundingBox().inflate(within, within, within));
+	@Nullable
+	protected LivingEntity getSelectedTarget() {
+		LivingEntity target = this.dragon.getTarget();
+		if (isValidTarget(target)) {
+			return target;
+		}
+		return null;
 	}
 }

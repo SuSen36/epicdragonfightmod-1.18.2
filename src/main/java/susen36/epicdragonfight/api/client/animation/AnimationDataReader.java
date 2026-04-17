@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.api.client.animation;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -31,7 +32,15 @@ public class AnimationDataReader {
 	};
 	
 	public static void readAndApply(StaticAnimation animation, Resource iresource) {
-		InputStream inputstream = iresource.getInputStream();
+		InputStream inputstream = null;
+
+		try {
+			inputstream = iresource.open();
+		} catch (IOException var5) {
+			var5.printStackTrace();
+		}
+
+		assert inputstream != null;
         Reader reader = new InputStreamReader(inputstream, StandardCharsets.UTF_8);
         AnimationDataReader propertySetter = GsonHelper.fromJson(GSON, reader, TYPE);
 

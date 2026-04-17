@@ -7,8 +7,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
@@ -19,13 +20,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.entity.PartEntity;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import susen36.epicdragonfight.EpicDragonFight;
@@ -36,13 +36,10 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.procedural.IKInfo;
 import susen36.epicdragonfight.api.animation.types.procedural.TipPointAnimation;
-import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.entitypatch.enderdragon.DragonAirstrikePhase;
-import susen36.epicdragonfight.entitypatch.enderdragon.PatchedDragonPhase;
-import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
-import susen36.epicdragonfight.entitypatch.enderdragon.PhaseManagerPatch;
+import susen36.epicdragonfight.entitypatch.ai.DragonHurtByTargetGoal;
+import susen36.epicdragonfight.entitypatch.enderdragon.*;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
@@ -74,6 +71,12 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Mutable
 	@Shadow @Final private EnderDragonPart[] subEntities;
 
+	@Shadow @Final private EnderDragonPart body;
+	@Shadow @Final private EnderDragonPart tail1;
+	@Shadow @Final private EnderDragonPart tail2;
+	@Shadow @Final private EnderDragonPart tail3;
+	@Shadow @Final private EnderDragonPart wing1;
+	@Shadow @Final private EnderDragonPart wing2;
 	EntityState state = EntityState.DEFAULT;
 	public Animator animator;
 	public LivingMotions currentLivingMotion = LivingMotions.IDLE;
@@ -87,9 +90,16 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	private EnderDragonPart neck2;
 	private EnderDragonPart neck3;
 	private EnderDragonPart neck4;
+	private EnderDragonPart neck5;
 	private EnderDragonPart tail4;
 	private EnderDragonPart tail5;
 	private EnderDragonPart tail6;
+	private EnderDragonPart tail7;
+	private EnderDragonPart tail8;
+	private EnderDragonPart tail9;
+	private EnderDragonPart tail10;
+	private EnderDragonPart tail11;
+	private EnderDragonPart tail12;
 
 	private boolean groundPhase;
 	public float xRoot;
@@ -102,6 +112,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(false).setCreateWorldFog(false);
 
 	private static final AttributeModifier LANDED_ARMOR_MODIFIER = new AttributeModifier(UUID.fromString("A1B2C3D4-E5F6-7890-ABCD-EF1234567890"), "Landed armor bonus", 5.0, AttributeModifier.Operation.ADDITION);
+	
+	private static final AttributeModifier FLYING_FOLLOW_RANGE_MODIFIER = new AttributeModifier(UUID.fromString("C2D3E4F5-A6B7-8901-CDEF-234567890123"), "Flying follow range", 36.0, AttributeModifier.Operation.ADDITION);
+	private static final AttributeModifier CRYSTAL_LINK_FOLLOW_RANGE_MODIFIER = new AttributeModifier(UUID.fromString("D3E4F5A6-B7C8-9012-DEFA-345678901234"), "Crystal link follow range", 86.0, AttributeModifier.Operation.ADDITION);
 
 	protected MixinEnderDragon(EntityType<? extends Mob> pEntityType, Level pLevel) {
 		super(pEntityType, pLevel);
@@ -119,31 +132,45 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		this.animator.init();
 		this.currentlyAttackedEntity = new ArrayList<>();
 
-		if(this.currentLivingMotion!= LivingMotions.FLY){
-			this.currentLivingMotion= LivingMotions.WALK;
+		if (this.currentLivingMotion != LivingMotions.FLY && this.currentLivingMotion != LivingMotions.IDLE) {
+			this.currentLivingMotion = LivingMotions.WALK;
 		}
 		DragonPhaseInstance currentPhase = this.getSelf().phaseManager.getCurrentPhase();
 		EnderDragonPhase<?> startPhase = (currentPhase == null || !(currentPhase instanceof PatchedDragonPhase)) ? PatchedPhases.FLYING : this.phaseManager.getCurrentPhase().getPhase();
 		this.getSelf().phaseManager = new PhaseManagerPatch(this.getSelf());
 		this.getSelf().phaseManager.setPhase(startPhase);
 		this.maxUpStep = 1.0F;
-		this.neck = new EnderDragonPart(this.getSelf(), "neck", 2.0F, 2.0F);
-		this.neck2 = new EnderDragonPart(this.getSelf(), "neck2", 2.0F, 2.0F);
-		this.neck3 = new EnderDragonPart(this.getSelf(), "neck3", 2.0F, 2.0F);
-		this.neck4 = new EnderDragonPart(this.getSelf(), "neck4", 2.0F, 2.0F);
-		this.tail4 = new EnderDragonPart(this.getSelf(), "tail4", 2.0F, 2.0F);
-		this.tail5 = new EnderDragonPart(this.getSelf(), "tail5", 2.0F, 2.0F);
-		this.tail6 = new EnderDragonPart(this.getSelf(), "tail6", 2.0F, 2.0F);
+		this.neck = new EnderDragonPart(this.getSelf(), "neck", 1.0F, 1.0F);
+		this.neck2 = new EnderDragonPart(this.getSelf(), "neck", 1.0F, 1.0F);
+		this.neck3 = new EnderDragonPart(this.getSelf(), "neck", 1.0F, 1.0F);
+		this.neck4 = new EnderDragonPart(this.getSelf(), "neck", 1.0F, 1.0F);
+		this.neck5 = new EnderDragonPart(this.getSelf(), "neck", 1.0F, 1.0F);
+		this.tail4 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail5 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail6 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail7 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail8 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail9 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail10 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail11 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
+		this.tail12 = new EnderDragonPart(this.getSelf(), "tail", 1.0F, 1.0F);
 		PartEntity<?>[] originalParts = this.subEntities;
-		this.subEntities = new EnderDragonPart[originalParts.length + 6];
+		this.subEntities = new EnderDragonPart[originalParts.length + 13];
 		System.arraycopy(originalParts, 0, this.subEntities, 0, originalParts.length);
 		this.subEntities[1] = this.neck;
 		this.subEntities[originalParts.length] = this.neck2;
 		this.subEntities[originalParts.length + 1] = this.neck3;
 		this.subEntities[originalParts.length + 2] = this.neck4;
-		this.subEntities[originalParts.length + 3] = this.tail4;
-		this.subEntities[originalParts.length + 4] = this.tail5;
-		this.subEntities[originalParts.length + 5] = this.tail6;
+		this.subEntities[originalParts.length + 3] = this.neck5;
+		this.subEntities[originalParts.length + 4] = this.tail4;
+		this.subEntities[originalParts.length + 5] = this.tail5;
+		this.subEntities[originalParts.length + 6] = this.tail6;
+		this.subEntities[originalParts.length + 7] = this.tail7;
+		this.subEntities[originalParts.length + 8] = this.tail8;
+		this.subEntities[originalParts.length + 9] = this.tail9;
+		this.subEntities[originalParts.length + 10] = this.tail10;
+		this.subEntities[originalParts.length + 11] = this.tail11;
+		this.subEntities[originalParts.length + 12] = this.tail12;
 		this.initJointBoundParts();
 	}
 
@@ -234,6 +261,11 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		this.currentLivingMotion = LivingMotions.DEATH;
 	}
 
+	@ModifyVariable(method = "tickDeath", name = "i", at = @At(value = "STORE", ordinal = 0))
+	private int modifyExperienceAmount(int original) {
+		return 12000;
+	}
+
 	@Inject(
 		method = "createAttributes",
 		at = @At("RETURN"),
@@ -246,6 +278,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		builder.add(Attributes.ARMOR_TOUGHNESS, 2.0D);
 		builder.add(Attributes.ATTACK_DAMAGE, 10.0D);
 		builder.add(Attributes.ATTACK_KNOCKBACK, 0.35D);
+		builder.add(Attributes.FOLLOW_RANGE, 64.0D);
 		cir.setReturnValue(builder);
 	}
 
@@ -298,8 +331,42 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
-	protected void registerGoals() {
+	public EnderDragonPart getHeadPart() {
+		return this.head;
+	}
 
+	@Override
+	public EnderDragonPart getBodyPart() {
+		return this.body;
+	}
+
+	@Override
+	public EnderDragonPart[] getTailParts() {
+		return new EnderDragonPart[]{this.tail1, this.tail2, this.tail3, this.tail4, this.tail5, this.tail6, this.tail7, this.tail8, this.tail9, this.tail10, this.tail11, this.tail12};
+	}
+
+	@Override
+	public EnderDragonPart[] getNeckParts() {
+		return new EnderDragonPart[]{this.neck, this.neck2, this.neck3, this.neck4, this.neck5};
+	}
+
+	@Override
+	public EnderDragonPart[] getWingParts() {
+		return new EnderDragonPart[]{this.wing1, this.wing2};
+	}
+
+	@Override
+	protected void registerGoals() {
+		this.targetSelector.addGoal(1, new DragonHurtByTargetGoal(this, EnderDragon.class));
+		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, (entity) -> !(entity instanceof EnderDragon)));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolem.class, 10, true, false, (entity) -> !(entity instanceof EnderDragon)));
+	}
+
+	@Inject(method = "aiStep", at = @At("TAIL"))
+	private void onAiStep(CallbackInfo ci) {
+		if (this.isEffectiveAi()) {
+			this.targetSelector.tick();
+		}
 	}
 
 	@Override
@@ -317,15 +384,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		cir.setReturnValue(false);
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	@Override
-	public void initAnimator(ClientAnimator clientAnimator) {
-		for (Map.Entry<LivingMotions, StaticAnimation> livingmotionEntry : this.livingMotions.entrySet()) {
-			clientAnimator.addLivingAnimation(livingmotionEntry.getKey(), livingmotionEntry.getValue());
-		}
-		clientAnimator.setCurrentMotionsAsDefault();
-	}
-
 	@Override
 	public void updateMotion(boolean considerInaction) {
 		if (this.getHealth() <= 0.0F) {
@@ -338,12 +396,16 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			if (!this.groundPhase) {
 				if (phase.getPhase() == PatchedPhases.AIRSTRIKE && ((DragonAirstrikePhase)phase).isActuallyAttacking()) {
 					this.currentLivingMotion = LivingMotions.CHASE;
+				} else if (phase.getPhase() == PatchedPhases.CHARGE && ((DragonChargePhase)phase).isActuallyAttacking()) {
+					this.currentLivingMotion = LivingMotions.CHASE;
 				} else {
 					this.currentLivingMotion = LivingMotions.FLY;
 				}
 			} else {
 				if (phase.getPhase() == PatchedPhases.GROUND_BATTLE) {
 					this.currentLivingMotion = LivingMotions.WALK;
+				} else if (phase.getPhase() == PatchedPhases.GROUND_IDLE) {
+					this.currentLivingMotion = LivingMotions.IDLE;
 				}
 			}
 		}
@@ -382,39 +444,38 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		}
 	}
 
-	@Override
-	public void resetTipAnimations() {
-		this.tipPointAnimations.clear();
-	}
-
-	private void initJointBoundParts() {
-		this.jointBoundParts.clear();
-
-		PartEntity[] parts = this.getSelf().getParts();
-		if (parts == null || parts.length < 14) {
-			return;
-		}
-
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[0], "head", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[1], "neck3", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[2], "body", new Vector3f(0.0F, -1.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[3], "neck_tail_4", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[4], "neck_tail_8", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[5], "neck_tail_12", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[6], "right_wing", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[7], "left_wing", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[8], "neck", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[9], "neck2", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[10], "neck4", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[11], "neck_tail_2", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[12], "neck_tail_6", new Vector3f(0.0F, 0.0F, 0.0F)));
-		this.jointBoundParts.add(new JointBoundPart(this.getSelf(), parts[13], "neck_tail_10", new Vector3f(0.0F, 0.0F, 0.0F)));
-	}
-
 	public void updateJointBoundParts() {
 		for (JointBoundPart part : this.jointBoundParts) {
 			part.tick(this);
 		}
+	}
+
+	@Unique
+	private void initJointBoundParts() {
+		this.jointBoundParts.clear();
+
+		this.jointBoundParts.add(new JointBoundPart(this.getHeadPart(), "head"));
+		this.jointBoundParts.add(new JointBoundPart(this.getBodyPart(), "body", new Vector3f(0.0F, -1.0F, 0.0F)));
+
+		for (EnderDragonPart wing : this.getWingParts()) {
+			String name = (wing == this.wing1) ? "right_wing" : "left_wing";
+			this.jointBoundParts.add(new JointBoundPart(wing, name));
+		}
+
+		EnderDragonPart[] necks = this.getNeckParts();
+		for (int i = 0; i < necks.length; i++) {
+			this.jointBoundParts.add(new JointBoundPart(necks[i], "neck" + (i > 0 ? String.valueOf(i + 1) : "")));
+		}
+
+		EnderDragonPart[] tails = this.getTailParts();
+		for (int i = 0; i < tails.length; i++) {
+			this.jointBoundParts.add(new JointBoundPart(tails[i], "neck_tail_" + (i + 1)));
+		}
+	}
+
+	@Override
+	public void resetTipAnimations() {
+		this.tipPointAnimations.clear();
 	}
 
 	@Inject(method = "tickPart", at = @At("HEAD"), cancellable = true)
@@ -428,22 +489,43 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		this.horizontalCollision = false;
 		this.verticalCollision = false;
 		this.updateArmorModifier();
+		this.updateFollowRangeModifier();
 	}
 
 	@Override
 	public void setGroundPhase() {
 		this.groundPhase = true;
 		this.updateArmorModifier();
+		this.updateFollowRangeModifier();
 	}
 
+	@Unique
 	private void updateArmorModifier() {
 		if (!this.isLogicalClient()) {
-			var armorAttribute = this.getAttribute(Attributes.ARMOR);
+			AttributeInstance armorAttribute = this.getAttribute(Attributes.ARMOR);
 			if (armorAttribute != null) {
 				armorAttribute.removeModifier(LANDED_ARMOR_MODIFIER);
 
 				if (this.groundPhase) {
 					armorAttribute.addPermanentModifier(LANDED_ARMOR_MODIFIER);
+				}
+			}
+		}
+	}
+
+	@Unique
+	private void updateFollowRangeModifier() {
+		if (!this.isLogicalClient()) {
+			AttributeInstance followRangeAttr = this.getAttribute(Attributes.FOLLOW_RANGE);
+			if (followRangeAttr != null){
+				followRangeAttr.removeModifier(FLYING_FOLLOW_RANGE_MODIFIER);
+				followRangeAttr.removeModifier(CRYSTAL_LINK_FOLLOW_RANGE_MODIFIER);
+
+				EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
+				if (currentPhase == PatchedPhases.FLYING || currentPhase == PatchedPhases.AIRSTRIKE || currentPhase == PatchedPhases.CHARGE) {
+					followRangeAttr.addTransientModifier(FLYING_FOLLOW_RANGE_MODIFIER);
+				} else if (currentPhase == PatchedPhases.CRYSTAL_LINK) {
+					followRangeAttr.addTransientModifier(CRYSTAL_LINK_FOLLOW_RANGE_MODIFIER);
 				}
 			}
 		}
@@ -481,6 +563,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		return modelDB.dragon;
 	}
 
+	@Override
 	public void playAnimationSynchronized(StaticAnimation animation, float convertTimeModifier, AnimationPacketProvider packetProvider) {
 		this.animator.playAnimation(animation, convertTimeModifier);
 		DragoFightNetworkManager.sendToAllPlayerTrackingThisEntity(packetProvider.get(animation, convertTimeModifier, this), this);
@@ -490,11 +573,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	public <A extends Animator> A getAnimator() {
 		return (A) this.animator;
-	}
-
-	@Override
-	public ClientAnimator getClientAnimator() {
-		return this.getAnimator();
 	}
 
 	@Override
@@ -520,6 +598,11 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	public void addTipPointAnimation(String jointName, Vector3f initpos, TransformSheet transformSheet, IKInfo ikSetter) {
 		this.tipPointAnimations.put(jointName, new TipPointAnimation(transformSheet, initpos, ikSetter));
+	}
+
+	@Override
+	public Map<LivingMotions, StaticAnimation> getLivingMotions() {
+		return this.livingMotions;
 	}
 
 	@Override
@@ -578,6 +661,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		return this.getSelf();
 	}
 
+	@Unique
 	private EnderDragon getSelf()
 	{
 		return (EnderDragon)(Object)this;
