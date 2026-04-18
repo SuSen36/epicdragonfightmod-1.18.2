@@ -25,12 +25,7 @@ public class DragonGroundIdlePhase extends PatchedDragonPhase {
 		++this.scanningTime;
 
 		LivingEntity target = this.getSelectedTarget();
-
-		if (target != null && isInEndSpikes(target)) {
-			this.dragonpatch.setAttakTargetSync(target);
-		} else {
-			this.dragonpatch.setAttakTargetSync(null);
-		}
+        this.dragonpatch.setAttakTargetSync(target);
 
 		if (target != null) {
 			this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);

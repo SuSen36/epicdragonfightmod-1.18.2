@@ -146,6 +146,12 @@ public class JsonModelLoader {
 	
 	public Joint getJoint(JsonObject object, JsonArray nameAsVertexGroups, Map<String, Joint> jointMap, boolean start) {
 		float[] floatArray = toFloatArray(object.get("transform").getAsJsonArray());
+		if (floatArray.length < 16) {
+			float[] full = new float[16];
+			System.arraycopy(floatArray, 0, full, 0, floatArray.length);
+			full[15] = 1.0f;
+			floatArray = full;
+		}
 		OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(floatArray));
 		localMatrix.transpose();
 		if (start) {
@@ -181,17 +187,17 @@ public class JsonModelLoader {
 		boolean action = animation instanceof ActionAnimation;
 		boolean attack = animation instanceof AttackAnimation;
 		boolean root = true;
-		
+
 		if (!action) {
 			if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
 				return;
 			}
 		}
-		
+
 		Set<String> allowedJoints = Sets.newLinkedHashSet();
-		
+
 		if (attack) {
-			for (Phase phase : ((AttackAnimation)animation).phases) {
+			for (Phase phase : ((AttackAnimation) animation).phases) {
 				Armature armature = animation.getModel().getArmature();
 				Joint joint = armature.getJointHierarcy();
 				long pathIndex = armature.searchPathIndex(phase.getColliderJointName());
@@ -202,7 +208,7 @@ public class JsonModelLoader {
 
 					if (nextJoint > 0) {
 						pathIndex /= 10;
-						joint = joint.getSubJoints().get((int)(nextJoint - 1));
+						joint = joint.getSubJoints().get((int) (nextJoint - 1));
 					} else {
 						joint = null;
 					}
@@ -211,39 +217,45 @@ public class JsonModelLoader {
 		} else if (action) {
 			allowedJoints.add("root");
 		}
-		
+
 		for (JsonElement element : array) {
 			JsonObject keyObject = element.getAsJsonObject();
 			String name = keyObject.get("name").getAsString();
-			
+
 			if (attack && FMLEnvironment.dist == Dist.DEDICATED_SERVER && !allowedJoints.contains(name)) {
 				continue;
 			}
-			
+
 			Joint joint = animation.getModel().getArmature().searchJointByName(name);
-			
+
 			if (joint == null) {
 				throw new IllegalArgumentException("[EpicDragonFight] Can't find the joint " + name + " in animation data " + animation);
 			}
-			
+
 			JsonArray timeArray = keyObject.getAsJsonArray("time");
 			JsonArray transformArray = keyObject.getAsJsonArray("transform");
 			int timeNum = timeArray.size();
 			int matrixNum = transformArray.size();
 			float[] times = new float[timeNum];
 			float[] transforms = new float[matrixNum * 16];
-			
+
 			for (int i = 0; i < timeNum; i++) {
 				times[i] = timeArray.get(i).getAsFloat();
 			}
-			
+
 			for (int i = 0; i < matrixNum; i++) {
-				JsonArray matrixJson = transformArray.get(i).getAsJsonArray();
-				for (int j = 0; j < 16; j++) {
-					transforms[i * 16 + j] = matrixJson.get(j).getAsFloat();
+				float[] matrixArray = toFloatArray(transformArray.get(i).getAsJsonArray());
+				int srcPos = i * 16;
+				if (matrixArray.length < 16) {
+					float[] full = new float[16];
+					System.arraycopy(matrixArray, 0, full, 0, matrixArray.length);
+					full[15] = 1.0f;
+					System.arraycopy(full, 0, transforms, srcPos, 16);
+				} else {
+					System.arraycopy(matrixArray, 0, transforms, srcPos, 16);
 				}
 			}
-			
+
 			TransformSheet sheet = getTransformSheet(times, transforms, OpenMatrix4f.invert(joint.getLocalTrasnform(), null), root);
 			animation.addSheet(name, sheet);
 			animation.setTotalTime(times[times.length - 1]);
@@ -254,34 +266,40 @@ public class JsonModelLoader {
 	public void loadStaticAnimationBothSide(StaticAnimation animation) {
 		JsonArray array = this.rootJson.get("animation").getAsJsonArray();
 		boolean root = true;
-		
+
 		for (JsonElement element : array) {
 			JsonObject keyObject = element.getAsJsonObject();
 			String name = keyObject.get("name").getAsString();
 			Joint joint = animation.getModel().getArmature().searchJointByName(name);
-			
+
 			if (joint == null) {
 				throw new IllegalArgumentException("[EpicDragonFight] Can't find the joint " + name + " in animation data " + animation);
 			}
-			
+
 			JsonArray timeArray = keyObject.getAsJsonArray("time");
 			JsonArray transformArray = keyObject.getAsJsonArray("transform");
 			int timeNum = timeArray.size();
 			int matrixNum = transformArray.size();
 			float[] times = new float[timeNum];
 			float[] transforms = new float[matrixNum * 16];
-			
+
 			for (int i = 0; i < timeNum; i++) {
 				times[i] = timeArray.get(i).getAsFloat();
 			}
-			
+
 			for (int i = 0; i < matrixNum; i++) {
-				JsonArray matrixJson = transformArray.get(i).getAsJsonArray();
-				for (int j = 0; j < 16; j++) {
-					transforms[i * 16 + j] = matrixJson.get(j).getAsFloat();
+				float[] matrixArray = toFloatArray(transformArray.get(i).getAsJsonArray());
+				int srcPos = i * 16;
+				if (matrixArray.length < 16) {
+					float[] full = new float[16];
+					System.arraycopy(matrixArray, 0, full, 0, matrixArray.length);
+					full[15] = 1.0f;
+					System.arraycopy(full, 0, transforms, srcPos, 16);
+				} else {
+					System.arraycopy(matrixArray, 0, transforms, srcPos, 16);
 				}
 			}
-			
+
 			TransformSheet sheet = getTransformSheet(times, transforms, OpenMatrix4f.invert(joint.getLocalTrasnform(), null), root);
 			animation.addSheet(name, sheet);
 			animation.setTotalTime(times[times.length - 1]);
