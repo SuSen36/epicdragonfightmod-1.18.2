@@ -72,7 +72,7 @@ public class DragonChargePhase extends PatchedDragonPhase {
 	public void doServerTick() {
 		LivingEntity target = this.dragon.getTarget();
 
-		if (isValidTarget(target) && isInBattleRange(target)) {
+		if (isValidTarget(target) && isInBattleRange(target) && isWithinAltarVerticalRange(target)) {
 			Vec3 startToDragon = this.dragon.position().subtract(this.startpos);
 			Vec3 startToTarget = target.position().subtract(this.startpos);
 

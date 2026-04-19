@@ -1,8 +1,7 @@
 package susen36.epicdragonfight.entitypatch;
 
-import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-
 public interface IEndCrystalPatch {
+
 	boolean hasShield();
 
 	void setShield(boolean shield);

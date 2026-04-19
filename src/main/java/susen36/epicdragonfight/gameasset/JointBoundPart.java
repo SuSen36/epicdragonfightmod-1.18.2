@@ -1,10 +1,12 @@
 package susen36.epicdragonfight.gameasset;
 
 import com.mojang.math.Vector3f;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
+import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.model.Armature;
@@ -50,7 +52,7 @@ public class JointBoundPart {
 	}
 
 	public Vec3 getJointWorldPosition(IDragonPatch dragonPatch, Armature armature) {
-		float partialTicks = 1.0f;
+		float partialTicks = EpicDragonFight.isPhysicalClient() ? Minecraft.getInstance().getFrameTime() : 1.0F;
 		Pose pose = dragonPatch.getAnimator().getPose(partialTicks);
 		OpenMatrix4f jointTransform = Animator.getBindedJointTransformByIndex(pose, armature, this.pathIndex);
 
@@ -63,7 +65,7 @@ public class JointBoundPart {
 			float f2 = dragon.dragonDeathTime > 0 ? 0.0F : Mth.rotWrap((float)(dragon.getLatencyPos(5, partialTicks)[0] - dragon.getLatencyPos(10, partialTicks)[0]));
 			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP).scale(-1.0F, 1.0F, -1.0F);
 		} else {
-			modelMatrix = dragonPatch.getModelMatrix(partialTicks).scale(-1.0F, 1.0F, -1.0F);
+			modelMatrix = dragonPatch.getModelMatrix(partialTicks);
 		}
 
 		OpenMatrix4f worldTransform = OpenMatrix4f.mul(modelMatrix, jointTransform, null);
