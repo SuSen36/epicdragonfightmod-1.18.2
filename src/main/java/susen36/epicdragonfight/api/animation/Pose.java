@@ -1,10 +1,10 @@
 package susen36.epicdragonfight.api.animation;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+
+import java.util.Map;
+import java.util.Set;
 
 public class Pose {
 	private final Map<String, JointTransform> jointTransformData = Maps.newHashMap();

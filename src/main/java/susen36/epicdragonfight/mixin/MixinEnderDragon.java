@@ -3,13 +3,19 @@ package susen36.epicdragonfight.mixin;
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector3f;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.*;
-import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
@@ -41,21 +47,12 @@ import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.ai.DragonHurtByTargetGoal;
 import susen36.epicdragonfight.entitypatch.enderdragon.*;
 import susen36.epicdragonfight.gameasset.Animations;
+import susen36.epicdragonfight.gameasset.JointBoundPart;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
-import susen36.epicdragonfight.gameasset.JointBoundPart;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.server.level.ServerBossEvent;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.BossEvent;
 
 import javax.annotation.Nullable;
+import java.util.*;
 
 @Mixin(EnderDragon.class)
 public abstract class MixinEnderDragon extends Mob implements IDragonPatch {

@@ -1,10 +1,6 @@
 package susen36.epicdragonfight.api.client.animation;
 
-import java.util.Arrays;
-import java.util.Map;
-
 import com.google.common.collect.Maps;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
@@ -13,8 +9,11 @@ import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.LayerOffAnimation;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.gameasset.Animations;
+
+import java.util.Arrays;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class Layer {

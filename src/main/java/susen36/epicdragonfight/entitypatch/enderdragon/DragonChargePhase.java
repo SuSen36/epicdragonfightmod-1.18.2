@@ -2,13 +2,9 @@ package susen36.epicdragonfight.entitypatch.enderdragon;
 
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -18,8 +14,6 @@ import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-
-import javax.annotation.Nullable;
 
 public class DragonChargePhase extends PatchedDragonPhase {
 	private Vec3 startpos;

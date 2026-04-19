@@ -18,11 +18,8 @@ import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
-
-import java.util.List;
+import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
 
 public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	private static final int GROUND_BATTLE_MAX_TICKS = 600;

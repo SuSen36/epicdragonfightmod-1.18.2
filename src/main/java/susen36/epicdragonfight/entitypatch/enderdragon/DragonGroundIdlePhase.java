@@ -4,7 +4,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.gameasset.Animations;
 
 public class DragonGroundIdlePhase extends PatchedDragonPhase {

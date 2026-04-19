@@ -1,19 +1,17 @@
 package susen36.epicdragonfight.api.client.model;
 
-import java.util.List;
-import java.util.Map;
-
-import com.mojang.math.Vector3f;
-import org.apache.commons.compress.utils.Lists;
-
 import com.google.common.collect.Maps;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.commons.compress.utils.Lists;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import com.mojang.math.Vector4f;
+
+import java.util.List;
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class Mesh {

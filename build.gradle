@@ -14,13 +14,14 @@ plugins {
     id 'eclipse'
     id 'maven-publish'
 }
- apply plugin: 'net.minecraftforge.gradle'
+
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.spongepowered.mixin'
 
 
-version = '0.6.47'
+version = '0.6.48'
 group = 'suseen36.epicdragonfight'
-archivesBaseName = 'epicdragonfight'
+archivesBaseName = 'epicdragonfight-1.19.2'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 

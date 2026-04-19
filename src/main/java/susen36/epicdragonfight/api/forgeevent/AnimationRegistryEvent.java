@@ -1,9 +1,9 @@
 package susen36.epicdragonfight.api.forgeevent;
 
-import java.util.Map;
-
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.event.IModBusEvent;
+
+import java.util.Map;
 
 public class AnimationRegistryEvent extends Event implements IModBusEvent {
 	private Map<String, Runnable> registryMap;

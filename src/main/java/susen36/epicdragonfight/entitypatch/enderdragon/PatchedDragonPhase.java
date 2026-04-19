@@ -1,14 +1,14 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.AbstractDragonPhaseInstance;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+
+import javax.annotation.Nullable;
 
 public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
 	protected final IDragonPatch dragonpatch;

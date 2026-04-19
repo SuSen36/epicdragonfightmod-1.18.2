@@ -1,11 +1,10 @@
 package susen36.epicdragonfight.api.client.model;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class VertexIndicator {

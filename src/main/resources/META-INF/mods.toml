@@ -4,7 +4,7 @@ license="MIT License"
 #issueTrackerURL="https://change.me.to.your.issue.tracker.example.invalid/" #optional
 [[mods]] #mandatory
 modId="epicdragonfight" #mandatory
-version="0.6.47" #mandatory
+version="0.6.48" #mandatory
 displayName="Epic DragonFight" #mandatory
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 #logoFile="examplemod.png" #optional

@@ -11,7 +11,6 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.AnimationDataReader;
 import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class AnimationManager extends SimplePreparableReloadListener<Map<Integer, Map<Integer, StaticAnimation>>> {

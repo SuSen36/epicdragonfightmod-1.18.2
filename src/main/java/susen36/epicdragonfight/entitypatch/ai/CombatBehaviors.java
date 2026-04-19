@@ -3,9 +3,9 @@ package susen36.epicdragonfight.entitypatch.ai;
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.Entity;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.network.server.SPPlayAnimation;
-import susen36.epicdragonfight.entitypatch.IDragonPatch.AnimationPacketProvider;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.IDragonPatch.AnimationPacketProvider;
+import susen36.epicdragonfight.network.server.SPPlayAnimation;
 
 import java.util.List;
 import java.util.function.Consumer;

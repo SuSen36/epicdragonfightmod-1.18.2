@@ -1,25 +1,19 @@
 package susen36.epicdragonfight.api.animation.types.procedural;
 
-import java.util.Map;
-
 import com.google.common.collect.Lists;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.animation.Joint;
-import susen36.epicdragonfight.api.animation.JointTransform;
-import susen36.epicdragonfight.api.animation.Keyframe;
-import susen36.epicdragonfight.api.animation.Pose;
-import susen36.epicdragonfight.api.animation.TransformSheet;
+import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.FABRIK;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+
+import java.util.Map;
 
 public interface ProceduralAnimation {
 	default void setIKInfo(IKInfo[] ikInfos, Map<String, TransformSheet> src, Map<String, TransformSheet> dest, Armature armature, boolean correctY, boolean correctZ) {

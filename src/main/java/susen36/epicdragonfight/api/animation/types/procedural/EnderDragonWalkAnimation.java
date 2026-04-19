@@ -1,7 +1,5 @@
 package susen36.epicdragonfight.api.animation.types.procedural;
 
-import java.util.Map;
-
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector3f;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -14,6 +12,8 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+
+import java.util.Map;
 
 public class EnderDragonWalkAnimation extends StaticAnimation implements ProceduralAnimation {
 	private final IKInfo[] ikInfos;

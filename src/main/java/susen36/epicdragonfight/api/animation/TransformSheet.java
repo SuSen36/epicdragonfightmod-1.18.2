@@ -1,13 +1,13 @@
 package susen36.epicdragonfight.api.animation;
 
-import java.util.List;
-
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
+import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.EpicDragonFight;
+
+import java.util.List;
 
 public class TransformSheet {
 	private Keyframe[] keyframes;

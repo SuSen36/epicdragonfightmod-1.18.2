@@ -6,8 +6,8 @@
   "client": [
     "MixinBufferBuilder",
     "MixinEndCrystalRenderer",
-    "MixinEnderDragonRenderer",
-    "MixinEnderDragonClient"
+    "MixinEnderDragonClient",
+    "MixinEnderDragonRenderer"
   ],
   "mixins": [
     "MixinAreaEffectCloud",

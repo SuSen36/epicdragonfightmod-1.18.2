@@ -13,12 +13,14 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import susen36.epicdragonfight.api.animation.*;
+import susen36.epicdragonfight.api.animation.AnimationManager;
+import susen36.epicdragonfight.api.animation.Animator;
+import susen36.epicdragonfight.api.animation.ServerAnimator;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
+import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
-import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.network.DragonFightDataSerializers;
 
 import java.util.function.Function;

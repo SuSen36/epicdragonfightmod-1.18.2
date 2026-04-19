@@ -1,15 +1,14 @@
 package susen36.epicdragonfight.mixin;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-
-import net.minecraft.util.RandomSource;
 
 @Mixin(SpikeFeature.class)
 public abstract class MixinSpikeFeature {

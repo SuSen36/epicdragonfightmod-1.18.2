@@ -1,17 +1,13 @@
 package susen36.epicdragonfight.api.client.animation;
 
-import java.util.Map;
-
 import com.mojang.datafixers.util.Pair;
-
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.Joint;
-import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
+
+import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class JointMask {

@@ -1,5 +1,14 @@
 package susen36.epicdragonfight.api.client.animation;
 
+import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.GsonHelper;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import susen36.epicdragonfight.api.animation.LivingMotions;
+import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -7,23 +16,6 @@ import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
-
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.util.GsonHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import susen36.epicdragonfight.api.animation.LivingMotions;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 
 @OnlyIn(Dist.CLIENT)
 public class AnimationDataReader {

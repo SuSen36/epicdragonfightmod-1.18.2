@@ -1,13 +1,12 @@
 package susen36.epicdragonfight.gameasset;
 
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.entitypatch.enderdragon.DragonFlyingPhase;
-import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.Behavior;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.BehaviorSeries;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.Health.Comparator;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+import susen36.epicdragonfight.entitypatch.enderdragon.DragonFlyingPhase;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 public class MobCombatBehaviors {
 

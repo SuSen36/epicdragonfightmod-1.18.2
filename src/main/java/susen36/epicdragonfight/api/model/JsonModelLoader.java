@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonReader;
 import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -26,10 +27,8 @@ import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.AttackAnimation;
 import susen36.epicdragonfight.api.animation.types.AttackAnimation.Phase;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.client.model.Mesh;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import com.mojang.math.Vector4f;
 
 import java.io.BufferedInputStream;
 import java.io.InputStreamReader;
