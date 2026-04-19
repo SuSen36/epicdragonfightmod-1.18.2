@@ -160,7 +160,6 @@ public class AttackAnimation extends ActionAnimation {
 				float pitch = entitypatch.getAttackDirectionPitch();
 				JointTransform chest = pose.getOrDefaultTransform("Chest");
 				chest.frontResult(JointTransform.getRotation(Vector3f.XP.rotationDegrees(-pitch)), OpenMatrix4f::mulAsOriginFront);
-
 			}
 		});
 		

@@ -27,12 +27,19 @@ public abstract class PatchedDragonPhase extends AbstractDragonPhaseInstance {
 	protected static boolean isValidTarget(LivingEntity entity) {
 		return entity != null && entity.canBeSeenAsEnemy();
 	}
-	
+
 	protected static boolean isInEndSpikes(LivingEntity entity) {
 		BlockPos blockpos = entity.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
 		double dx = entity.getX() - blockpos.getX();
 		double dz = entity.getZ() - blockpos.getZ();
-		return dx * dx + dz * dz < 400.0D && Math.abs(entity.getY() - blockpos.getY()) <= 10.0D;
+		return dx * dx + dz * dz < 2000.0D && Math.abs(entity.getY() - blockpos.getY()) <= 10.0D;
+	}
+
+	protected static boolean isInBattleRange(LivingEntity entity) {
+		BlockPos blockpos = entity.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
+		double dx = entity.getX() - blockpos.getX();
+		double dz = entity.getZ() - blockpos.getZ();
+		return dx * dx + dz * dz < 3000.0D && Math.abs(entity.getY() - blockpos.getY()) <= 40.0D;
 	}
 
 	protected static boolean isWithinAltarVerticalRange(LivingEntity entity) {

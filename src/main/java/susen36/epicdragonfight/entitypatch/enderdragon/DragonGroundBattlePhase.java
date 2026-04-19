@@ -60,7 +60,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 		
 		LivingEntity target = this.dragon.getTarget();
 		
-		if (isValidTarget(target)) {
+		if (isValidTarget(target) && isInEndSpikes(target)) {
 			EntityState state = this.dragonpatch.getEntityState();
 			this.combatBehaviors.tick();
 			--this.aggroCounter;
@@ -106,7 +106,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 			}
 		} else {
 			this.searchNearestTarget();
-			if (this.dragon.getTarget() == null && !this.dragonpatch.getEntityState().inaction()) {
+			if ((target == null || !isInEndSpikes(target)) && !this.dragonpatch.getEntityState().inaction()) {
 				this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_IDLE);
 			}
 		}
@@ -145,7 +145,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	private void searchNearestTarget() {
 		LivingEntity target = this.getSelectedTarget();
 
-		if (target != null && isInEndSpikes(target)) {
+		if (isValidTarget(target) && isInEndSpikes(target)) {
 			this.dragonpatch.setAttakTargetSync(target);
 		} else {
 			this.dragonpatch.setAttakTargetSync(null);

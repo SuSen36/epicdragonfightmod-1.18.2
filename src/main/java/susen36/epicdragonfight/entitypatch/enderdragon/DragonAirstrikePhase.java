@@ -98,7 +98,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 	public void doServerTick() {
 		LivingEntity target = this.dragon.getTarget();
 
-		if (isValidTarget(target)) {
+		if (isValidTarget(target) && isInBattleRange(target)) {
 			Vec3 startToDragon = this.dragon.position().subtract(this.startpos);
 			Vec3 startToTarget = target.position().subtract(this.startpos);
 

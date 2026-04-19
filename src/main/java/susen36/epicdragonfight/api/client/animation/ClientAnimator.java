@@ -174,8 +174,6 @@ public class ClientAnimator extends Animator {
 		this.currentCompositeMotion = this.entitypatch.getCurrentCompositeMotion();
 	}
 
-
-
 	public Layer getCompositeLayer(Layer.Priority priority) {
 		return this.baseLayer.compositeLayers.get(priority);
 	}
@@ -256,13 +254,7 @@ public class ClientAnimator extends Animator {
 	}
 
 	public boolean compareMotion(LivingMotions motion) {
-		boolean flag = this.currentMotion == motion;
-
-		if (flag) {
-			this.currentMotion = motion;
-		}
-
-		return flag;
+        return this.currentMotion == motion;
 	}
 
 	public boolean compareCompositeMotion(LivingMotions motion) {

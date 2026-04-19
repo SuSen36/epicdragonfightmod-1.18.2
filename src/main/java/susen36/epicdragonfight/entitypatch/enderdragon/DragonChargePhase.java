@@ -72,7 +72,7 @@ public class DragonChargePhase extends PatchedDragonPhase {
 	public void doServerTick() {
 		LivingEntity target = this.dragon.getTarget();
 
-		if (isValidTarget(target)) {
+		if (isValidTarget(target) && isInBattleRange(target)) {
 			Vec3 startToDragon = this.dragon.position().subtract(this.startpos);
 			Vec3 startToTarget = target.position().subtract(this.startpos);
 
@@ -132,7 +132,7 @@ public class DragonChargePhase extends PatchedDragonPhase {
 
 	@Override
 	public float getFlySpeed() {
-		return isActuallyAttacking()? 2.5F : 2.0F;
+		return isActuallyAttacking()? 1.95F : 1.75F;
 	}
 
 	@Override

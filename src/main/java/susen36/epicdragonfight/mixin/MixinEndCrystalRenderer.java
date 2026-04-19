@@ -19,7 +19,7 @@ import susen36.epicdragonfight.entitypatch.IEndCrystalPatch;
 @Mixin(EndCrystalRenderer.class)
 public abstract class MixinEndCrystalRenderer {
 	@Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", ordinal = 0, shift = At.Shift.BEFORE), method = "render(Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
-	private void epicfight_renderCrystalShield(EndCrystal enderCrystal, float yRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
+	private void renderCrystalShield(EndCrystal enderCrystal, float yRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
 		if (!(enderCrystal instanceof IEndCrystalPatch patch) || !patch.hasShield()) return;
 
 		float pulseScale = 1.0F + ((float)Math.sin((enderCrystal.tickCount + partialTicks) * 0.15F) * 0.08F);

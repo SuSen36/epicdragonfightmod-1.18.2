@@ -177,10 +177,10 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	public void tick() {
 		super.tick();
-		this.animator.tick();
 
 		this.updateJointBoundParts();
 		this.updateTipPoints();
+		this.animator.tick();
 
 		if (this.isLogicalClient()) {
 			this.xRootO = this.xRoot;
@@ -190,7 +190,10 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 				this.shieldEndEffectAge++;
 			}
 		} else {
-			this.hurtTime = 2;
+			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
+			boolean isFlying = currentPhase == PatchedPhases.FLYING || currentPhase == PatchedPhases.AIRSTRIKE || currentPhase == PatchedPhases.CHARGE;
+
+			this.hurtTime = isFlying ? hurtTime : 2;
 			this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 			if (this.level instanceof ServerLevel serverLevel) {
 				EndDragonFight dragonFight = serverLevel.dragonFight();

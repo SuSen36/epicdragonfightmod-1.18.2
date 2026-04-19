@@ -62,11 +62,8 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 
 			LivingEntity target = this.getSelectedTarget();
 
-			if (target == null) {
-				return;
-			}
 
-			if (isInEndSpikes(target) && !target.isOnGround()) {
+			if (target != null && isInEndSpikes(target) && !target.isOnGround()) {
 				if (this.dragon.getRandom().nextInt(crystalsAlive / 2 + 2) == 0) {
 					this.dragon.getPhaseManager().setPhase(PatchedPhases.LANDING);
 				}
@@ -74,12 +71,14 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 			}
 
 			BlockPos blockpos = this.dragon.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
-			double d0 = blockpos.distToCenterSqr(target.position()) / 512.0D;
-				
-				if (!isWithinAltarVerticalRange(target) && (this.dragon.getRandom().nextInt(Mth.abs((int)d0) + 2) == 0 || this.dragon.getRandom().nextFloat() < 0.05F + crystalsAlive * crystalsAlive * 0.007F)) {
+
+            if (target != null && !isWithinAltarVerticalRange(target)  &&!this.executeAirstrike && (this.dragon.getRandom().nextInt(Mth.abs((int) (blockpos.distToCenterSqr(target.position()) / 512.0D)) + 2) == 0 || this.dragon.getRandom().nextFloat() < 0.05F + crystalsAlive * crystalsAlive * 0.007F)) {
+				if (isInEndSpikes(target)) {
+					this.executeAirstrike = true;
+				}
 				this.dragonpatch.setAttakTargetSync(target);
 				this.dragon.getPhaseManager().setPhase(PatchedPhases.CHARGE);
-			}else if (isWithinAltarVerticalRange(target) &&!this.executeAirstrike && this.dragon.getRandom().nextFloat() > crystalsAlive * 0.15F) {
+			}else if (target != null && isWithinAltarVerticalRange(target) &&!this.executeAirstrike && this.dragon.getRandom().nextFloat() > crystalsAlive * 0.15F) {
 					if (isInEndSpikes(target)) {
 						this.executeAirstrike = true;
 					}

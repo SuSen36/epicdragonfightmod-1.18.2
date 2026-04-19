@@ -70,7 +70,7 @@ public class Animations {
 						IKInfo.make("left_hind_leg", "left_hind_foot", "right_hind_foot", Pair.of(2, 4), 0.1344F, 4, new boolean[] {true, true}),
 						IKInfo.make("right_hind_leg", "right_hind_foot", "left_hind_foot", Pair.of(0, 3), 0.1344F, 2, new boolean[] {true, true, true})
 				});
-		DRAGON_FLY = new EnderDragonFlyingAnimation(0.35F, "fly", dragon)
+		DRAGON_FLY = new StaticAnimation(0.35F,true, "fly", dragon)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.4F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
 
 		DRAGON_DEATH = new EnderDragonDeathAnimation(1.0F, "death", dragon);
@@ -119,7 +119,7 @@ public class Animations {
 					LivingEntity original = entitypatch.getOriginal();
 					DamageSource damageSource = DamageSource.mobAttack(original);
 
-					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(8.0D, 0.0D, 8.0D))) {
+					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(2.0D, 0.0D, 2.0D))) {
 						if (entity != original && !(entity instanceof EnderDragonPart part && part.getParent() == original)) {
 							entity.hurt(damageSource, 6.0F);
 						}
@@ -178,7 +178,7 @@ public class Animations {
 			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT), Event.create(1.26F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
-			for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(4.0D, 1.5D, 4.0D))) {
+			for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(2.0D, 0.D, 2.0D))) {
 				original.doHurtTarget(entity);
 			}
 		}, Side.SERVER)});
@@ -207,7 +207,7 @@ public class Animations {
 			dragonFireball.moveTo(d6, d7, d8, 0.0F, 0.0F);
 			original.level.addFreshEntity(dragonFireball);
 		}, Side.SERVER)});
-		DRAGON_AIRSTRIKE = new EnderDragonFlyingAnimation(0.35F, "airstrike", dragon)
+		DRAGON_AIRSTRIKE = new StaticAnimation(0.35F,true, "airstrike", dragon)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
 
 		DRAGON_BACKJUMP_PREPARE = new EnderDragonActionAnimation(0.35F, "backjump_prepare", dragon, new IKInfo[]{
@@ -224,7 +224,7 @@ public class Animations {
 					LivingEntity original = entitypatch.getOriginal();
 					DamageSource damageSource = DamageSource.mobAttack(original);
 
-					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(8.0D, 0.0D, 8.0D))) {
+					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(2.0D, 0.0D, 2.0D))) {
 						if (entity != original && !(entity instanceof EnderDragonPart part && part.getParent() == original)) {
 							entity.hurt(damageSource, 8.0F);
 						}

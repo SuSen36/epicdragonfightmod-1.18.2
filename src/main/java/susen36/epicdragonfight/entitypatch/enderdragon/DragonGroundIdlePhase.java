@@ -27,9 +27,15 @@ public class DragonGroundIdlePhase extends PatchedDragonPhase {
 		LivingEntity target = this.getSelectedTarget();
         this.dragonpatch.setAttakTargetSync(target);
 
-		if (target != null) {
-			this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);
-		} else if (this.scanningTime >= IDLE_WAIT_TICKS && !this.dragonpatch.getEntityState().inaction()) {
+		if (isValidTarget(target)) {
+			if(isInEndSpikes(target)){
+				this.dragonpatch.playAnimationSynchronized(Animations.DRAGON_GROUND_TO_FLY, 0.0F);
+				this.dragon.getPhaseManager().setPhase(PatchedPhases.FLYING);
+				((DragonFlyingPhase)this.dragon.getPhaseManager().getCurrentPhase()).enableAirstrike();
+			}else {
+				this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);
+			}
+		} else if (isInEndSpikes(this.dragon) || this.scanningTime >= IDLE_WAIT_TICKS && !this.dragonpatch.getEntityState().inaction()) {
 			this.dragonpatch.playAnimationSynchronized(Animations.DRAGON_GROUND_TO_FLY, 0.0F);
 			this.dragon.getPhaseManager().setPhase(PatchedPhases.FLYING);
 			((DragonFlyingPhase)this.dragon.getPhaseManager().getCurrentPhase()).enableAirstrike();
