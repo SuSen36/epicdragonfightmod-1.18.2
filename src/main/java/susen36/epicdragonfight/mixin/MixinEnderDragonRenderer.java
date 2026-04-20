@@ -45,7 +45,7 @@ public abstract class MixinEnderDragonRenderer{
 
 	@Unique
 	private void render(EnderDragon entityIn, IDragonPatch entitypatch, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
-		ClientModel model = Models.LOGICAL_CLIENT.dragon;
+		ClientModel model = Models.getClientModels().dragon;
 		Armature armature = model.getArmature();
 		poseStack.pushPose();
 		this.mulPoseStack(poseStack, entityIn, entitypatch, partialTicks);

@@ -53,8 +53,8 @@ public class EpicDragonFight {
 		this.animatorProvider = ClientAnimator::getAnimator;
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 		Models.LOGICAL_SERVER.loadArmatures(resourceManager);
-		Models.LOGICAL_CLIENT.loadMeshData(resourceManager);
-		Models.LOGICAL_CLIENT.copyArmaturesFromServer();
+		Models.getClientModels().loadMeshData(resourceManager);
+		Models.getClientModels().copyArmaturesFromServer();
 		this.animationManager.loadAnimationsInit(resourceManager);
         ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);
     }

@@ -60,7 +60,7 @@ public class Animations {
 	}
 
 	private static void build() {
-		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.LOGICAL_CLIENT.dragon : Models.LOGICAL_SERVER.dragon;
+		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.getClientModels().dragon : Models.LOGICAL_SERVER.dragon;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "idle", dragon);
 		DRAGON_WALK = new EnderDragonWalkAnimation(0.35F, "walk", dragon,

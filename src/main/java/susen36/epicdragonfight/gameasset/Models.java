@@ -15,7 +15,16 @@ import java.util.Map;
 
 public abstract class Models<T extends Model> {
 	public static final ServerModels LOGICAL_SERVER = new ServerModels();
-	public static final ClientModels LOGICAL_CLIENT = new ClientModels();
+	
+	private static ClientModels clientModels;
+
+	@OnlyIn(Dist.CLIENT)
+	public static ClientModels getClientModels() {
+		if (clientModels == null) {
+			clientModels = new ClientModels();
+		}
+		return clientModels;
+	}
 
 	protected final Map<ResourceLocation, T> models = Maps.newHashMap();
 
