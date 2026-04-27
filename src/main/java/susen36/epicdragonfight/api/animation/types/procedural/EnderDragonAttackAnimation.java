@@ -23,6 +23,7 @@ import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.RenderingTool;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 import java.util.Map;
 
@@ -39,7 +40,9 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	
 	@Override
 	public void loadAnimation(ResourceManager resourceManager) {
-		loadBothSide(resourceManager, this);
+		String animPath = this.resourceLocation.getPath();
+		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
+		DragonAnimationData.loadByName(animName, this);
 		this.tipPointTransform = Maps.newHashMap();
 		this.setIKInfo(this.ikInfos, this.getTransfroms(), this.tipPointTransform, this.getModel().getArmature(), false, true);
 		this.onLoaded();

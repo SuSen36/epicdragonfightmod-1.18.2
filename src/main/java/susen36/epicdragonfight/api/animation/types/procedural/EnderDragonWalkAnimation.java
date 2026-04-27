@@ -12,6 +12,7 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 import java.util.Map;
 
@@ -26,7 +27,9 @@ public class EnderDragonWalkAnimation extends StaticAnimation implements Procedu
 
 	@Override
 	public void loadAnimation(ResourceManager resourceManager) {
-		loadBothSide(resourceManager, this);
+		String animPath = this.resourceLocation.getPath();
+		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
+		DragonAnimationData.loadByName(animName, this);
 		this.tipPointTransforms = Maps.newHashMap();
 		this.setIKInfo(this.ikInfos, this.getTransfroms(), this.tipPointTransforms, this.getModel().getArmature(), false, true);
 		this.onLoaded();

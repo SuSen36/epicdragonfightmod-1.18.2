@@ -7,6 +7,7 @@ import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 public class EnderDragonDeathAnimation extends ActionAnimation {
 	public EnderDragonDeathAnimation(float convertTime, String path, Model model) {
@@ -25,7 +26,9 @@ public class EnderDragonDeathAnimation extends ActionAnimation {
 	
 	@Override
 	public void loadAnimation(ResourceManager resourceManager) {
-		loadBothSide(resourceManager, this);
+		String animPath = this.resourceLocation.getPath();
+		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
+		DragonAnimationData.loadByName(animName, this);
 		this.onLoaded();
 	}
 	
