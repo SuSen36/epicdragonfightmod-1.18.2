@@ -19,6 +19,7 @@ import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
 import susen36.epicdragonfight.api.model.JsonModelLoader;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 import java.util.List;
 import java.util.Map;
@@ -80,15 +81,9 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	public void loadAnimation(ResourceManager resourceManager) {
-		try {
-			int id = Integer.parseInt(this.resourceLocation.getPath().substring(22));
-			StaticAnimation animation = EpicDragonFight.getInstance().animationManager.findAnimationById(this.namespaceId, id);
-			this.jointTransforms = animation.jointTransforms;
-			this.setTotalTime(animation.totalTime);
-		} catch (NumberFormatException e) {
-			load(resourceManager, this);
-		}
-		
+		String animPath = this.resourceLocation.getPath();
+		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
+		DragonAnimationData.loadByName(animName, this);
 		this.onLoaded();
 	}
 	

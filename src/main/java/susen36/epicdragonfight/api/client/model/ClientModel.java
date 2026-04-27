@@ -10,9 +10,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import susen36.epicdragonfight.api.model.JsonModelLoader;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
+import susen36.epicdragonfight.gameasset.DragonModelData;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModel extends Model {
@@ -28,17 +28,7 @@ public class ClientModel extends Model {
 	}
 	
 	public void loadMeshAndProperties(ResourceManager resourceManager) {
-		JsonModelLoader loader = new JsonModelLoader(resourceManager, this.getLocation());
-		
-		if (loader.isValidSource()) {
-			ResourceLocation parent = loader.getParent();
-			
-			if (parent == null) {
-				this.mesh = loader.getMesh();
-			} else {
-				throw new IllegalStateException("Parent models are not supported in this simplified implementation");
-			}
-		}
+		this.mesh = DragonModelData.createMesh();
 	}
 	
 	public Mesh getMesh() {
