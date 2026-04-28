@@ -63,6 +63,10 @@ public class Armature {
 		return this.jointHierarcy;
 	}
 
+	public Map<String, Joint> getJointByNameMap() {
+		return this.jointByName;
+	}
+
 	private void jointToTransformMatrixArray(Joint joint, OpenMatrix4f[] jointMatrices) {
 		OpenMatrix4f result = OpenMatrix4f.mul(joint.getAnimatedTransform(), joint.getInversedModelTransform(), null);
 		jointMatrices[joint.getId()] = result;

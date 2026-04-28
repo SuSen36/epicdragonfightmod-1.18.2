@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
@@ -26,7 +25,6 @@ import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
 import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.enderdragon.DragonCrystalLinkPhase;
@@ -56,15 +54,15 @@ public abstract class MixinEnderDragonRenderer{
 			poseStack.translate(entityIn.getRandom().nextGaussian() * 0.08D, 0.0D, entityIn.getRandom().nextGaussian() * 0.08D);
 			float deathTimeProgression = ((float) entityIn.dragonDeathTime + partialTicks) / 200.0F;
 
-			VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.dragonExplosionAlphaTriangles(EnderDragonRenderer.DRAGON_EXPLODING_LOCATION));
-			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, deathTimeProgression, OverlayTexture.NO_OVERLAY, poses);
-			VertexConsumer builder2 = buffer.getBuffer(DragonFightRenderTypes.entityDecalTriangles(EnderDragonRenderer.DRAGON_LOCATION));
-			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses);
+			VertexConsumer builder = buffer.getBuffer(RenderType.dragonExplosionAlpha(EnderDragonRenderer.DRAGON_EXPLODING_LOCATION));
+			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, deathTimeProgression, OverlayTexture.NO_OVERLAY, poses, armature);
+			VertexConsumer builder2 = buffer.getBuffer(RenderType.entityDecal(EnderDragonRenderer.DRAGON_LOCATION));
+			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses, armature);
 		} else {
-			VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.animatedModel(EnderDragonRenderer.DRAGON_LOCATION));
-			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses);
-			VertexConsumer builder2 = buffer.getBuffer(DragonFightRenderTypes.eyeGlow(new ResourceLocation("textures/entity/enderdragon/dragon_eyes.png")));
-			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, OverlayTexture.NO_OVERLAY,poses);
+			VertexConsumer builder = buffer.getBuffer(RenderType.entityCutoutNoCull(EnderDragonRenderer.DRAGON_LOCATION));
+			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses, armature);
+			VertexConsumer builder2 = buffer.getBuffer(RenderType.eyes(EnderDragonRenderer.DRAGON_EYES_LOCATION));
+			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, OverlayTexture.NO_OVERLAY, poses, armature);
 		}
 
 		if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
@@ -166,7 +164,7 @@ public abstract class MixinEnderDragonRenderer{
 		poseStack.mulPose(com.mojang.math.Vector3f.YP.rotationDegrees(interpolatedYaw));
 		poseStack.scale(interpolatedScale * 8.0F, interpolatedScale * 8.0F, interpolatedScale * 8.0F);
 
-		VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.forceField(EnderDragonRenderer.CRYSTAL_BEAM_LOCATION));
+		VertexConsumer builder = buffer.getBuffer(RenderType.entitySmoothCutout(EnderDragonRenderer.CRYSTAL_BEAM_LOCATION));
 
 		float uvOffset = (dragon.tickCount + partialTicks) * 0.02F;
 		this.renderSphereShield(poseStack, builder, uvOffset, packedLight);

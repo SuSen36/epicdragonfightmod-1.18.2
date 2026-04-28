@@ -2,10 +2,7 @@ package susen36.epicdragonfight.gameasset;
 
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.Joint;
-import susen36.epicdragonfight.api.client.model.Mesh;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 
@@ -20,11 +17,6 @@ public class DragonModelData {
         Joint rootJoint = buildRoot(jointMap);
         rootJoint.setInversedModelTransform(new OpenMatrix4f());
         return new Armature(jointMap.size(), rootJoint, jointMap);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static Mesh createMesh() {
-        return DragonMeshData.createMesh();
     }
 
     private static Joint buildRoot(Map<String, Joint> jointMap) {
