@@ -174,9 +174,9 @@ public abstract class DynamicAnimation {
 		this.collectJointData(rootJoint, poses, jointPositions, connections, -1);
 
 		VertexConsumer quadBuilder = buffer.getBuffer(DragonFightRenderTypes.debugQuads());
-		for (int i = 0; i < jointPositions.size(); i++) {
-			RenderingTool.drawCube(poseStack, quadBuilder, jointPositions.get(i), 0.2F, 0.0F, 1.0F, 0.0F);
-		}
+        for (Vector3f jointPosition : jointPositions) {
+            RenderingTool.drawCube(poseStack, quadBuilder, jointPosition, 0.2F, 0.0F, 1.0F, 0.0F);
+        }
 
 		VertexConsumer lineBuilder = buffer.getBuffer(RenderType.lines());
 		for (int[] conn : connections) {

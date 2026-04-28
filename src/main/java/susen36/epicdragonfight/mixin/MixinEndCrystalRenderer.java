@@ -38,17 +38,18 @@ public abstract class MixinEndCrystalRenderer {
 
 	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
 		Matrix4f matrix4f = poseStack.last().pose();
-		int segments = 24;
+		int segments = 16;
 		int rings = 16;
-		float radius = 1.0F;
+		float uTile = 0.75F;
+		float vTile = 0.75F;
 
 		for (int ring = 0; ring < rings; ring++) {
 			float phi1 = (float)ring / rings * (float)Math.PI;
 			float phi2 = (float)(ring + 1) / rings * (float)Math.PI;
-			float y1 = (float)Math.cos(phi1) * radius;
-			float y2 = (float)Math.cos(phi2) * radius;
-			float ringRadius1 = (float)Math.sin(phi1) * radius;
-			float ringRadius2 = (float)Math.sin(phi2) * radius;
+			float y1 = (float)Math.cos(phi1);
+			float y2 = (float)Math.cos(phi2);
+			float ringRadius1 = (float)Math.sin(phi1);
+			float ringRadius2 = (float)Math.sin(phi2);
 
 			float ringProgress1 = (float)ring / rings;
 			float ringProgress2 = (float)(ring + 1) / rings;
@@ -66,10 +67,10 @@ public abstract class MixinEndCrystalRenderer {
 				float x4 = (float)Math.cos(theta1) * ringRadius2;
 				float z4 = (float)Math.sin(theta1) * ringRadius2;
 
-				float u1 = (float)seg / segments + uvOffset;
-				float u2 = (float)(seg + 1) / segments + uvOffset;
-				float v1 = (float)ring / rings + uvOffset;
-				float v2 = (float)(ring + 1) / rings + uvOffset;
+				float u1 = (float)seg / segments * uTile + uvOffset;
+				float u2 = (float)(seg + 1) / segments * uTile + uvOffset;
+				float v1 = (float)ring / rings * vTile + uvOffset;
+				float v2 = (float)(ring + 1) / rings * vTile + uvOffset;
 
 				int color1 = (int)(ringProgress1 * 255);
 				int color2 = (int)(ringProgress2 * 255);

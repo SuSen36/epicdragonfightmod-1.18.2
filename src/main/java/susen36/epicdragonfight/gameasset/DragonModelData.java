@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.gameasset;
 
 import com.google.common.collect.Maps;
-import com.mojang.math.Vector3f;
 import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
@@ -10,7 +9,6 @@ import java.nio.FloatBuffer;
 import java.util.Map;
 
 public class DragonModelData {
-    private static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 
     public static Armature createArmature() {
         Map<String, Joint> jointMap = Maps.newHashMap();
@@ -20,10 +18,9 @@ public class DragonModelData {
     }
 
     private static Joint buildRoot(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, -1.268548F, 0.0F, 0.0F, 1.0F, 2.441811F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, -1e-06F, 1.0F, 2.441811F, 0.0F, -1.0F, -1e-06F, 1.268548F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
-        localMatrix.mulFront(CORRECTION);
         Joint joint = new Joint("root", 0, localMatrix);
         jointMap.put("root", joint);
         joint.addSubJoint(buildRightHindLeg(jointMap));
@@ -43,7 +40,7 @@ public class DragonModelData {
     }
 
     private static Joint buildRightHindLegTip(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.871159F, 0.491001F, 1.692269F, 0.0F, -0.491001F, 0.871159F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, -0.0F, 0.0F, 0.0F, 0.871159F, 0.491001F, 1.692269F, -0.0F, -0.491001F, 0.871159F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("right_hind_leg_tip", 2, localMatrix);
@@ -53,7 +50,7 @@ public class DragonModelData {
     }
 
     private static Joint buildRightHindFoot(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.659118F, -0.75204F, 2.159911F, 0.0F, 0.75204F, 0.659118F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, -0.0F, 0.0F, -0.0F, 0.659118F, -0.75204F, 2.159911F, 0.0F, 0.75204F, 0.659118F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("right_hind_foot", 3, localMatrix);
@@ -72,7 +69,7 @@ public class DragonModelData {
     }
 
     private static Joint buildLeftHindLegTip(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.871159F, 0.491001F, 1.692269F, 0.0F, -0.491001F, 0.871159F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, -0.0F, 0.0F, 0.0F, 0.871159F, 0.491001F, 1.692269F, -0.0F, -0.491001F, 0.871159F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("left_hind_leg_tip", 5, localMatrix);
@@ -82,7 +79,7 @@ public class DragonModelData {
     }
 
     private static Joint buildLeftHindFoot(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.659118F, -0.75204F, 2.159911F, 0.0F, 0.75204F, 0.659118F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, -0.0F, -0.0F, -0.0F, 0.659118F, -0.75204F, 2.159911F, 0.0F, 0.75204F, 0.659118F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("left_hind_foot", 6, localMatrix);
@@ -91,7 +88,7 @@ public class DragonModelData {
     }
 
     private static Joint buildBody(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.273754F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, -1e-06F, 0.273754F, 0.0F, 1e-06F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("body", 7, localMatrix);
@@ -106,7 +103,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail1(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{-1.0F, 0.0F, 0.0F, 0.0F, 0.0F, -1.0F, 0.0F, -0.516188F, 0.0F, 0.0F, 1.0F, 0.429314F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{-1.0F, 0.0F, 0.0F, -0.0F, 0.0F, -1.0F, 0.0F, -0.516188F, 0.0F, 0.0F, 1.0F, 0.429314F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_1", 8, localMatrix);
@@ -116,7 +113,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail2(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.615504F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, -0.0F, 1.0F, 0.0F, 0.615504F, 0.0F, -0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_2", 9, localMatrix);
@@ -126,7 +123,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail3(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.624616F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F, -0.0F, 0.624616F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_3", 10, localMatrix);
@@ -136,7 +133,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail4(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.62624F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.62624F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_4", 11, localMatrix);
@@ -146,7 +143,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail5(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.624649F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, -0.0F, 1.0F, 0.0F, 0.624649F, -0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_5", 12, localMatrix);
@@ -186,7 +183,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail9(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.624782F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, -0.0F, 0.0F, -0.0F, 1.0F, -0.0F, 0.624782F, 0.0F, 0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_9", 16, localMatrix);
@@ -196,7 +193,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail10(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.62586F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.62586F, 0.0F, 0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_10", 17, localMatrix);
@@ -206,7 +203,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail11(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.625142F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.625142F, 0.0F, 0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_11", 18, localMatrix);
@@ -216,7 +213,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeckTail12(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.624677F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, -0.0F, 0.0F, 0.0F, 1.0F, -0.0F, 0.624677F, 0.0F, 0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck_tail_12", 19, localMatrix);
@@ -235,7 +232,7 @@ public class DragonModelData {
     }
 
     private static Joint buildRightFrontLegTip(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.956842F, -0.290608F, 1.253495F, 0.0F, 0.290608F, 0.956842F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, -0.0F, 0.956842F, -0.290608F, 1.253495F, -0.0F, 0.290608F, 0.956842F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("right_front_leg_tip", 21, localMatrix);
@@ -245,7 +242,7 @@ public class DragonModelData {
     }
 
     private static Joint buildRightFrontFoot(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.646395F, -0.763003F, 1.488528F, 0.0F, 0.763003F, 0.646395F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 0.646395F, -0.763003F, 1.488528F, 0.0F, 0.763003F, 0.646395F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("right_front_foot", 22, localMatrix);
@@ -264,7 +261,7 @@ public class DragonModelData {
     }
 
     private static Joint buildLeftFrontLegTip(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.956842F, -0.290608F, 1.253495F, 0.0F, 0.290608F, 0.956842F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, -0.0F, -0.0F, 0.0F, 0.956842F, -0.290608F, 1.253495F, 0.0F, 0.290608F, 0.956842F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("left_front_leg_tip", 24, localMatrix);
@@ -274,7 +271,7 @@ public class DragonModelData {
     }
 
     private static Joint buildLeftFrontFoot(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.646395F, -0.763003F, 1.488528F, 0.0F, 0.763003F, 0.646395F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, -0.0F, -0.0F, -0.0F, 0.646395F, -0.763003F, 1.488528F, -0.0F, 0.763003F, 0.646395F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("left_front_foot", 25, localMatrix);
@@ -283,7 +280,7 @@ public class DragonModelData {
     }
 
     private static Joint buildRightWing(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{0.0F, 1.0F, 0.0F, 0.749813F, -1.0F, 0.0F, 0.0F, 2.861323F, 0.0F, 0.0F, 1.0F, 0.744816F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{0.0F, 1.0F, 0.0F, 0.749813F, -1.0F, 0.0F, -0.0F, 2.861323F, -0.0F, 0.0F, 1.0F, 0.744816F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("right_wing", 26, localMatrix);
@@ -302,7 +299,7 @@ public class DragonModelData {
     }
 
     private static Joint buildLeftWing(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{0.0F, -1.0F, 0.0F, -0.75068F, 1.0F, 0.0F, 0.0F, 2.861323F, 0.0F, 0.0F, 1.0F, 0.744816F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{-0.0F, -1.0F, 0.0F, -0.75068F, 1.0F, -0.0F, -0.0F, 2.861323F, 0.0F, 0.0F, 1.0F, 0.744816F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("left_wing", 28, localMatrix);
@@ -312,7 +309,7 @@ public class DragonModelData {
     }
 
     private static Joint buildLeftWingTip(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 3.499784F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 3.499784F, -0.0F, -0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("left_wing_tip", 29, localMatrix);
@@ -321,7 +318,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeck(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 3.493827F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, -0.0F, 3.493827F, 0.0F, 0.0F, 1.0F, 1e-06F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck", 30, localMatrix);
@@ -341,7 +338,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeck3(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.626764F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, -0.0F, 0.626764F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck3", 32, localMatrix);
@@ -351,7 +348,7 @@ public class DragonModelData {
     }
 
     private static Joint buildNeck4(Map<String, Joint> jointMap) {
-        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.624224F, 0.0F, 0.0F, 1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
+        float[] transform = new float[]{1.0F, 0.0F, 0.0F, 0.0F, 0.0F, 1.0F, 0.0F, 0.624224F, 0.0F, -0.0F, 1.0F, -0.0F, 0.0F, 0.0F, 0.0F, 1.0F};
         OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));
         localMatrix.transpose();
         Joint joint = new Joint("neck4", 33, localMatrix);

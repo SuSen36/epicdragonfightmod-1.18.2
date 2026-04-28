@@ -4,7 +4,7 @@ import struct
 import base64
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INPUT_FILE = os.path.join(BASE_DIR, "src", "main", "resources", "assets", "epicdragonfight", "animmodels", "dragon.json")
+INPUT_FILE = os.path.join(BASE_DIR, "参考文件", "assets", "epicdragonfight", "animmodels", "dragon.json")
 OUTPUT_DIR = os.path.join(BASE_DIR, "src", "main", "java", "susen36", "epicdragonfight", "gameasset")
 
 def read_json(filepath):
@@ -37,6 +37,35 @@ def write_file(filepath, content):
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
 
+def apply_correction(flat_data):
+    M = [[flat_data[col * 4 + row] for col in range(4)] for row in range(4)]
+    CT = [
+        [1, 0,  0, 0],
+        [0, 0, -1, 0],
+        [0, 1,  0, 0],
+        [0, 0,  0, 1]
+    ]
+    result = [[sum(M[i][k] * CT[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
+    flat_result = [0.0] * 16
+    for row in range(4):
+        for col in range(4):
+            flat_result[col * 4 + row] = result[row][col]
+    return flat_result
+
+def correct_positions(positions):
+    corrected = []
+    for i in range(0, len(positions), 3):
+        x, y, z = positions[i], positions[i + 1], positions[i + 2]
+        corrected.extend([x, z, -y])
+    return corrected
+
+def correct_normals(normals_float):
+    corrected = []
+    for i in range(0, len(normals_float), 3):
+        nx, ny, nz = normals_float[i], normals_float[i + 1], normals_float[i + 2]
+        corrected.extend([nx, nz, -ny])
+    return corrected
+
 def generate_mesh_data_class(data):
     vertices = data["vertices"]
     positions = vertices["positions"]["array"]
@@ -47,9 +76,13 @@ def generate_mesh_data_class(data):
     weights = vertices["weights"]["array"]
     vindices = vertices["vindices"]["array"]
 
+    positions = correct_positions(positions)
+    normals_float = correct_normals(normals_float)
+
     positions_b64 = floats_to_base64(positions)
 
     normals_byte = [round(v * 127.0) for v in normals_float]
+    normals_byte = [max(-128, min(127, v)) for v in normals_byte]
     normals_b64 = bytes_to_base64(normals_byte)
 
     uvs_b64 = floats_to_base64(uvs)
@@ -66,12 +99,9 @@ def generate_mesh_data_class(data):
 
     return f"""package susen36.epicdragonfight.gameasset;
 
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.client.model.Mesh;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -82,7 +112,6 @@ public class DragonMeshData {{
     private static final int VERTEX_COUNT = {vertex_count};
     private static final int NORMAL_COUNT = {normal_count_float};
     private static final int TRIANGLE_COUNT = {index_count_tri};
-    private static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 
     private static final String POSITIONS_B64 =
         {split_base64(positions_b64)};
@@ -157,25 +186,7 @@ public class DragonMeshData {{
 
     public static Mesh createMesh() {{
         float[] positionArray = decodeFloats(POSITIONS_B64);
-        for (int i = 0; i < positionArray.length / 3; i++) {{
-            int k = i * 3;
-            Vector4f posVector = new Vector4f(positionArray[k], positionArray[k+1], positionArray[k+2], 1.0F);
-            OpenMatrix4f.transform(CORRECTION, posVector, posVector);
-            positionArray[k] = posVector.x;
-            positionArray[k+1] = posVector.y;
-            positionArray[k+2] = posVector.z;
-        }}
-
         float[] normalArray = decodeNormalBytes(NORMALS_B64);
-        for (int i = 0; i < normalArray.length / 3; i++) {{
-            int k = i * 3;
-            Vector4f normVector = new Vector4f(normalArray[k], normalArray[k+1], normalArray[k+2], 1.0F);
-            OpenMatrix4f.transform(CORRECTION, normVector, normVector);
-            normalArray[k] = normVector.x;
-            normalArray[k+1] = normVector.y;
-            normalArray[k+2] = normVector.z;
-        }}
-
         int[] drawingIndices = decodeShortsToInts(INDICES_B64);
         int[] jointIds = decodeInts(JOINT_IDS_B64);
         int[] animationIndices = expandAnimationIndices(jointIds);
@@ -194,6 +205,10 @@ def generate_joint_builder(hierarchy, joint_names):
         children = joint_data.get("children", [])
 
         padded = transform + [0.0, 0.0, 0.0, 1.0] if len(transform) < 16 else transform
+
+        if is_root:
+            padded = apply_correction(padded)
+
         transform_str = ", ".join(f"{v}F" for v in padded)
 
         index = joint_names.index(name) if name in joint_names else -1
@@ -203,8 +218,6 @@ def generate_joint_builder(hierarchy, joint_names):
         lines.append(f"        float[] transform = new float[]{{{transform_str}}};")
         lines.append(f"        OpenMatrix4f localMatrix = new OpenMatrix4f().load(FloatBuffer.wrap(transform));")
         lines.append(f"        localMatrix.transpose();")
-        if is_root:
-            lines.append(f"        localMatrix.mulFront(CORRECTION);")
         lines.append(f"        Joint joint = new Joint(\"{name}\", {index}, localMatrix);")
         lines.append(f"        jointMap.put(\"{name}\", joint);")
 
@@ -233,7 +246,6 @@ def generate_model_data_class(data):
     return f"""package susen36.epicdragonfight.gameasset;
 
 import com.google.common.collect.Maps;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.Joint;
@@ -245,7 +257,6 @@ import java.nio.FloatBuffer;
 import java.util.Map;
 
 public class DragonModelData {{
-    private static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 
     public static Armature createArmature() {{
         Map<String, Joint> jointMap = Maps.newHashMap();

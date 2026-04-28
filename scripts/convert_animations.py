@@ -1,8 +1,9 @@
 import json
 import os
 
-ANIM_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "main", "resources", "assets", "epicdragonfight", "animmodels", "animations")
-OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "main", "java", "susen36", "epicdragonfight", "gameasset", "DragonAnimationData.java")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ANIM_DIR = os.path.join(BASE_DIR, "参考文件", "assets", "epicdragonfight", "animmodels", "animations")
+OUTPUT_FILE = os.path.join(BASE_DIR, "src", "main", "java", "susen36", "epicdragonfight", "gameasset", "DragonAnimationData.java")
 
 def read_json(filepath):
     with open(filepath, 'r', encoding='utf-8-sig') as f:
@@ -12,6 +13,21 @@ def to_camel_case(snake_str):
     components = snake_str.split('_')
     return ''.join(x.title() for x in components)
 
+def apply_correction(flat_data):
+    M = [[flat_data[col * 4 + row] for col in range(4)] for row in range(4)]
+    CT = [
+        [1, 0,  0, 0],
+        [0, 0, -1, 0],
+        [0, 1,  0, 0],
+        [0, 0,  0, 1]
+    ]
+    result = [[sum(M[i][k] * CT[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
+    flat_result = [0.0] * 16
+    for row in range(4):
+        for col in range(4):
+            flat_result[col * 4 + row] = result[row][col]
+    return flat_result
+
 def convert_animation(anim_name, anim_data):
     joints = anim_data["animation"]
     lines = []
@@ -19,9 +35,9 @@ def convert_animation(anim_name, anim_data):
     method_name = to_camel_case(anim_name)
     lines.append(f"    public static void load{method_name}(StaticAnimation animation) {{")
     lines.append(f"        Armature armature = animation.getModel().getArmature();")
-    lines.append(f"        boolean root = true;")
     lines.append(f"")
 
+    is_root = True
     for joint_data in joints:
         joint_name = joint_data["name"]
         times = joint_data["time"]
@@ -41,6 +57,8 @@ def convert_animation(anim_name, anim_data):
         lines.append(f"            float[] {transforms_var} = new float[]{{")
         for ti, transform in enumerate(transforms):
             padded = transform + [0.0, 0.0, 0.0, 1.0] if len(transform) < 16 else transform
+            if is_root:
+                padded = apply_correction(padded)
             mat_str = ", ".join(f"{v}F" for v in padded)
             lines.append(f"                {mat_str},")
         lines.append(f"            }};")
@@ -50,12 +68,13 @@ def convert_animation(anim_name, anim_data):
         lines.append(f"            if (joint == null) {{")
         lines.append(f"                throw new IllegalArgumentException(\"[EpicDragonFight] Can't find the joint {joint_name} in animation data \" + animation);")
         lines.append(f"            }}")
-        lines.append(f"            TransformSheet sheet = getTransformSheet({times_var}, {transforms_var}, OpenMatrix4f.invert(joint.getLocalTrasnform(), null), root);")
+        lines.append(f"            TransformSheet sheet = getTransformSheet({times_var}, {transforms_var}, OpenMatrix4f.invert(joint.getLocalTrasnform(), null));")
         lines.append(f"            animation.addSheet(\"{joint_name}\", sheet);")
         lines.append(f"            animation.setTotalTime({times_var}[{times_var}.length - 1]);")
-        lines.append(f"            root = false;")
         lines.append(f"        }}")
         lines.append(f"")
+
+        is_root = False
 
     lines.append(f"    }}")
     return "\n".join(lines)
@@ -83,7 +102,6 @@ def main():
 
     java_code = f"""package susen36.epicdragonfight.gameasset;
 
-import com.mojang.math.Vector3f;
 import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
@@ -97,7 +115,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DragonAnimationData {{
-    private static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 
 {chr(10).join(all_methods)}
     public static void loadByName(String name, StaticAnimation animation) {{
@@ -107,7 +124,7 @@ public class DragonAnimationData {{
         }}
     }}
 
-    private static TransformSheet getTransformSheet(float[] times, float[] transformMatrix, OpenMatrix4f invLocalTransform, boolean correct) {{
+    private static TransformSheet getTransformSheet(float[] times, float[] transformMatrix, OpenMatrix4f invLocalTransform) {{
         List<Keyframe> keyframeList = new ArrayList<>();
 
         for (int i = 0; i < times.length; i++) {{
@@ -121,10 +138,6 @@ public class DragonAnimationData {{
 
             OpenMatrix4f matrix = new OpenMatrix4f().load(FloatBuffer.wrap(matrixElements));
             matrix.transpose();
-
-            if (correct) {{
-                matrix.mulFront(CORRECTION);
-            }}
 
             matrix.mulFront(invLocalTransform);
 

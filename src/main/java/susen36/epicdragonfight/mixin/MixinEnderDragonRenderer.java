@@ -48,7 +48,6 @@ public abstract class MixinEnderDragonRenderer{
 		poseStack.pushPose();
 		this.mulPoseStack(poseStack, entityIn, entitypatch, partialTicks);
 		OpenMatrix4f[] poses = this.getPoseMatrices(entitypatch, armature, partialTicks);
-		poses[0] = OpenMatrix4f.rotate(-90.0F, Vector3f.XP, poses[0], null);
 
 		if (entityIn.dragonDeathTime > 0) {
 			poseStack.translate(entityIn.getRandom().nextGaussian() * 0.08D, 0.0D, entityIn.getRandom().nextGaussian() * 0.08D);
