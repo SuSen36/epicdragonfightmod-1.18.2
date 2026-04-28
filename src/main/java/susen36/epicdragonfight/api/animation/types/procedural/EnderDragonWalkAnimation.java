@@ -19,16 +19,14 @@ public class EnderDragonWalkAnimation extends StaticAnimation implements Procedu
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransforms;
 
-	public EnderDragonWalkAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, true, path, model);
+	public EnderDragonWalkAnimation(float convertTime, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, true, name, model);
 		this.ikInfos = ikInfos;
 	}
 
 	@Override
 	public void loadAnimation() {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
 		this.tipPointTransforms = Maps.newHashMap();
 		this.setIKInfo(this.ikInfos, this.getTransfroms(), this.tipPointTransforms, this.getModel().getArmature(), false, true);
 		this.onLoaded();

@@ -9,8 +9,8 @@ import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class EnderDragonTailAttackAnimation extends EnderDragonAttackAnimation {
 
-	public EnderDragonTailAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String rightFrontFoot, String path, Model dragon, IKInfo[] ikInfos) {
-		super(convertTime, antic, preDelay, contact, recovery, rightFrontFoot, path, dragon, ikInfos);
+	public EnderDragonTailAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String rightFrontFoot, String name, Model dragon, IKInfo[] ikInfos) {
+		super(convertTime, antic, preDelay, contact, recovery, rightFrontFoot, name, dragon, ikInfos);
 	}
 
 	@Override

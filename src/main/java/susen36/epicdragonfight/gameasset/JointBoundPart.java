@@ -69,7 +69,6 @@ public class JointBoundPart {
 		}
 
 		OpenMatrix4f worldTransform = OpenMatrix4f.mul(modelMatrix, jointTransform, null);
-
 		Vector3f jointPos = worldTransform.toTranslationVector();
 
 		float worldX = -jointPos.x();

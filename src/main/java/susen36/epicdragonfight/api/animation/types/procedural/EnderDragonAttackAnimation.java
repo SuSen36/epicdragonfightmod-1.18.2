@@ -31,8 +31,8 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransform;
 	
-	public EnderDragonAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, antic, preDelay, contact, recovery, index, path, model);
+	public EnderDragonAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, antic, preDelay, contact, recovery, index, name, model);
 		this.ikInfos = ikInfos;
 		this.addProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE, true);
 		this.properties.remove(ActionAnimationProperty.COORD_SET_TICK);
@@ -40,9 +40,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	
 	@Override
 	public void loadAnimation() {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
 		this.tipPointTransform = Maps.newHashMap();
 		this.setIKInfo(this.ikInfos, this.getTransfroms(), this.tipPointTransform, this.getModel().getArmature(), false, true);
 		this.onLoaded();

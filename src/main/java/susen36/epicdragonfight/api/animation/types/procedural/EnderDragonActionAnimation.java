@@ -29,16 +29,14 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransforms;
 	
-	public EnderDragonActionAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, path, model);
+	public EnderDragonActionAnimation(float convertTime, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, name, model);
 		this.ikInfos = ikInfos;
 	}
 	
 	@Override
 	public void loadAnimation() {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
 		this.tipPointTransforms = Maps.newHashMap();
 		this.setIKInfo(this.ikInfos, this.getTransfroms(), this.tipPointTransforms, this.getModel().getArmature(), this.getProperty(ActionAnimationProperty.MOVE_VERTICAL).orElse(false), true);
 		this.onLoaded();

@@ -28,16 +28,14 @@ public class EnderDragonDynamicActionAnimation extends ActionAnimation implement
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransform;
 	
-	public EnderDragonDynamicActionAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, path, model);
+	public EnderDragonDynamicActionAnimation(float convertTime, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, name, model);
 		this.ikInfos = ikInfos;
 	}
 	
 	@Override
 	public void loadAnimation() {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
 		this.tipPointTransform = Maps.newHashMap();
 		this.setIKInfo(this.ikInfos, this.getTransfroms(), this.tipPointTransform, this.getModel().getArmature(), true, true);
 		this.onLoaded();

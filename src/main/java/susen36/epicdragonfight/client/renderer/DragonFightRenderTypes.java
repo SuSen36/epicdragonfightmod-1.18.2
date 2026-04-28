@@ -37,7 +37,7 @@ public class DragonFightRenderTypes extends RenderType {
 				.setLightmapState(LIGHTMAP)
 				.setOverlayState(OVERLAY)
 				.createCompositeState(true);
-		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.TRIANGLES, 256, true, false, state);
+		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.QUADS, 256, true, false, state);
 	});
 
 	public static RenderType debugQuads() {

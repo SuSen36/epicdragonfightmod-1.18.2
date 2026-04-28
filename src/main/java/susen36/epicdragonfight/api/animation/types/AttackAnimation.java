@@ -47,12 +47,12 @@ public class AttackAnimation extends ActionAnimation {
 	
 	public final Phase[] phases;
 	
-	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String path, Model model) {
-		this(convertTime, path, model, new Phase(0.0F, antic, preDelay, contact, recovery, Float.MAX_VALUE, index));
+	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String name, Model model) {
+		this(convertTime, name, model, new Phase(0.0F, antic, preDelay, contact, recovery, Float.MAX_VALUE, index));
 	}
 
-	public AttackAnimation(float convertTime, String path, Model model, Phase... phases) {
-		super(convertTime, path, model);
+	public AttackAnimation(float convertTime, String name, Model model, Phase... phases) {
+		super(convertTime, name, model);
 		
 		this.addProperty(ActionAnimationProperty.COORD_SET_BEGIN, COMMON_COORD_SETTER);
 		this.addProperty(ActionAnimationProperty.COORD_SET_TICK, COMMON_COORD_SETTER);

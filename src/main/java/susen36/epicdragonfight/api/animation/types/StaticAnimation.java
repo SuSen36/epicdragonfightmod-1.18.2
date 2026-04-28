@@ -43,11 +43,11 @@ public class StaticAnimation extends DynamicAnimation {
 		this.model = null;
 	}
 	
-	public StaticAnimation(boolean repeatPlay, String path, Model model) {
-		this(0.15F, repeatPlay, path, model);
+	public StaticAnimation(boolean repeatPlay, String name, Model model) {
+		this(0.15F, repeatPlay, name, model);
 	}
 	
-	public StaticAnimation(float convertTime, boolean isRepeat, String path, Model model) {
+	public StaticAnimation(float convertTime, boolean isRepeat, String name, Model model) {
 		super(convertTime, isRepeat);
 		
 		AnimationManager animationManager = EpicDragonFight.getInstance().animationManager;
@@ -55,23 +55,21 @@ public class StaticAnimation extends DynamicAnimation {
 		this.animationId = animationManager.getIdCounter();
 		
 		animationManager.getIdMap().put(this.animationId, this);
-		this.resourceLocation = new ResourceLocation(animationManager.getModid(), "animmodels/animations/" + path);
-		animationManager.getNameMap().put(new ResourceLocation(animationManager.getModid(), path), this);
+		this.resourceLocation = new ResourceLocation(animationManager.getModid(), name);
+		animationManager.getNameMap().put(this.resourceLocation, this);
 		this.model = model;
 	}
 	
-	public StaticAnimation(float convertTime, boolean repeatPlay, String path, Model model, boolean notRegisteredInAnimationManager) {
+	public StaticAnimation(float convertTime, boolean repeatPlay, String name, Model model, boolean notRegisteredInAnimationManager) {
 		super(convertTime, repeatPlay);
 		this.namespaceId = -1;
 		this.animationId = -1;
-		this.resourceLocation = new ResourceLocation(EpicDragonFight.getInstance().animationManager.getModid(), "animmodels/animations/" + path);
+		this.resourceLocation = new ResourceLocation(EpicDragonFight.getInstance().animationManager.getModid(), name);
 		this.model = model;
 	}
 	
 	public void loadAnimation() {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
 		this.onLoaded();
 	}
 	
