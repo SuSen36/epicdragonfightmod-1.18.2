@@ -1,18 +1,23 @@
 package susen36.epicdragonfight.api.animation.types;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
+import susen36.epicdragonfight.api.model.Armature;
+import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
+import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
+import susen36.epicdragonfight.client.renderer.RenderingTool;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public abstract class DynamicAnimation {
 	protected Map<String, TransformSheet> jointTransforms;
@@ -162,7 +167,41 @@ public abstract class DynamicAnimation {
 	}
 	
 	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, IDragonPatch entitypatch, float playTime, float partialTicks) {
-		
+	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, IDragonPatch entitypatch, float playTime, float partialTicks, OpenMatrix4f[] poses, Armature armature) {
+		Joint rootJoint = armature.getJointHierarcy();
+		List<Vector3f> jointPositions = new ArrayList<>();
+		List<int[]> connections = new ArrayList<>();
+		this.collectJointData(rootJoint, poses, jointPositions, connections, -1);
+
+		VertexConsumer quadBuilder = buffer.getBuffer(DragonFightRenderTypes.debugQuads());
+		for (int i = 0; i < jointPositions.size(); i++) {
+			RenderingTool.drawCube(poseStack, quadBuilder, jointPositions.get(i), 0.2F, 0.0F, 1.0F, 0.0F);
+		}
+
+		VertexConsumer lineBuilder = buffer.getBuffer(RenderType.lines());
+		for (int[] conn : connections) {
+			RenderingTool.drawLine(poseStack, lineBuilder, jointPositions.get(conn[0]), jointPositions.get(conn[1]), 0.0F, 1.0F, 0.0F);
+		}
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	private void collectJointData(Joint joint, OpenMatrix4f[] poses, List<Vector3f> positions, List<int[]> connections, int parentIndex) {
+		OpenMatrix4f pose = poses[joint.getId()];
+		if (pose == null) {
+			return;
+		}
+
+		Vector3f pos = new Vector3f(pose.m30, -pose.m31, pose.m32);
+
+		int currentIndex = positions.size();
+		positions.add(pos);
+
+		if (parentIndex >= 0) {
+			connections.add(new int[]{parentIndex, currentIndex});
+		}
+
+		for (Joint subJoint : joint.getSubJoints()) {
+			this.collectJointData(subJoint, poses, positions, connections, currentIndex);
+		}
 	}
 }

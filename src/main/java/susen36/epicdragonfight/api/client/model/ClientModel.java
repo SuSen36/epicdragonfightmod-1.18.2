@@ -2,8 +2,6 @@ package susen36.epicdragonfight.api.client.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.model.Armature;
@@ -15,11 +13,7 @@ import susen36.epicdragonfight.gameasset.DragonPartModel;
 public class ClientModel extends Model {
 	protected DragonPartModel partModel;
 
-	public ClientModel(ResourceLocation location) {
-		super(location);
-	}
-
-	public void loadMeshAndProperties(ResourceManager resourceManager) {
+	public void loadMeshAndProperties() {
 		this.partModel = DragonPartModel.bake();
 	}
 

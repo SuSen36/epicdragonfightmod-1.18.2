@@ -3,7 +3,6 @@ package susen36.epicdragonfight.gameasset;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
@@ -34,10 +33,10 @@ public abstract class Models<T extends Model> {
 		public ServerModels() {
 			this.dragon = register(new ResourceLocation(EpicDragonFight.MODID, "dragon"));
 		}
-		
+
 		@Override
 		public Model register(ResourceLocation rl) {
-			Model model = new Model(rl);
+			Model model = new Model();
 			this.models.put(rl, model);
 			return model;
 		}
@@ -51,9 +50,9 @@ public abstract class Models<T extends Model> {
 			this.dragon = this.register(new ResourceLocation(EpicDragonFight.MODID, "dragon"));
 		}
 
-		public void loadMeshData(ResourceManager resourceManager) {
+		public void loadMeshData() {
 			this.registeredModels.forEach((model) -> {
-				model.loadMeshAndProperties(resourceManager);
+				model.loadMeshAndProperties();
 			});
 		}
 		
@@ -63,7 +62,7 @@ public abstract class Models<T extends Model> {
 		
 		@Override
 		public ClientModel register(ResourceLocation rl) {
-			ClientModel model = new ClientModel(rl);
+			ClientModel model = new ClientModel();
 			this.models.put(rl, model);
 			this.registeredModels.add(model);
 			return model;
@@ -76,7 +75,7 @@ public abstract class Models<T extends Model> {
 		return this.models.get(location);
 	}
 	
-	public void loadArmatures(ResourceManager resourceManager) {
-		this.dragon.loadArmatureData(resourceManager);
+	public void loadArmatures() {
+		this.dragon.loadArmatureData();
 	}
 }

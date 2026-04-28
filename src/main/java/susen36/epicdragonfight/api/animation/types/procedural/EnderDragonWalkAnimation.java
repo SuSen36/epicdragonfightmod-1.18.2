@@ -2,7 +2,6 @@ package susen36.epicdragonfight.api.animation.types.procedural;
 
 import com.google.common.collect.Maps;
 import com.mojang.math.Vector3f;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.Keyframe;
@@ -26,7 +25,7 @@ public class EnderDragonWalkAnimation extends StaticAnimation implements Procedu
 	}
 
 	@Override
-	public void loadAnimation(ResourceManager resourceManager) {
+	public void loadAnimation() {
 		String animPath = this.resourceLocation.getPath();
 		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
 		DragonAnimationData.loadByName(animName, this);

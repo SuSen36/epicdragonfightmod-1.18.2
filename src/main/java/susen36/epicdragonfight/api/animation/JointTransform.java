@@ -147,7 +147,6 @@ public class JointTransform {
 		return JointTransform.translationRotation(new Vector3f(0.0F, 0.0F, 0.0F), quat);
 	}
 
-	
 	public static JointTransform translationRotation(Vector3f vec, Quaternion quat) {
 		return new JointTransform(vec, quat, new Vector3f(1.0F, 1.0F, 1.0F));
 	}

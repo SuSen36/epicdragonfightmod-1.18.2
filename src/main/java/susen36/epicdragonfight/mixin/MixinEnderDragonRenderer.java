@@ -69,7 +69,7 @@ public abstract class MixinEnderDragonRenderer{
 			for (Layer.Priority priority : Layer.Priority.HIGHEST.lowers()) {
 				AnimationPlayer animPlayer = entitypatch.getClientAnimator().getCompositeLayer(priority).animationPlayer;
 				float playTime = animPlayer.getPrevElapsedTime() + (animPlayer.getElapsedTime() - animPlayer.getPrevElapsedTime()) * partialTicks;
-				animPlayer.getAnimation().renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks);
+				animPlayer.getAnimation().renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks, poses, armature);
 			}
 		}
 

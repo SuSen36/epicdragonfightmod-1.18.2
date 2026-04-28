@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,6 +17,7 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAn
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAnimationProperty;
 import susen36.epicdragonfight.api.animation.types.AttackAnimation;
+import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
@@ -39,7 +39,7 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	}
 	
 	@Override
-	public void loadAnimation(ResourceManager resourceManager) {
+	public void loadAnimation() {
 		String animPath = this.resourceLocation.getPath();
 		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
 		DragonAnimationData.loadByName(animName, this);
@@ -154,8 +154,8 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, IDragonPatch entitypatch, float playTime, float partialTicks) {
-		super.renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks);
+	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, IDragonPatch entitypatch, float playTime, float partialTicks, OpenMatrix4f[] poses, Armature armature) {
+		super.renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks, poses, armature);
 
 		OpenMatrix4f modelmat = entitypatch.getModelMatrix(partialTicks);
 		LivingEntity originalEntity = entitypatch.getOriginal();

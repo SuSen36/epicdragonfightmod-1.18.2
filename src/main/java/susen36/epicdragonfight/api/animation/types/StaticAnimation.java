@@ -3,7 +3,6 @@ package susen36.epicdragonfight.api.animation.types;
 
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
@@ -16,7 +15,6 @@ import susen36.epicdragonfight.api.client.animation.JointMask;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
-import susen36.epicdragonfight.api.model.JsonModelLoader;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.DragonAnimationData;
@@ -70,17 +68,7 @@ public class StaticAnimation extends DynamicAnimation {
 		this.model = model;
 	}
 	
-	public static void load(ResourceManager resourceManager, StaticAnimation animation) {
-		ResourceLocation extenderPath = new ResourceLocation(animation.resourceLocation.getNamespace(), animation.resourceLocation.getPath() + ".json");
-		(new JsonModelLoader(resourceManager, extenderPath)).loadStaticAnimation(animation);
-	}
-	
-	public static void loadBothSide(ResourceManager resourceManager, StaticAnimation animation) {
-		ResourceLocation extenderPath = new ResourceLocation(animation.resourceLocation.getNamespace(), animation.resourceLocation.getPath() + ".json");
-		(new JsonModelLoader(resourceManager, extenderPath)).loadStaticAnimationBothSide(animation);
-	}
-	
-	public void loadAnimation(ResourceManager resourceManager) {
+	public void loadAnimation() {
 		String animPath = this.resourceLocation.getPath();
 		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
 		DragonAnimationData.loadByName(animName, this);

@@ -74,7 +74,7 @@ public class Joint {
 		} else {
 			int i = 1;
 			for (Joint subJoint : this.subJoints) {
-				String str = subJoint.searchPath(String.valueOf(i) + path, joint);
+				String str = subJoint.searchPath(i + path, joint);
 				i++;
 				if (str != null) {
 					return str;

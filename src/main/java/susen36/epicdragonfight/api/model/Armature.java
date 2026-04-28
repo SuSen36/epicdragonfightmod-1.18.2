@@ -58,7 +58,6 @@ public class Armature {
 		this.jointHierarcy.initializeAnimationTransform();
 	}
 
-
 	public Joint getJointHierarcy() {
 		return this.jointHierarcy;
 	}

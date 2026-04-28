@@ -12,6 +12,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 
@@ -170,7 +171,7 @@ public class DragonPartModel {
     }
 
     public void renderWithPoses(PoseStack poseStack, VertexConsumer consumer, int packedLight, int overlayCoord, float r, float g, float b, float a, OpenMatrix4f[] poses, Armature armature) {
-        Map<String, susen36.epicdragonfight.api.animation.Joint> jointMap = armature.getJointByNameMap();
+        Map<String, Joint> jointMap = armature.getJointByNameMap();
 
         for (int i = 0; i < 5; i++) {
             this.applyPoseToPart(this.neckSegments[i], poses, jointMap, NECK_JOINT_NAMES[i]);
@@ -201,12 +202,12 @@ public class DragonPartModel {
         this.root.render(poseStack, consumer, packedLight, overlayCoord, r, g, b, a);
     }
 
-    private void applyPoseToPart(ModelPart part, OpenMatrix4f[] poses, Map<String, susen36.epicdragonfight.api.animation.Joint> jointMap, String jointName) {
+    private void applyPoseToPart(ModelPart part, OpenMatrix4f[] poses, Map<String, Joint> jointMap, String jointName) {
         this.applyPoseToPart(part, poses, jointMap, jointName, null);
     }
 
-    private void applyPoseToPart(ModelPart part, OpenMatrix4f[] poses, Map<String, susen36.epicdragonfight.api.animation.Joint> jointMap, String jointName, OpenMatrix4f parentAnimTransform) {
-        susen36.epicdragonfight.api.animation.Joint joint = jointMap.get(jointName);
+    private void applyPoseToPart(ModelPart part, OpenMatrix4f[] poses, Map<String, Joint> jointMap, String jointName, OpenMatrix4f parentAnimTransform) {
+        Joint joint = jointMap.get(jointName);
         if (joint == null) {
             return;
         }

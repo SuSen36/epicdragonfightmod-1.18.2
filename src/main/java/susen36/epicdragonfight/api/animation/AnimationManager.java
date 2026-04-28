@@ -47,7 +47,7 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 	public void loadAnimationsInit(ResourceManager resourceManager) {
 		this.animationById.values().forEach((map) -> {
 			map.values().forEach((animation) -> {
-				animation.loadAnimation(resourceManager);
+				animation.loadAnimation();
 				this.setAnimationProperties(resourceManager, animation);
 			});
 		});
@@ -70,7 +70,7 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 	protected void apply(Map<Integer, Map<Integer, StaticAnimation>> objectIn, ResourceManager resourceManager, ProfilerFiller profilerIn) {
 		objectIn.values().forEach((map) -> {
 			map.values().forEach((animation) -> {
-				animation.loadAnimation(resourceManager);
+				animation.loadAnimation();
 			});
 		});
 	}
