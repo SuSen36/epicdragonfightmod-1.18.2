@@ -50,8 +50,6 @@ public class Animations {
 	public static StaticAnimation DRAGON_BACKJUMP_MOVE;
 	public static StaticAnimation DRAGON_BACKJUMP_RECOVERY;
 	public static StaticAnimation DRAGON_CRYSTAL_LINK;
-	public static StaticAnimation DRAGON_NEUTRALIZED;
-	public static StaticAnimation DRAGON_NEUTRALIZED_RECOVERY;
 
 	public static void build() {
 		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.getClientDragon() : Models.SERVER_DRAGON;
@@ -253,26 +251,6 @@ public class Animations {
 					Entity original = entitypatch.getOriginal();
 					original.level.addParticle(ParticleTypes.EXPLOSION, original.getX(), original.getY() + 2.0D, original.getZ(), 0, 0, 0);
 				}, Side.CLIENT)});
-
-		DRAGON_NEUTRALIZED = new EnderDragonActionAnimation(0.1F, "neutralized", dragon, new IKInfo[]{
-				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(0, 4), 0.12F, 0, new boolean[]{true, true, true, true}),
-				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(0, 4), 0.12F, 0, new boolean[]{true, true, true, true}),
-				IKInfo.make("left_hind_leg", "left_hind_foot", null, Pair.of(0, 4), 0.1344F, 0, new boolean[]{true, true, true, true}),
-				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(0, 4), 0.1344F, 0, new boolean[]{true, true, true, true})
-		})
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(3.95F, (entitypatch) -> {
-					entitypatch.getAnimator().playAnimation(DRAGON_NEUTRALIZED_RECOVERY, 0);
-				}, Side.BOTH)});
-
-		DRAGON_NEUTRALIZED_RECOVERY = new EnderDragonActionAnimation(0.05F, "neutralized_recovery", dragon, new IKInfo[]{
-				IKInfo.make("left_front_leg", "left_front_foot", null, Pair.of(0, 4), 0.12F, 0, new boolean[]{true, true, true, false, true}),
-				IKInfo.make("right_front_leg", "right_front_foot", null, Pair.of(0, 4), 0.12F, 0, new boolean[]{true, false, true, true, true}),
-				IKInfo.make("left_hind_leg", "left_hind_foot", null, Pair.of(0, 4), 0.1344F, 0, new boolean[]{true, true, true, true, true}),
-				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(0, 3), 0.1344F, 0, new boolean[]{true, true, true, true})
-		})
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.6F, (entitypatch) -> {
-					entitypatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.GROUND_BATTLE).fly();
-				}, Side.SERVER)});
 	}
 
 	private static class ReuseableEvents {
