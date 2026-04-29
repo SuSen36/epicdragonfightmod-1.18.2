@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.api.client.model;
 
-import com.google.common.collect.Lists;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
