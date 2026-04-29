@@ -28,6 +28,9 @@ public abstract class MixinEndDragonFight {
     @Shadow
     private int crystalsAlive;
 
+    @Shadow
+    private boolean dragonKilled;
+
     @Unique
     private int getTotalCrystals() {
         return SpikeFeature.getSpikesForLevel(this.level).size();
@@ -54,8 +57,7 @@ public abstract class MixinEndDragonFight {
     private void updateCrystalBossBar() {
         int total = getTotalCrystals();
         int alive = Mth.clamp(this.crystalsAlive, 0, total);
-        this.dragonEvent.setVisible(alive > 0);
-        this.dragonEvent.setProgress((float)alive / total);
+       this.dragonEvent.setProgress((float)alive / total);
 
         Component name = Component.translatable(
             "entity.minecraft.end_crystal"

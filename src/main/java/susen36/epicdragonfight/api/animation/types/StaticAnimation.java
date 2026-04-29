@@ -1,44 +1,37 @@
-
 package susen36.epicdragonfight.api.animation.types;
 
-import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.animation.AnimationManager;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
+import susen36.epicdragonfight.api.animation.Layer;
+import susen36.epicdragonfight.api.animation.Layer.LayerType;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
-import susen36.epicdragonfight.api.client.animation.Layer;
-import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
 import susen36.epicdragonfight.api.model.Model;
+import susen36.epicdragonfight.api.utils.TypeFlexibleHashMap;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class StaticAnimation extends DynamicAnimation {
-	protected final Map<AnimationProperty<?>, Object> properties = Maps.newHashMap();
+	protected final TypeFlexibleHashMap<AnimationProperty> properties = new TypeFlexibleHashMap<>();
 	protected final StateSpectrum.Blueprint stateSpectrumBlueprint = new StateSpectrum.Blueprint();
-	protected final ResourceLocation resourceLocation;
+	protected final String name;
 	protected final Model model;
-	protected final int namespaceId;
 	protected final int animationId;
 	
 	private final StateSpectrum stateSpectrum = new StateSpectrum();
 	
 	public StaticAnimation() {
 		super(0.0F, false);
-		this.namespaceId = -1;
 		this.animationId = -1;
-		this.resourceLocation = null;
+		this.name = null;
 		this.model = null;
 	}
 	
@@ -49,27 +42,22 @@ public class StaticAnimation extends DynamicAnimation {
 	public StaticAnimation(float convertTime, boolean isRepeat, String name, Model model) {
 		super(convertTime, isRepeat);
 
-		AnimationManager animationManager = EpicDragonFight.getInstance().animationManager;
-		this.namespaceId = animationManager.getNamespaceHash();
-		this.animationId = animationManager.getIdCounter();
+		this.animationId = EpicDragonFight.getIdCounter();
 
-		animationManager.getIdMap().put(this.animationId, this);
-		this.resourceLocation = new ResourceLocation(animationManager.getModid(), "animmodels/animations/" + name);
+		EpicDragonFight.getIdMap().put(this.animationId, this);
+		this.name = name;
 		this.model = model;
 	}
 
 	public StaticAnimation(float convertTime, boolean repeatPlay, String name, Model model, boolean notRegisteredInAnimationManager) {
 		super(convertTime, repeatPlay);
-		this.namespaceId = -1;
 		this.animationId = -1;
-		this.resourceLocation = new ResourceLocation(EpicDragonFight.getInstance().animationManager.getModid(), "animmodels/animations/" + name);
+		this.name = name;
 		this.model = model;
 	}
 	
-	public void loadAnimation(ResourceManager resourceManager) {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+	public void loadAnimation() {
+		DragonAnimationData.loadByName(this.name, this);
 		this.onLoaded();
 	}
 	
@@ -137,17 +125,8 @@ public class StaticAnimation extends DynamicAnimation {
 	}
 	
 	@Override
-	public int getNamespaceId() {
-		return this.namespaceId;
-	}
-	
-	@Override
 	public int getId() {
 		return this.animationId;
-	}
-	
-	public ResourceLocation getLocation() {
-		return this.resourceLocation;
 	}
 	
 	public Model getModel() {
@@ -162,7 +141,7 @@ public class StaticAnimation extends DynamicAnimation {
 	@Override
 	public String toString() {
 		String classPath = this.getClass().toString();
-		return classPath.substring(classPath.lastIndexOf(".") + 1) + " " + this.getLocation();
+		return classPath.substring(classPath.lastIndexOf(".") + 1) + " " + this.name;
 	}
 	
 	public <V> StaticAnimation addProperty(StaticAnimationProperty<V> propertyType, V value) {
@@ -170,10 +149,9 @@ public class StaticAnimation extends DynamicAnimation {
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public <V> Optional<V> getProperty(AnimationProperty<V> propertyType) {
-		return (Optional<V>) Optional.ofNullable(this.properties.get(propertyType));
+		return Optional.ofNullable(this.properties.get(propertyType));
 	}
 	
 	@OnlyIn(Dist.CLIENT)

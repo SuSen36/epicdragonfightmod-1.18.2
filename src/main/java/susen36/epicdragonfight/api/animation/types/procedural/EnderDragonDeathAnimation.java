@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.api.animation.types.procedural;
 
-import net.minecraft.server.packs.resources.ResourceManager;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
@@ -25,10 +24,8 @@ public class EnderDragonDeathAnimation extends ActionAnimation {
 	}
 	
 	@Override
-	public void loadAnimation(ResourceManager resourceManager) {
-		String animPath = this.resourceLocation.getPath();
-		String animName = animPath.substring(animPath.lastIndexOf('/') + 1);
-		DragonAnimationData.loadByName(animName, this);
+	public void loadAnimation() {
+		DragonAnimationData.loadByName(this.name, this);
 		this.onLoaded();
 	}
 	

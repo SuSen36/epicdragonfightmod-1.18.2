@@ -12,7 +12,7 @@ public class AnimationPlayer {
 	private boolean doNotResetNext;
 	private boolean reversed;
 	private DynamicAnimation play;
-	private TransformSheet actionAnimationCoord = new TransformSheet();
+	private final TransformSheet actionAnimationCoord = new TransformSheet();
 	
 	public AnimationPlayer() {
 		this.setPlayAnimation(Animations.DUMMY_ANIMATION);
@@ -104,5 +104,4 @@ public class AnimationPlayer {
 	public void setReversed(boolean reversed) {
 		this.reversed = reversed;
 	}
-
 }

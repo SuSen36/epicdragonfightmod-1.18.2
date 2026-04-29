@@ -1,10 +1,9 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import net.minecraft.client.Minecraft;
+import susen36.epicdragonfight.api.animation.Layer.Priority;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
-import susen36.epicdragonfight.api.client.animation.Layer.Priority;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 
@@ -32,7 +31,7 @@ public class LayerOffAnimation extends DynamicAnimation {
 	
 	@Override
 	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
-		Pose lowerLayerPose = entitypatch.getAnimator().getComposedLayerPoseBelow(this.layerPriority, Minecraft.getInstance().getFrameTime());
+		Pose lowerLayerPose = entitypatch.getAnimator().getComposedLayerPoseBelow(this.layerPriority, partialTicks);
 		return Pose.interpolatePose(this.lastPose, lowerLayerPose, time / this.totalTime);
 	}
 	

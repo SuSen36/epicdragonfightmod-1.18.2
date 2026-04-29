@@ -12,10 +12,10 @@ import susen36.epicdragonfight.api.model.Armature;
 import java.util.List;
 
 public class FABRIK {
-	private Armature armature;
-	private List<Chain> chains = Lists.newArrayList();
-	private Vector3f target = new Vector3f();
-	private Vector3f startPos = new Vector3f();
+	private final Armature armature;
+	private final List<Chain> chains = Lists.newArrayList();
+	private final Vector3f target = new Vector3f();
+	private final Vector3f startPos = new Vector3f();
 	Pose pose;
 	
 	public FABRIK(Pose pose, Armature armature, String startJoint, String endJoint) {
@@ -26,7 +26,7 @@ public class FABRIK {
 
 	public void addChain(Pose pose, Joint startJoint, Joint endJoint) {
 		OpenMatrix4f bindTransform = Animator.getBindedJointTransformByIndex(pose, this.armature, this.armature.searchPathIndex(startJoint.getName()));
-		long pathIndex = Long.parseLong(startJoint.searchPath(new String(""), endJoint.getName()));
+		long pathIndex = Long.parseLong(startJoint.searchPath("", endJoint.getName()));
 		this.startPos.set(bindTransform.m30, bindTransform.m31, bindTransform.m32);
 		this.addChainInternal(pose, bindTransform, startJoint, pathIndex);
 	}
@@ -80,7 +80,6 @@ public class FABRIK {
 	}
 	
 	private void forward() {
-		int chainNum = this.chains.size();
 		Vector3f newTailPos = new Vector3f(this.startPos.x(), this.startPos.y(), this.startPos.z());
 
         for (Chain chain : this.chains) {

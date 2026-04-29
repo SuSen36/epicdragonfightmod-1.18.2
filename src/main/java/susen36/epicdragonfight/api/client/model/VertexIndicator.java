@@ -8,7 +8,7 @@ import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class VertexIndicator {
-	public static List<VertexIndicator> create(int[] drawingIndices, int[] vCounts, int[] jointIds) {
+	public static List<VertexIndicator> create(int[] drawingIndices, int[] jointIds) {
 		List<VertexIndicator> vertexIndicators = Lists.newArrayList();
 
 		for (int i = 0; i < drawingIndices.length / 3; i++) {

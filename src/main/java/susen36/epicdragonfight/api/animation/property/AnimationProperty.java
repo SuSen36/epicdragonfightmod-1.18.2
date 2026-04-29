@@ -4,9 +4,10 @@ import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+import susen36.epicdragonfight.api.utils.TypeFlexibleHashMap.TypeKey;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
-public abstract class AnimationProperty<T> {
+public abstract class AnimationProperty<T> implements TypeKey {
 	public static class StaticAnimationProperty<T> extends AnimationProperty<T> {
 		/**
 		 * You can put the various events in animation. Must be registered in order of time.

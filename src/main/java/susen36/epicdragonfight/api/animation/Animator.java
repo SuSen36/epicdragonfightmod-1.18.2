@@ -9,7 +9,6 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
-import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
@@ -28,7 +27,7 @@ public class Animator {
 
 	public final AnimationPlayer animationPlayer;
 	protected DynamicAnimation nextPlaying;
-	private LinkAnimation linkAnimation;
+	private final LinkAnimation linkAnimation;
 	public boolean pause = false;
 
 	private final Map<LivingMotions, StaticAnimation> compositeLivingAnimations;
@@ -366,8 +365,8 @@ public class Animator {
 		return Pose.interpolatePose(this.prevPose, this.currentPose, partialTicks);
 	}
 
-	public final void playAnimation(int namespaceId, int id, float convertTimeModifier) {
-		this.playAnimation(EpicDragonFight.getInstance().animationManager.findAnimationById(namespaceId, id), convertTimeModifier);
+	public final void playAnimation(int id, float convertTimeModifier) {
+		this.playAnimation(EpicDragonFight.findAnimationById(id), convertTimeModifier);
 	}
 
 	public static OpenMatrix4f getBindedJointTransformByName(Pose pose, Armature armature, String jointName) {

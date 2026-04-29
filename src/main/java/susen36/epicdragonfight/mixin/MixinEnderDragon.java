@@ -48,7 +48,6 @@ import susen36.epicdragonfight.entitypatch.ai.DragonHurtByTargetGoal;
 import susen36.epicdragonfight.entitypatch.enderdragon.*;
 import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.JointBoundPart;
-import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
 
 import javax.annotation.Nullable;
@@ -558,7 +557,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	@Override
 	public Model getEntityModel() {
-		return Models.SERVER_DRAGON;
+		return EpicDragonFight.MODEL;
 	}
 
 	@Override

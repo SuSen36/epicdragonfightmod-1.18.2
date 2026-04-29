@@ -1,10 +1,6 @@
-package susen36.epicdragonfight.api.client.animation;
+package susen36.epicdragonfight.api.animation;
 
 import com.google.common.collect.Maps;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import susen36.epicdragonfight.api.animation.AnimationPlayer;
-import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.LayerOffAnimation;
 import susen36.epicdragonfight.api.animation.types.LinkAnimation;
@@ -15,7 +11,6 @@ import susen36.epicdragonfight.gameasset.Animations;
 import java.util.Arrays;
 import java.util.Map;
 
-@OnlyIn(Dist.CLIENT)
 public class Layer {
 	public final AnimationPlayer animationPlayer;
 	public DynamicAnimation nextAnimation;
@@ -23,21 +18,21 @@ public class Layer {
 	public LayerOffAnimation layerOffAnimation;
 	public boolean disabled;
 	public boolean paused;
-	
+
 	public Layer(Priority priority) {
 		this.animationPlayer = new AnimationPlayer();
 		this.linkAnimationStorage = new LinkAnimation();
 		this.layerOffAnimation = new LayerOffAnimation(priority);
 		this.disabled = true;
 	}
-	
+
 	public void playAnimation(StaticAnimation nextAnimation, IDragonPatch entitypatch, float convertTimeModifier) {
 		Pose lastPose = entitypatch.getAnimator().getPose(1.0F);
-		
+
 		this.animationPlayer.getAnimation().end(entitypatch, this.animationPlayer.isEnd());
 		this.resume();
 		nextAnimation.begin(entitypatch);
-		
+
 		if (!nextAnimation.isMetaAnimation()) {
 			this.setLinkAnimation(nextAnimation, entitypatch, lastPose, convertTimeModifier);
 			this.linkAnimationStorage.putOnPlayer(this.animationPlayer);
@@ -45,7 +40,7 @@ public class Layer {
 			this.nextAnimation = nextAnimation;
 		}
 	}
-	
+
 	public void playAnimationInstant(DynamicAnimation nextAnimation, IDragonPatch entitypatch) {
 		this.animationPlayer.getAnimation().end(entitypatch, this.animationPlayer.isEnd());
 		this.resume();
@@ -54,33 +49,33 @@ public class Layer {
 		entitypatch.updateEntityState();
 		this.nextAnimation = null;
 	}
-	
+
 	public void setLinkAnimation(DynamicAnimation nextAnimation, IDragonPatch entitypatch, Pose lastPose, float convertTimeModifier) {
 		nextAnimation.setLinkAnimation(lastPose, convertTimeModifier, entitypatch, this.linkAnimationStorage);
 	}
-	
+
 	public void update(IDragonPatch entitypatch) {
 		if (this.paused) {
 			this.animationPlayer.setElapsedTime(this.animationPlayer.getElapsedTime());
 		} else {
 			this.animationPlayer.tick(entitypatch);
 		}
-		
+
 		if (this.isBaseLayer()) {
 			entitypatch.updateEntityState();
 			entitypatch.updateMotion(true);
 		}
-		
+
 		this.animationPlayer.getAnimation().tick(entitypatch);
-		
+
 		if (!this.paused && this.animationPlayer.isEnd()) {
 			if (this.nextAnimation != null) {
 				this.animationPlayer.getAnimation().end(entitypatch, true);
-				
+
 				if (!(this.animationPlayer.getAnimation() instanceof LinkAnimation) && !(this.nextAnimation instanceof LinkAnimation)) {
 					this.nextAnimation.begin(entitypatch);
 				}
-				
+
 				this.nextAnimation.putOnPlayer(this.animationPlayer);
 				this.nextAnimation = null;
 			} else {
@@ -92,24 +87,24 @@ public class Layer {
 			}
 		}
 	}
-	
+
 	public void pause() {
 		this.paused = true;
 	}
-	
+
 	public void resume() {
 		this.paused = false;
 		this.disabled = false;
 	}
-	
+
 	public boolean isDisabled() {
 		return this.disabled;
 	}
-	
+
 	protected boolean isBaseLayer() {
 		return false;
 	}
-	
+
 	public void off(IDragonPatch entitypatch) {
 		if (!this.isDisabled() && !(this.animationPlayer.getAnimation() instanceof LayerOffAnimation)) {
 			float convertTime = entitypatch.getAnimator().baseLayer.animationPlayer.getAnimation().getConvertTime();
@@ -117,17 +112,17 @@ public class Layer {
 			this.playAnimationInstant(this.layerOffAnimation, entitypatch);
 		}
 	}
-	
+
 	public static void setLayerOffAnimation(DynamicAnimation currentAnimation, Pose currentPose, LayerOffAnimation offAnimation, float convertTime) {
 		offAnimation.setLastAnimation(currentAnimation.getRealAnimation());
 		offAnimation.setLastPose(currentPose);
 		offAnimation.setTotalTime(convertTime);
 	}
-	
+
 	public static class BaseLayer extends Layer {
 		public Map<Priority, Layer> compositeLayers = Maps.newHashMap();
 		public Priority baserLayerPriority;
-		
+
 		public BaseLayer(Priority priority) {
 			super(priority);
 			this.compositeLayers.computeIfAbsent(Priority.HIGHEST, Layer::new);
@@ -135,7 +130,7 @@ public class Layer {
 			this.compositeLayers.put(Priority.LOWEST, this);
 			this.baserLayerPriority = Priority.LOWEST;
 		}
-		
+
 		@Override
 		public void playAnimation(StaticAnimation nextAnimation, IDragonPatch entitypatch, float convertTimeModifier) {
 			Priority priority = nextAnimation.getPriority();
@@ -143,50 +138,50 @@ public class Layer {
 			this.offCompositeLayerLowerThan(entitypatch, priority);
 			super.playAnimation(nextAnimation, entitypatch, convertTimeModifier);
 		}
-		
+
 		@Override
 		public void update(IDragonPatch entitypatch) {
 			super.update(entitypatch);
-			
+
 			for (Layer layer : this.compositeLayers.values()) {
 				if (layer != this) {
 					layer.update(entitypatch);
 				}
 			}
 		}
-		
+
 		public void offCompositeLayerLowerThan(IDragonPatch entitypatch, Priority priority) {
 			for (Priority p : priority.notUpperThan()) {
 				this.compositeLayers.get(p).off(entitypatch);
 			}
 		}
-		
+
 		public void disableLayer(Priority priority) {
 			Layer layer = this.compositeLayers.get(priority);
 			layer.disabled = true;
 			Animations.DUMMY_ANIMATION.putOnPlayer(layer.animationPlayer);
 		}
-		
+
 		@Override
 		public void off(IDragonPatch entitypatch) {
-			
+
 		}
-		
+
 		@Override
 		public boolean isDisabled() {
 			return false;
 		}
-		
+
 		@Override
 		protected boolean isBaseLayer() {
 			return true;
 		}
 	}
-	
+
 	public enum LayerType {
 		BASE_LAYER, COMPOSITE_LAYER;
 	}
-	
+
 	public enum Priority {
 		/**
 		 * LOWEST: Most living motions
@@ -194,15 +189,15 @@ public class Layer {
 		 * HIGHEST: Attack or skill motions
 		 */
 		LOWEST, MIDDLE, HIGHEST;
-		
+
 		public Priority[] lowers() {
 			return Arrays.copyOfRange(Priority.values(), 0, this.ordinal());
 		}
-		
+
 		public Priority[] uppers() {
 			return Arrays.copyOfRange(Priority.values(), this.ordinal() + 1, 3);
 		}
-		
+
 		public Priority[] notUpperThan() {
 			return Arrays.copyOfRange(Priority.values(), 0, this.ordinal() + 1);
 		}

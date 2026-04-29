@@ -36,7 +36,7 @@ public class JointBoundPart {
 			return;
 		}
 
-		Armature armature = Models.SERVER_DRAGON.getArmature();
+		Armature armature = EpicDragonFight.MODEL.getArmature();
 
 		if (this.pathIndex == -1) {
 			this.pathIndex = armature.searchPathIndex(this.jointName);

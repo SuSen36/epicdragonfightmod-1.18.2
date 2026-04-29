@@ -27,10 +27,10 @@ public class JointTransform {
 		}
 	}
 	
-	private Map<String, TransformEntry> entries = Maps.newHashMap();
-	private Vector3f translation;
-	private Vector3f scale;
-	private Quaternion rotation;
+	private final Map<String, TransformEntry> entries = Maps.newHashMap();
+	private final Vector3f translation;
+	private final Vector3f scale;
+	private final Quaternion rotation;
 	
 	public JointTransform(Vector3f translation, Quaternion rotation, Vector3f scale) {
 		this.translation = translation;
@@ -147,7 +147,6 @@ public class JointTransform {
 		return JointTransform.translationRotation(new Vector3f(0.0F, 0.0F, 0.0F), quat);
 	}
 
-	
 	public static JointTransform translationRotation(Vector3f vec, Quaternion quat) {
 		return new JointTransform(vec, quat, new Vector3f(1.0F, 1.0F, 1.0F));
 	}

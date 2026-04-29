@@ -136,11 +136,7 @@ public abstract class DynamicAnimation {
 	public boolean canBePlayedReverse() {
 		return false;
 	}
-	
-	public int getNamespaceId() {
-		return -1;
-	}
-	
+
 	public int getId() {
 		return -1;
 	}

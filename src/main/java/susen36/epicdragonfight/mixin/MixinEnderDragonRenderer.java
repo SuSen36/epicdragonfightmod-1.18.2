@@ -19,10 +19,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
-import susen36.epicdragonfight.api.client.animation.Layer;
-import susen36.epicdragonfight.api.client.model.ClientModel;
+import susen36.epicdragonfight.api.animation.Layer;
 import susen36.epicdragonfight.api.model.Armature;
+import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
@@ -30,7 +31,6 @@ import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.enderdragon.DragonCrystalLinkPhase;
 import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
-import susen36.epicdragonfight.gameasset.Models;
 
 @Mixin(value = EnderDragonRenderer.class)
 public abstract class MixinEnderDragonRenderer{
@@ -44,7 +44,7 @@ public abstract class MixinEnderDragonRenderer{
 
 	@Unique
 	private void render(EnderDragon entityIn, IDragonPatch entitypatch, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
-		ClientModel model = Models.getClientDragon();
+		Model model = EpicDragonFight.MODEL;
 		Armature armature = model.getArmature();
 		poseStack.pushPose();
 		this.mulPoseStack(poseStack, entityIn, entitypatch, partialTicks);

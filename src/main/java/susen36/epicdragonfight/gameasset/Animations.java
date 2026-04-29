@@ -9,9 +9,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
+import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
@@ -52,7 +51,7 @@ public class Animations {
 	public static StaticAnimation DRAGON_CRYSTAL_LINK;
 
 	public static void build() {
-		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.getClientDragon() : Models.SERVER_DRAGON;
+		Model dragon = EpicDragonFight.MODEL;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "idle", dragon);
 		DRAGON_WALK = new EnderDragonWalkAnimation(0.35F, "walk", dragon,

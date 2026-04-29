@@ -14,13 +14,13 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.Models;
 
 import java.util.Map;
 
@@ -137,7 +137,7 @@ public class ActionAnimation extends MainFrameAnimation {
 	protected void modifyPose(Pose pose, IDragonPatch entitypatch, float time) {
 		JointTransform jt = pose.getOrDefaultTransform("root");
 		Vector3f jointPosition = jt.translation();
-		OpenMatrix4f toRootTransformApplied = Models.SERVER_DRAGON.getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
+		OpenMatrix4f toRootTransformApplied = EpicDragonFight.MODEL.getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
 		OpenMatrix4f toOrigin = OpenMatrix4f.invert(toRootTransformApplied, null);
 		Vector3f worldPosition = OpenMatrix4f.transform3v(toRootTransformApplied, jointPosition, null);
 		worldPosition.x = 0.0F;
@@ -211,7 +211,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		Vector4f currentpos = new Vector4f(jt.translation().x, jt.translation().y, jt.translation().z, 1.0F);
 		Vector4f prevpos = new Vector4f(prevJt.translation().x, prevJt.translation().y, prevJt.translation().z, 1.0F);
 		OpenMatrix4f rotationTransform = entitypatch.getModelMatrix(1.0F).removeTranslation();
-		OpenMatrix4f localTransform = Models.SERVER_DRAGON.getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
+		OpenMatrix4f localTransform = EpicDragonFight.MODEL.getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
 		rotationTransform.mulBack(localTransform);
 		OpenMatrix4f.transform(rotationTransform, currentpos, currentpos);
 		OpenMatrix4f.transform(rotationTransform, prevpos, prevpos);

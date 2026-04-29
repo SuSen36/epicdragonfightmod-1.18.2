@@ -2,8 +2,8 @@ package susen36.epicdragonfight.api.animation.types;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import susen36.epicdragonfight.api.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
-import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 

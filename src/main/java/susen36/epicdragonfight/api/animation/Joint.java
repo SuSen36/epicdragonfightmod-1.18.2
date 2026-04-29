@@ -11,8 +11,8 @@ public class Joint {
 	private final int jointId;
 	private final String jointName;
 	private final OpenMatrix4f localTransform;
-	private OpenMatrix4f inversedTransform = new OpenMatrix4f();
-	private OpenMatrix4f animatedTransform = new OpenMatrix4f();
+	private final OpenMatrix4f inversedTransform = new OpenMatrix4f();
+	private final OpenMatrix4f animatedTransform = new OpenMatrix4f();
 	
 	public Joint(String name, int jointID, OpenMatrix4f localTransform) {
 		this.jointId = jointID;
@@ -74,7 +74,7 @@ public class Joint {
 		} else {
 			int i = 1;
 			for (Joint subJoint : this.subJoints) {
-				String str = subJoint.searchPath(String.valueOf(i) + path, joint);
+				String str = subJoint.searchPath(i + path, joint);
 				i++;
 				if (str != null) {
 					return str;
@@ -83,5 +83,4 @@ public class Joint {
 			return null;
 		}
 	}
-
 }

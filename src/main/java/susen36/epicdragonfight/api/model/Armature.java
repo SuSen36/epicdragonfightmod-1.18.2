@@ -42,12 +42,12 @@ public class Armature {
 		if (this.pathIndexMap.containsKey(joint)) {
 			return this.pathIndexMap.get(joint);
 		} else {
-			String pathIndex = this.jointHierarcy.searchPath(new String(""), joint);
+			String pathIndex = this.jointHierarcy.searchPath("", joint);
 			long pathIndex2Long = 0;
 			if (pathIndex == null) {
 				throw new IllegalArgumentException("failed to get joint path index for " + joint);
 			} else {
-				pathIndex2Long = (pathIndex.length() == 0) ? -1 : Long.parseLong(pathIndex);
+				pathIndex2Long = (pathIndex.isEmpty()) ? -1 : Long.parseLong(pathIndex);
 				this.pathIndexMap.put(joint, pathIndex2Long);
 			}
 			return pathIndex2Long;
