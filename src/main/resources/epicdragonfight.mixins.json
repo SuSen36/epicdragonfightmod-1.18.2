@@ -6,7 +6,8 @@
   "client": [
     "MixinEndCrystalRenderer",
     "MixinEnderDragonClient",
-    "MixinEnderDragonRenderer"
+    "MixinEnderDragonRenderer",
+    "MixinEnderDragonModel"
   ],
   "mixins": [
     "MixinAreaEffectCloud",

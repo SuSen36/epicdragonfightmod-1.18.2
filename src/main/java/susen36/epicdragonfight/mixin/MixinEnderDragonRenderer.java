@@ -37,52 +37,19 @@ public abstract class MixinEnderDragonRenderer{
 	private void epicfight_render(EnderDragon enderdragon, float yRot, float partialTicks, PoseStack poseStack, MultiBufferSource multiSourceBuffer, int packedLight, CallbackInfo ci) {
 		if (enderdragon instanceof IDragonPatch dragonPatch) {
 			this.render(enderdragon,dragonPatch, multiSourceBuffer,poseStack,packedLight,partialTicks);
-			ci.cancel();
 		}
 	}
 
+	//if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+	//	for (Layer.Priority priority : Layer.Priority.HIGHEST.lowers()) {
+	//		AnimationPlayer animPlayer = entitypatch.getClientAnimator().getCompositeLayer(priority).animationPlayer;
+	//		float playTime = animPlayer.getPrevElapsedTime() + (animPlayer.getElapsedTime() - animPlayer.getPrevElapsedTime()) * partialTicks;
+	//		animPlayer.getAnimation().renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks, poses, armature);
+	//	}
+	//}
 	@Unique
 	private void render(EnderDragon entityIn, IDragonPatch entitypatch, MultiBufferSource buffer, PoseStack poseStack, int packedLight, float partialTicks) {
-		ClientModel model = Models.getClientModels().dragon;
-		Armature armature = model.getArmature();
 		poseStack.pushPose();
-		this.mulPoseStack(poseStack, entityIn, entitypatch, partialTicks);
-		OpenMatrix4f[] poses = this.getPoseMatrices(entitypatch, armature, partialTicks);
-
-		if (entityIn.dragonDeathTime > 0) {
-			poseStack.translate(entityIn.getRandom().nextGaussian() * 0.08D, 0.0D, entityIn.getRandom().nextGaussian() * 0.08D);
-			float deathTimeProgression = ((float) entityIn.dragonDeathTime + partialTicks) / 200.0F;
-
-			VertexConsumer builder = buffer.getBuffer(RenderType.dragonExplosionAlpha(EnderDragonRenderer.DRAGON_EXPLODING_LOCATION));
-			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, deathTimeProgression, OverlayTexture.NO_OVERLAY, poses, armature);
-			VertexConsumer builder2 = buffer.getBuffer(RenderType.entityDecal(EnderDragonRenderer.DRAGON_LOCATION));
-			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses, armature);
-		} else {
-			VertexConsumer builder = buffer.getBuffer(RenderType.entityCutoutNoCull(EnderDragonRenderer.DRAGON_LOCATION));
-			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses, armature);
-			VertexConsumer builder2 = buffer.getBuffer(RenderType.eyes(EnderDragonRenderer.DRAGON_EYES_LOCATION));
-			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, OverlayTexture.NO_OVERLAY, poses, armature);
-		}
-
-		if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
-			for (Layer.Priority priority : Layer.Priority.HIGHEST.lowers()) {
-				AnimationPlayer animPlayer = entitypatch.getClientAnimator().getCompositeLayer(priority).animationPlayer;
-				float playTime = animPlayer.getPrevElapsedTime() + (animPlayer.getElapsedTime() - animPlayer.getPrevElapsedTime()) * partialTicks;
-				animPlayer.getAnimation().renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks, poses, armature);
-			}
-		}
-
-		poseStack.popPose();
-
-		if (entityIn.nearestCrystal != null) {
-			float x = (float)(entityIn.nearestCrystal.getX() - Mth.lerp(partialTicks, entityIn.xo, entityIn.getX()));
-			float y = (float)(entityIn.nearestCrystal.getY() - Mth.lerp(partialTicks, entityIn.yo, entityIn.getY()));
-			float z = (float)(entityIn.nearestCrystal.getZ() - Mth.lerp(partialTicks, entityIn.zo, entityIn.getZ()));
-			poseStack.pushPose();
-			EnderDragonRenderer.renderCrystalBeams(x, y + EndCrystalRenderer.getY(entityIn.nearestCrystal, partialTicks), z, partialTicks, entityIn.tickCount, poseStack, buffer, packedLight);
-			poseStack.popPose();
-		}
-
 		if (entityIn.dragonDeathTime > 0) {
 			float deathTimeProgression = ((float) entityIn.dragonDeathTime + partialTicks) / 200.0F;
 			VertexConsumer lightningBuffer = buffer.getBuffer(RenderType.lightning());
@@ -107,35 +74,10 @@ public abstract class MixinEnderDragonRenderer{
 				this.renderForceField(entityIn, (DragonCrystalLinkPhase)currentPhase, buffer, poseStack, partialTicks, packedLight);
 			}
 		}
-
+		poseStack.popPose();
 	}
 
-	@SuppressWarnings("deprecation")
-	private void mulPoseStack(PoseStack matStack, EnderDragon entityIn, IDragonPatch entitypatch, float partialTicks) {
-		OpenMatrix4f modelMatrix;
-
-		if (!entitypatch.isGroundPhase() || entitypatch.getOriginal().dragonDeathTime > 0) {
-			float f = (float)entityIn.getLatencyPos(7, partialTicks)[0];
-			float f1 = (float)(entityIn.getLatencyPos(5, partialTicks)[1] - entityIn.getLatencyPos(10, partialTicks)[1]);
-			float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F : Mth.rotWrap((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
-			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
-		} else {
-			modelMatrix = entitypatch.getModelMatrix(partialTicks).scale(-1.0F, 1.0F, -1.0F);
-		}
-
-		OpenMatrix4f transpose = new OpenMatrix4f(modelMatrix).transpose();
-		MathUtils.translateStack(matStack, modelMatrix);
-		MathUtils.rotateStack(matStack, transpose);
-		MathUtils.scaleStack(matStack, transpose);
-	}
-
-	private OpenMatrix4f[] getPoseMatrices(IDragonPatch entitypatch, Armature armature, float partialTicks) {
-		armature.initializeTransform();
-		entitypatch.getClientAnimator().setPoseToModel(partialTicks);
-
-		return armature.getJointTransforms();
-	}
-
+	@Unique
 	private int getOverlayCoord(EnderDragon entity) {
 		DragonPhaseInstance currentPhase = entity.getPhaseManager().getCurrentPhase();
 		float chargingTick = DragonCrystalLinkPhase.CHARGING_TICK;
@@ -144,6 +86,7 @@ public abstract class MixinEnderDragonRenderer{
 		return OverlayTexture.pack(OverlayTexture.u(progression), OverlayTexture.v(entity.hurtTime > 5 || entity.deathTime > 0));
 	}
 
+	@Unique
 	private void renderForceField(EnderDragon dragon, DragonCrystalLinkPhase phase, MultiBufferSource buffer, PoseStack poseStack, float partialTicks, int packedLight) {
 		int chargingCount = phase.getChargingCount();
 		int age = DragonCrystalLinkPhase.CHARGING_TICK - chargingCount;
@@ -171,6 +114,7 @@ public abstract class MixinEnderDragonRenderer{
 		poseStack.popPose();
 	}
 
+	@Unique
 	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
 		Matrix4f matrix4f = poseStack.last().pose();
 		int segments = 24;
