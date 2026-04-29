@@ -22,8 +22,8 @@ public class Models {
 		return clientDragon;
 	}
 
-	public static void loadArmatures(ResourceManager resourceManager) {
-		SERVER_DRAGON.loadArmatureData(resourceManager);
+	public static void loadArmatures() {
+		SERVER_DRAGON.loadArmatureData();
 	}
 
 	@OnlyIn(Dist.CLIENT)

@@ -20,8 +20,8 @@ public class EnderDragonWalkAnimation extends StaticAnimation implements Procedu
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransforms;
 
-	public EnderDragonWalkAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, true, path, model);
+	public EnderDragonWalkAnimation(float convertTime, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, true, name, model);
 		this.ikInfos = ikInfos;
 	}
 

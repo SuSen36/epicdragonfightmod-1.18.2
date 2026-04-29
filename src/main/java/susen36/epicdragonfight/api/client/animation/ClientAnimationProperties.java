@@ -8,5 +8,4 @@ import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAn
 public class ClientAnimationProperties {
 	public static final StaticAnimationProperty<Layer.LayerType> LAYER_TYPE = new StaticAnimationProperty<Layer.LayerType> ();
 	public static final StaticAnimationProperty<Layer.Priority> PRIORITY = new StaticAnimationProperty<Layer.Priority> ();
-	public static final StaticAnimationProperty<JointMaskEntry> JOINT_MASK = new StaticAnimationProperty<JointMaskEntry> ();
 }

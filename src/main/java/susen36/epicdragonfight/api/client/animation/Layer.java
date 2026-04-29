@@ -18,11 +18,11 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class Layer {
 	public final AnimationPlayer animationPlayer;
-	protected DynamicAnimation nextAnimation;
-	protected LinkAnimation linkAnimationStorage;
-	protected LayerOffAnimation layerOffAnimation;
-	protected boolean disabled;
-	protected boolean paused;
+	public DynamicAnimation nextAnimation;
+	public LinkAnimation linkAnimationStorage;
+	public LayerOffAnimation layerOffAnimation;
+	public boolean disabled;
+	public boolean paused;
 	
 	public Layer(Priority priority) {
 		this.animationPlayer = new AnimationPlayer();
@@ -102,7 +102,7 @@ public class Layer {
 		this.disabled = false;
 	}
 	
-	protected boolean isDisabled() {
+	public boolean isDisabled() {
 		return this.disabled;
 	}
 	
@@ -112,7 +112,7 @@ public class Layer {
 	
 	public void off(IDragonPatch entitypatch) {
 		if (!this.isDisabled() && !(this.animationPlayer.getAnimation() instanceof LayerOffAnimation)) {
-			float convertTime = entitypatch.getClientAnimator().baseLayer.animationPlayer.getAnimation().getConvertTime();
+			float convertTime = entitypatch.getAnimator().baseLayer.animationPlayer.getAnimation().getConvertTime();
 			setLayerOffAnimation(this.animationPlayer.getAnimation(), this.animationPlayer.getCurrentPose(entitypatch, 1.0F), this.layerOffAnimation, convertTime);
 			this.playAnimationInstant(this.layerOffAnimation, entitypatch);
 		}
@@ -125,8 +125,8 @@ public class Layer {
 	}
 	
 	public static class BaseLayer extends Layer {
-		protected Map<Priority, Layer> compositeLayers = Maps.newHashMap();
-		protected Priority baserLayerPriority;
+		public Map<Priority, Layer> compositeLayers = Maps.newHashMap();
+		public Priority baserLayerPriority;
 		
 		public BaseLayer(Priority priority) {
 			super(priority);
@@ -173,7 +173,7 @@ public class Layer {
 		}
 		
 		@Override
-		protected boolean isDisabled() {
+		public boolean isDisabled() {
 			return false;
 		}
 		

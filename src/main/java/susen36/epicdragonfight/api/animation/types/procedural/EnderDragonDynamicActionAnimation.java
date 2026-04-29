@@ -28,8 +28,8 @@ public class EnderDragonDynamicActionAnimation extends ActionAnimation implement
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransform;
 	
-	public EnderDragonDynamicActionAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, path, model);
+	public EnderDragonDynamicActionAnimation(float convertTime, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, name, model);
 		this.ikInfos = ikInfos;
 	}
 	

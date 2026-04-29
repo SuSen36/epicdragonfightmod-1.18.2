@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.api.model;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import susen36.epicdragonfight.gameasset.DragonModelData;
 
 public class Model {
@@ -9,10 +8,10 @@ public class Model {
 	protected Armature armature;
 	
 	public Model(ResourceLocation location) {
-		this.location = new ResourceLocation(location.getNamespace(), "animmodels/" + location.getPath() + ".json");
+		this.location = new ResourceLocation(location.getNamespace(), location.getPath());
 	}
 	
-	public void loadArmatureData(ResourceManager resourceManager) {
+	public void loadArmatureData() {
 		this.armature = DragonModelData.createArmature();
 	}
 	

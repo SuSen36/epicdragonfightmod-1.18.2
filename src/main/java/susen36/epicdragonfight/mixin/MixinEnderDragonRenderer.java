@@ -69,7 +69,7 @@ public abstract class MixinEnderDragonRenderer{
 
 		if (Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
 			for (Layer.Priority priority : Layer.Priority.HIGHEST.lowers()) {
-				AnimationPlayer animPlayer = entitypatch.getClientAnimator().getCompositeLayer(priority).animationPlayer;
+				AnimationPlayer animPlayer = entitypatch.getAnimator().getCompositeLayer(priority).animationPlayer;
 				float playTime = animPlayer.getPrevElapsedTime() + (animPlayer.getElapsedTime() - animPlayer.getPrevElapsedTime()) * partialTicks;
 				animPlayer.getAnimation().renderDebugging(poseStack, buffer, entitypatch, playTime, partialTicks);
 			}
@@ -134,7 +134,7 @@ public abstract class MixinEnderDragonRenderer{
 
 	private OpenMatrix4f[] getPoseMatrices(IDragonPatch entitypatch, Armature armature, float partialTicks) {
 		armature.initializeTransform();
-		entitypatch.getClientAnimator().setPoseToModel(partialTicks);
+		entitypatch.getAnimator().setPoseToModel(partialTicks);
 
 		return armature.getJointTransforms();
 	}

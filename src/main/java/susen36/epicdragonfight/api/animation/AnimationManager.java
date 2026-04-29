@@ -7,7 +7,7 @@ import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.client.animation.AnimationDataReader;
+import susen36.epicdragonfight.gameasset.Animations;
 
 import java.util.Map;
 
@@ -41,21 +41,12 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 		this.animationById.values().forEach((map) -> {
 			map.values().forEach((animation) -> {
 				animation.loadAnimation(resourceManager);
-				this.setAnimationProperties(resourceManager, animation);
 			});
 		});
 	}
 
 	@Override
 	protected Map<Integer, Map<Integer, StaticAnimation>> prepare(ResourceManager resourceManager, ProfilerFiller profilerIn) {
-		if (EpicDragonFight.isPhysicalClient()) {
-			this.animationById.values().forEach((map) -> {
-				map.values().forEach((animation) -> {
-					this.setAnimationProperties(resourceManager, animation);
-				});
-			});
-		}
-
 		return this.animationById;
 	}
 
@@ -66,23 +57,6 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 				animation.loadAnimation(resourceManager);
 			});
 		});
-	}
-
-	private void setAnimationProperties(ResourceManager resourceManager, StaticAnimation animation) {
-		if (resourceManager == null) {
-			return;
-		}
-
-		ResourceLocation location = animation.getLocation();
-		String path = location.getPath();
-		int last = location.getPath().lastIndexOf('/');
-
-		if (last > 0) {
-			ResourceLocation dataLocation = new ResourceLocation(location.getNamespace(), String.format("%s/data%s.json", path.substring(0, last), path.substring(last)));
-			if (resourceManager.getResource(dataLocation).isPresent()) {
-                AnimationDataReader.readAndApply(animation, resourceManager.getResource(dataLocation).get());
-            }
-		}
 	}
 
 	public String getModid() {

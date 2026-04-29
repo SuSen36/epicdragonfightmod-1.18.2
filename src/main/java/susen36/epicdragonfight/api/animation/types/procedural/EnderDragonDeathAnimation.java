@@ -10,8 +10,8 @@ import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 public class EnderDragonDeathAnimation extends ActionAnimation {
-	public EnderDragonDeathAnimation(float convertTime, String path, Model model) {
-		super(convertTime, path, model);
+	public EnderDragonDeathAnimation(float convertTime, String name, Model model) {
+		super(convertTime, name, model);
 		this.addProperty(AnimationProperty.ActionAnimationProperty.STOP_MOVEMENT, true);
 
 		this.stateSpectrumBlueprint.clear()

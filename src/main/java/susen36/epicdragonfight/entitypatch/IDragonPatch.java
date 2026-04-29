@@ -19,11 +19,9 @@ import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.procedural.IKInfo;
 import susen36.epicdragonfight.api.animation.types.procedural.TipPointAnimation;
-import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
 
 import java.util.List;
@@ -39,7 +37,7 @@ public interface IDragonPatch {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-    void initAnimator(ClientAnimator clientAnimator);
+	void initAnimator(Animator animator);
 
     void updateMotion(boolean considerInaction);
 	
@@ -74,10 +72,7 @@ public interface IDragonPatch {
 		SPPlayAnimation get(StaticAnimation animation, float convertTimeModifier, IDragonPatch entitypatch);
 	}
 
-	<A extends Animator> A getAnimator();
-
-	@OnlyIn(Dist.CLIENT)
-	ClientAnimator getClientAnimator();
+	Animator getAnimator();
 
 	EntityState getEntityState();
 

@@ -26,12 +26,12 @@ import java.util.Map;
 
 public class ActionAnimation extends MainFrameAnimation {
 	
-	public ActionAnimation(float convertTime, String path, Model model) {
-		this(convertTime, Float.MAX_VALUE, path, model);
+	public ActionAnimation(float convertTime, String name, Model model) {
+		this(convertTime, Float.MAX_VALUE, name, model);
 	}
 	
-	public ActionAnimation(float convertTime, float postDelay, String path, Model model) {
-		super(convertTime, path, model);
+	public ActionAnimation(float convertTime, float postDelay, String name, Model model) {
+		super(convertTime, name, model);
 		
 		this.stateSpectrumBlueprint.clear()
 			.newTimePair(0.0F, postDelay)

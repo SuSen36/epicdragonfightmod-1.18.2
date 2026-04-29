@@ -12,16 +12,13 @@ import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
-import susen36.epicdragonfight.api.client.animation.JointMask;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
-import susen36.epicdragonfight.api.model.JsonModelLoader;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -45,39 +42,29 @@ public class StaticAnimation extends DynamicAnimation {
 		this.model = null;
 	}
 	
-	public StaticAnimation(boolean repeatPlay, String path, Model model) {
-		this(0.15F, repeatPlay, path, model);
+	public StaticAnimation(boolean repeatPlay, String name, Model model) {
+		this(0.15F, repeatPlay, name, model);
 	}
-	
-	public StaticAnimation(float convertTime, boolean isRepeat, String path, Model model) {
+
+	public StaticAnimation(float convertTime, boolean isRepeat, String name, Model model) {
 		super(convertTime, isRepeat);
-		
+
 		AnimationManager animationManager = EpicDragonFight.getInstance().animationManager;
 		this.namespaceId = animationManager.getNamespaceHash();
 		this.animationId = animationManager.getIdCounter();
-		
+
 		animationManager.getIdMap().put(this.animationId, this);
-		this.resourceLocation = new ResourceLocation(animationManager.getModid(), "animmodels/animations/" + path);
-		animationManager.getNameMap().put(new ResourceLocation(animationManager.getModid(), path), this);
+		this.resourceLocation = new ResourceLocation(animationManager.getModid(), "animmodels/animations/" + name);
+		animationManager.getNameMap().put(new ResourceLocation(animationManager.getModid(), name), this);
 		this.model = model;
 	}
-	
-	public StaticAnimation(float convertTime, boolean repeatPlay, String path, Model model, boolean notRegisteredInAnimationManager) {
+
+	public StaticAnimation(float convertTime, boolean repeatPlay, String name, Model model, boolean notRegisteredInAnimationManager) {
 		super(convertTime, repeatPlay);
 		this.namespaceId = -1;
 		this.animationId = -1;
-		this.resourceLocation = new ResourceLocation(EpicDragonFight.getInstance().animationManager.getModid(), "animmodels/animations/" + path);
+		this.resourceLocation = new ResourceLocation(EpicDragonFight.getInstance().animationManager.getModid(), "animmodels/animations/" + name);
 		this.model = model;
-	}
-	
-	public static void load(ResourceManager resourceManager, StaticAnimation animation) {
-		ResourceLocation extenderPath = new ResourceLocation(animation.resourceLocation.getNamespace(), animation.resourceLocation.getPath() + ".json");
-		(new JsonModelLoader(resourceManager, extenderPath)).loadStaticAnimation(animation);
-	}
-	
-	public static void loadBothSide(ResourceManager resourceManager, StaticAnimation animation) {
-		ResourceLocation extenderPath = new ResourceLocation(animation.resourceLocation.getNamespace(), animation.resourceLocation.getPath() + ".json");
-		(new JsonModelLoader(resourceManager, extenderPath)).loadStaticAnimationBothSide(animation);
 	}
 	
 	public void loadAnimation(ResourceManager resourceManager) {
@@ -142,25 +129,12 @@ public class StaticAnimation extends DynamicAnimation {
 	
 	@Override
 	public boolean isJointEnabled(IDragonPatch entitypatch, String joint) {
-		if (!super.isJointEnabled(entitypatch, joint)) {
-			return false;
-		} else {
-            return this.getProperty(ClientAnimationProperties.JOINT_MASK).map((bindModifier) -> !bindModifier.isMasked(entitypatch.getCurrentLivingMotion(), joint)).orElse(true);
-		}
+		return super.isJointEnabled(entitypatch, joint);
 	}
-	
+
 	@Override
 	public BindModifier getBindModifier(IDragonPatch entitypatch, String joint) {
-		return this.getProperty(ClientAnimationProperties.JOINT_MASK).map((jointMaskEntry) -> {
-			List<JointMask> list = jointMaskEntry.getMask(entitypatch.getCurrentLivingMotion());
-			int position = list.indexOf(JointMask.of(joint));
-			
-			if (position >= 0) {
-				return list.get(position).getBindModifier();
-			} else {
-				return null;
-			}
-		}).orElse(null);
+		return null;
 	}
 	
 	@Override

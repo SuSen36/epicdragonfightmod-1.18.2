@@ -15,14 +15,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.AnimationManager;
 import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.animation.ServerAnimator;
-import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
-import susen36.epicdragonfight.network.DragonFightDataSerializers;
-
-import java.util.function.Function;
 
 @Mod(EpicDragonFight.MODID)
 public class EpicDragonFight {
@@ -35,7 +30,6 @@ public class EpicDragonFight {
 	}
 	
 	public final AnimationManager animationManager;
-	private Function<IDragonPatch, Animator> animatorProvider;
 	
     public EpicDragonFight() {
     	this.animationManager = new AnimationManager();
@@ -44,13 +38,11 @@ public class EpicDragonFight {
     	bus.addListener(this::doClientStuff);
     	bus.addListener(this::doCommonStuff);
     	bus.addListener(this::doServerStuff);
-		DragonFightDataSerializers.VEC.register(bus);
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {
-		this.animatorProvider = ClientAnimator::getAnimator;
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		Models.loadArmatures(resourceManager);
+		Models.loadArmatures();
 		Models.loadMeshData(resourceManager);
 		Models.copyArmaturesFromServer();
 		this.animationManager.loadAnimationsInit(resourceManager);
@@ -58,9 +50,8 @@ public class EpicDragonFight {
     }
 	
 	private void doServerStuff(final FMLDedicatedServerSetupEvent event) {
-		Models.loadArmatures(null);
+		Models.loadArmatures();
 		this.animationManager.loadAnimationsInit(null);
-		this.animatorProvider = ServerAnimator::getAnimator;
 	}
 	
 	private void doCommonStuff(final FMLCommonSetupEvent event) {
@@ -69,7 +60,7 @@ public class EpicDragonFight {
     }
 	
 	public static Animator getAnimator(IDragonPatch entitypatch) {
-		return EpicDragonFight.getInstance().animatorProvider.apply(entitypatch);
+		return Animator.getAnimator(entitypatch);
 	}
 	
 	public static boolean isPhysicalClient() {

@@ -8,8 +8,8 @@ import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class MainFrameAnimation extends StaticAnimation {
-	public MainFrameAnimation(float convertTime, String path, Model model) {
-		super(convertTime, false, path, model);
+	public MainFrameAnimation(float convertTime, String name, Model model) {
+		super(convertTime, false, name, model);
 	}
 	
 	@Override
@@ -19,9 +19,9 @@ public class MainFrameAnimation extends StaticAnimation {
 		entitypatch.updateEntityState();
 		
 		if (entitypatch.isLogicalClient()) {
-			entitypatch.getClientAnimator().resetMotion();
-			entitypatch.getClientAnimator().resetCompositeMotion();
-			entitypatch.getClientAnimator().getPlayerFor(this).setReversed(false);
+			entitypatch.getAnimator().resetMotion();
+		entitypatch.getAnimator().resetCompositeMotion();
+		entitypatch.getAnimator().getPlayerFor(this).setReversed(false);
 		}
 	}
 	

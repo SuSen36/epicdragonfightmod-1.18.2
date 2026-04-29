@@ -29,8 +29,8 @@ public class EnderDragonActionAnimation extends ActionAnimation implements Proce
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransforms;
 	
-	public EnderDragonActionAnimation(float convertTime, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, path, model);
+	public EnderDragonActionAnimation(float convertTime, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, name, model);
 		this.ikInfos = ikInfos;
 	}
 	

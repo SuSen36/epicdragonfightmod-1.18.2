@@ -6,9 +6,9 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.NetworkEvent;
 import susen36.epicdragonfight.EpicDragonFight;
+import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public class SPChangeLivingMotion {
 
 			Entity entity = mc.level.getEntity(msg.entityId);
 			if (entity instanceof IDragonPatch entitypatch) {
-				ClientAnimator animator = entitypatch.getClientAnimator();
+				Animator animator = entitypatch.getAnimator();
 
 				if (animator != null) {
 					animator.resetMotions();

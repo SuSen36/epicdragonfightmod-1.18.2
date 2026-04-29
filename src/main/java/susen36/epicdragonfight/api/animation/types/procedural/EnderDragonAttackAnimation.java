@@ -31,8 +31,8 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 	private final IKInfo[] ikInfos;
 	private Map<String, TransformSheet> tipPointTransform;
 	
-	public EnderDragonAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String path, Model model, IKInfo[] ikInfos) {
-		super(convertTime, antic, preDelay, contact, recovery, index, path, model);
+	public EnderDragonAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String name, Model model, IKInfo[] ikInfos) {
+		super(convertTime, antic, preDelay, contact, recovery, index, name, model);
 		this.ikInfos = ikInfos;
 		this.addProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE, true);
 		this.properties.remove(ActionAnimationProperty.COORD_SET_TICK);
@@ -112,8 +112,8 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 		}
 		
 		if (entitypatch.isLogicalClient()) {
-			entitypatch.getClientAnimator().resetMotion();
-			entitypatch.getClientAnimator().resetCompositeMotion();
+			entitypatch.getAnimator().resetMotion();
+			entitypatch.getAnimator().resetCompositeMotion();
 		}
 	}
 	

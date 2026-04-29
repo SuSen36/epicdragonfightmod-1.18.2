@@ -444,6 +444,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		}
 	}
 
+	@Unique
 	public void updateJointBoundParts() {
 		for (JointBoundPart part : this.jointBoundParts) {
 			part.tick(this);
@@ -565,10 +566,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		DragoFightNetworkManager.sendToAllPlayerTrackingThisEntity(packetProvider.get(animation, convertTimeModifier, this), this);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <A extends Animator> A getAnimator() {
-		return (A) this.animator;
+	public Animator getAnimator() {
+		return this.animator;
 	}
 
 	@Override

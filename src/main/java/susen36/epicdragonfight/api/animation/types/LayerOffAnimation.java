@@ -26,13 +26,13 @@ public class LayerOffAnimation extends DynamicAnimation {
 	@Override
 	public void end(IDragonPatch entitypatch, boolean isEnd) {
 		if (entitypatch.isLogicalClient()) {
-			entitypatch.getClientAnimator().baseLayer.disableLayer(this.layerPriority);
+			entitypatch.getAnimator().baseLayer.disableLayer(this.layerPriority);
 		}
 	}
 	
 	@Override
 	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
-		Pose lowerLayerPose = entitypatch.getClientAnimator().getComposedLayerPoseBelow(this.layerPriority, Minecraft.getInstance().getFrameTime());
+		Pose lowerLayerPose = entitypatch.getAnimator().getComposedLayerPoseBelow(this.layerPriority, Minecraft.getInstance().getFrameTime());
 		return Pose.interpolatePose(this.lastPose, lowerLayerPose, time / this.totalTime);
 	}
 	
