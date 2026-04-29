@@ -12,7 +12,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
-import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
@@ -24,7 +23,6 @@ import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event.Side;
 import susen36.epicdragonfight.api.animation.types.procedural.*;
-import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
@@ -55,11 +53,7 @@ public class Animations {
 	public static StaticAnimation DRAGON_NEUTRALIZED;
 	public static StaticAnimation DRAGON_NEUTRALIZED_RECOVERY;
 
-	public static void registerAnimations(AnimationRegistryEvent event) {
-		event.getRegistryMap().put(EpicDragonFight.MODID, Animations::build);
-	}
-
-	private static void build() {
+	public static void build() {
 		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.getClientDragon() : Models.SERVER_DRAGON;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "idle", dragon);

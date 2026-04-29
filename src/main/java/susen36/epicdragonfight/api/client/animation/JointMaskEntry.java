@@ -39,7 +39,6 @@ public class JointMaskEntry {
 				return false;
 			}
 		}
-		
 		return true;
 	}
 	

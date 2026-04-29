@@ -5,11 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.fml.ModLoader;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.client.animation.AnimationDataReader;
-import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
 
 import java.util.Map;
 
@@ -32,16 +30,11 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 
 
 	public void registerAnimations() {
-		Map<String, Runnable> registryMap = Maps.newHashMap();
-		ModLoader.get().postEvent(new AnimationRegistryEvent(registryMap));
-
-		registryMap.forEach((key, value) -> {
-            this.modid = key;
-            this.namespaceHash = this.modid.hashCode();
-            this.animationById.put(this.namespaceHash, Maps.newHashMap());
-            this.counter = 0;
-            value.run();
-        });
+		this.modid = EpicDragonFight.MODID;
+		this.namespaceHash = this.modid.hashCode();
+		this.animationById.put(this.namespaceHash, Maps.newHashMap());
+		this.counter = 0;
+		Animations.build();
 	}
 
 	public void loadAnimationsInit(ResourceManager resourceManager) {

@@ -83,9 +83,9 @@ public class AnimationDataReader {
 	}
 	
 	private static List<JointMask> getJointMaskEntry(String type) {
-        return switch (type) {
-            case "wings" -> JointMaskEntry.WINGS;
-            default -> List.of();
-        };
+		if ("wings".equals(type)) {
+			return JointMaskEntry.WINGS;
+		}
+		return List.of();
 	}
 }

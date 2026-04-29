@@ -38,17 +38,16 @@ public abstract class MixinEndCrystalRenderer {
 
 	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
 		Matrix4f matrix4f = poseStack.last().pose();
-		int segments = 24;
+		int segments = 16;
 		int rings = 16;
-		float radius = 1.0F;
 
-		for (int ring = 0; ring < rings; ring++) {
+        for (int ring = 0; ring < rings; ring++) {
 			float phi1 = (float)ring / rings * (float)Math.PI;
 			float phi2 = (float)(ring + 1) / rings * (float)Math.PI;
-			float y1 = (float)Math.cos(phi1) * radius;
-			float y2 = (float)Math.cos(phi2) * radius;
-			float ringRadius1 = (float)Math.sin(phi1) * radius;
-			float ringRadius2 = (float)Math.sin(phi2) * radius;
+			float y1 = (float) Math.cos(phi1);
+			float y2 = (float) Math.cos(phi2);
+			float ringRadius1 = (float) Math.sin(phi1);
+			float ringRadius2 = (float) Math.sin(phi2);
 
 			float ringProgress1 = (float)ring / rings;
 			float ringProgress2 = (float)(ring + 1) / rings;
