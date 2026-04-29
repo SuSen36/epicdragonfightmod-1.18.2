@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.network.server;
+package susen36.epicdragonfight.network;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;

@@ -43,7 +43,7 @@ public class EpicDragonFight {
 	private void doClientStuff(final FMLClientSetupEvent event) {
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 		Models.loadArmatures();
-		Models.loadMeshData(resourceManager);
+		Models.loadMeshData();
 		Models.copyArmaturesFromServer();
 		this.animationManager.loadAnimationsInit(resourceManager);
         ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);

@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.api.animation;
 
 import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -13,7 +12,6 @@ import java.util.Map;
 
 public class AnimationManager extends SimplePreparableReloadListener<Map<Integer, Map<Integer, StaticAnimation>>> {
 	private final Map<Integer, Map<Integer, StaticAnimation>> animationById = Maps.newHashMap();
-	private final Map<ResourceLocation, StaticAnimation> animationByName = Maps.newHashMap();
 	private String modid;
 	private int namespaceHash;
 	private int counter = 0;
@@ -73,9 +71,5 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 
 	public Map<Integer, StaticAnimation> getIdMap() {
 		return this.animationById.get(this.namespaceHash);
-	}
-
-	public Map<ResourceLocation, StaticAnimation> getNameMap() {
-		return this.animationByName;
 	}
 }

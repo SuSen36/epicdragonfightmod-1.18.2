@@ -31,7 +31,6 @@ public class DragonFightRenderTypes extends RenderType {
 	    return create(EpicDragonFight.MODID + ":animated_model", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, true, false, state);
 	});
 
-
 	private static final Function<ResourceLocation, RenderType> ENTITY_DECAL_TRIANGLES = Util.memoize((p_173194_) -> {
 		CompositeState state = CompositeState.builder()
 				.setShaderState(RENDERTYPE_ENTITY_DECAL_SHADER)

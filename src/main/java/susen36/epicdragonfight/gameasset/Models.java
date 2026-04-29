@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.gameasset;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
@@ -27,8 +26,8 @@ public class Models {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void loadMeshData(ResourceManager resourceManager) {
-		getClientDragon().loadMeshAndProperties(resourceManager);
+	public static void loadMeshData() {
+		getClientDragon().loadMeshAndProperties();
 	}
 
 	@OnlyIn(Dist.CLIENT)

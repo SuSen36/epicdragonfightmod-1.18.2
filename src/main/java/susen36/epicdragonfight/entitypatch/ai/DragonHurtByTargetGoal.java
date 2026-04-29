@@ -1,117 +1,112 @@
 package susen36.epicdragonfight.entitypatch.ai;
 
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.phys.AABB;
 
 import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.Iterator;
 import java.util.List;
 
-public class DragonHurtByTargetGoal  extends TargetGoal {
-    private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
-    private static final int ALERT_RANGE_Y = 10;
-    private boolean alertSameType;
-    private int timestamp;
-    private final Class<?>[] toIgnoreDamage;
-    @Nullable
-    private Class<?>[] toIgnoreAlert;
+public class DragonHurtByTargetGoal extends TargetGoal {
+	private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
+	private static final int ALERT_RANGE_Y = 10;
 
-    public DragonHurtByTargetGoal(Mob p_26039_, Class<?>... p_26040_) {
-        super(p_26039_, true);
-        this.toIgnoreDamage = p_26040_;
-        this.setFlags(EnumSet.of(Flag.TARGET));
-    }
+	private boolean alertSameType;
+	private int timestamp;
+	private final Class<?>[] toIgnoreDamage;
+	@Nullable
+	private Class<?>[] toIgnoreAlert;
 
-    public boolean canUse() {
-        int $$0 = this.mob.getLastHurtByMobTimestamp();
-        LivingEntity $$1 = this.mob.getLastHurtByMob();
-        if ($$0 != this.timestamp && $$1 != null) {
-            if ($$1.getType() == EntityType.PLAYER && this.mob.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
-                return false;
-            } else {
-                Class[] var3 = this.toIgnoreDamage;
-                int var4 = var3.length;
+	public DragonHurtByTargetGoal(Mob mob, Class<?>... toIgnoreDamage) {
+		super(mob, true);
+		this.toIgnoreDamage = toIgnoreDamage;
+		this.setFlags(EnumSet.of(Flag.TARGET));
+	}
 
-                for (Class<?> $$2 : var3) {
-                    if ($$2.isAssignableFrom($$1.getClass())) {
-                        return false;
-                    }
-                }
+	public boolean canUse() {
+		int lastHurtTimestamp = this.mob.getLastHurtByMobTimestamp();
+		LivingEntity attacker = this.mob.getLastHurtByMob();
 
-                return this.canAttack($$1, HURT_BY_TARGETING);
-            }
-        } else {
-            return false;
-        }
-    }
+		if (lastHurtTimestamp == this.timestamp || attacker == null) {
+			return false;
+		}
 
-    public DragonHurtByTargetGoal setAlertOthers(Class<?>... p_26045_) {
-        this.alertSameType = true;
-        this.toIgnoreAlert = p_26045_;
-        return this;
-    }
+		if (attacker instanceof Player && this.mob.level.getGameRules().getBoolean(GameRules.RULE_UNIVERSAL_ANGER)) {
+			return false;
+		}
 
-    public void start() {
-        this.mob.setTarget(this.mob.getLastHurtByMob());
-        this.targetMob = this.mob.getTarget();
-        this.timestamp = this.mob.getLastHurtByMobTimestamp();
-        this.unseenMemoryTicks = 300;
-        if (this.alertSameType) {
-            this.alertOthers();
-        }
+		for (Class<?> ignoreClass : this.toIgnoreDamage) {
+			if (ignoreClass.isAssignableFrom(attacker.getClass())) {
+				return false;
+			}
+		}
 
-        super.start();
-    }
+		return this.canAttack(attacker, HURT_BY_TARGETING);
+	}
 
-    protected void alertOthers() {
-        double $$0 = this.getFollowDistance();
-        AABB $$1 = AABB.unitCubeFromLowerCorner(this.mob.position()).inflate($$0, ALERT_RANGE_Y, $$0);
-        List<? extends Mob> $$2 = this.mob.level.getEntitiesOfClass(this.mob.getClass(), $$1, EntitySelector.NO_SPECTATORS);
-        Iterator<? extends Mob> var5 = $$2.iterator();
+	public DragonHurtByTargetGoal setAlertOthers(Class<?>... toIgnoreAlert) {
+		this.alertSameType = true;
+		this.toIgnoreAlert = toIgnoreAlert;
+		return this;
+	}
 
-        while(true) {
-            Mob $$3;
-            boolean $$4;
-            do {
-                do {
-                    do {
-                        do {
-                            do {
-                                if (!var5.hasNext()) {
-                                    return;
-                                }
+	public void start() {
+		this.mob.setTarget(this.mob.getLastHurtByMob());
+		this.targetMob = this.mob.getTarget();
+		this.timestamp = this.mob.getLastHurtByMobTimestamp();
+		this.unseenMemoryTicks = 300;
 
-                                $$3 = (Mob)var5.next();
-                            } while(this.mob == $$3);
-                        } while($$3.getTarget() != null);
-                    } while(this.mob instanceof TamableAnimal && ((TamableAnimal)this.mob).getOwner() != ((TamableAnimal)$$3).getOwner());
-                } while($$3.isAlliedTo(this.mob.getLastHurtByMob()));
+		if (this.alertSameType) {
+			this.alertOthers();
+		}
 
-                if (this.toIgnoreAlert == null) {
-                    break;
-                }
+		super.start();
+	}
 
-                $$4 = false;
-                Class[] var8 = this.toIgnoreAlert;
-                int var9 = var8.length;
+	protected void alertOthers() {
+		double followDistance = this.getFollowDistance();
+		AABB searchArea = AABB.unitCubeFromLowerCorner(this.mob.position()).inflate(followDistance, ALERT_RANGE_Y, followDistance);
+		LivingEntity attacker = this.mob.getLastHurtByMob();
+		List<? extends Mob> nearbyMobs = this.mob.level.getEntitiesOfClass(this.mob.getClass(), searchArea, EntitySelector.NO_SPECTATORS);
 
-                for (Class<?> $$5 : var8) {
-                    if ($$3.getClass() == $$5) {
-                        $$4 = true;
-                        break;
-                    }
-                }
-            } while($$4);
+		for (Mob nearby : nearbyMobs) {
+			if (nearby == this.mob) {
+				continue;
+			}
+			if (nearby.getTarget() != null) {
+				continue;
+			}
+			if (this.mob instanceof TamableAnimal ownerA && nearby instanceof TamableAnimal ownerB && ownerA.getOwner() != ownerB.getOwner()) {
+				continue;
+			}
+			if (nearby.isAlliedTo(attacker)) {
+				continue;
+			}
+			if (this.toIgnoreAlert != null) {
+				boolean shouldIgnore = false;
+				for (Class<?> ignoreClass : this.toIgnoreAlert) {
+					if (nearby.getClass() == ignoreClass) {
+						shouldIgnore = true;
+						break;
+					}
+				}
+				if (shouldIgnore) {
+					continue;
+				}
+			}
 
-            this.alertOther($$3, this.mob.getLastHurtByMob());
-        }
-    }
+			this.alertOther(nearby, attacker);
+		}
+	}
 
-    protected void alertOther(Mob p_26042_, LivingEntity p_26043_) {
-        p_26042_.setTarget(p_26043_);
-    }
+	protected void alertOther(Mob mobToAlert, LivingEntity target) {
+		mobToAlert.setTarget(target);
+	}
 }

@@ -55,7 +55,6 @@ public class StaticAnimation extends DynamicAnimation {
 
 		animationManager.getIdMap().put(this.animationId, this);
 		this.resourceLocation = new ResourceLocation(animationManager.getModid(), "animmodels/animations/" + name);
-		animationManager.getNameMap().put(new ResourceLocation(animationManager.getModid(), name), this);
 		this.model = model;
 	}
 

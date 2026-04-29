@@ -7,7 +7,6 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.model.Model;
@@ -27,7 +26,7 @@ public class ClientModel extends Model {
 		this.mesh = mesh;
 	}
 	
-	public void loadMeshAndProperties(ResourceManager resourceManager) {
+	public void loadMeshAndProperties() {
 		this.mesh = DragonModelData.createMesh();
 	}
 	

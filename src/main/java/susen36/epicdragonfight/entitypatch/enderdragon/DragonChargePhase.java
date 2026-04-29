@@ -126,7 +126,7 @@ public class DragonChargePhase extends PatchedDragonPhase {
 
 	@Override
 	public float getFlySpeed() {
-		return isActuallyAttacking()? 1.95F : 1.75F;
+		return isActuallyAttacking()? 1.75F : 1.65F;
 	}
 
 	@Override

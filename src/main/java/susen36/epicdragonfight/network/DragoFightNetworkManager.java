@@ -7,10 +7,6 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.PacketDistributor.PacketTarget;
 import net.minecraftforge.network.simple.SimpleChannel;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.network.server.SPChangeLivingMotion;
-import susen36.epicdragonfight.network.server.SPPlayAnimation;
-import susen36.epicdragonfight.network.server.SPPlayAnimationAndSetTarget;
-import susen36.epicdragonfight.network.server.SPPlayAnimationAndSyncTransform;
 
 public class DragoFightNetworkManager {
 	private static final String PROTOCOL_VERSION = "1";
@@ -27,9 +23,6 @@ public class DragoFightNetworkManager {
 
 	public static void registerPackets() {
 		int id = 0;
-		INSTANCE.registerMessage(id++, SPChangeLivingMotion.class, SPChangeLivingMotion::toBytes, SPChangeLivingMotion::fromBytes, SPChangeLivingMotion::handle);
 		INSTANCE.registerMessage(id++, SPPlayAnimation.class, SPPlayAnimation::toBytes, SPPlayAnimation::fromBytes, SPPlayAnimation::handle);
-		INSTANCE.registerMessage(id++, SPPlayAnimationAndSetTarget.class, SPPlayAnimationAndSetTarget::toBytes, SPPlayAnimationAndSetTarget::fromBytes, SPPlayAnimationAndSetTarget::handle);
-		INSTANCE.registerMessage(id++, SPPlayAnimationAndSyncTransform.class, SPPlayAnimationAndSyncTransform::toBytes, SPPlayAnimationAndSyncTransform::fromBytes, SPPlayAnimationAndSyncTransform::handle);
 	}
 }

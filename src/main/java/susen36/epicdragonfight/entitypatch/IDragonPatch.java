@@ -22,7 +22,7 @@ import susen36.epicdragonfight.api.animation.types.procedural.TipPointAnimation;
 import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.network.server.SPPlayAnimation;
+import susen36.epicdragonfight.network.SPPlayAnimation;
 
 import java.util.List;
 import java.util.Map;
