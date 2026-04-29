@@ -119,7 +119,7 @@ public class ClientAnimator extends Animator {
 	}
 
 	public void setPoseToModel(float partialTicks) {
-		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
+		Joint rootJoint = this.entitypatch.getEntityModel().getArmature().getJointHierarcy();
 		this.applyPoseToJoint(rootJoint, new OpenMatrix4f(), this.getPose(partialTicks));
 	}
 
@@ -200,7 +200,7 @@ public class ClientAnimator extends Animator {
 			}
 		}
 
-		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
+		Joint rootJoint = this.entitypatch.getEntityModel().getArmature().getJointHierarcy();
 		this.applyBindModifier(composedPose, rootJoint, layerPoses);
 
 		return composedPose;
@@ -223,7 +223,7 @@ public class ClientAnimator extends Animator {
 			}
 		}
 
-		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
+		Joint rootJoint = this.entitypatch.getEntityModel().getArmature().getJointHierarcy();
 		this.applyBindModifier(composedPose, rootJoint, layerPoses);
 
 		return composedPose;

@@ -43,7 +43,7 @@ public class DragonChargePhase extends PatchedDragonPhase {
 	@Override
 	public void doClientTick() {
 		super.doClientTick();
-		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel(null).getArmature(), "upperJaw");
+		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel().getArmature(), "upperJaw");
 
 		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
 		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);

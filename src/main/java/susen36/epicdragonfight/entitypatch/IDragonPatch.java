@@ -63,7 +63,7 @@ public interface IDragonPatch {
 
 	EnderDragonPart[] getWingParts();
 
-	<M extends Model> M getEntityModel(Models<M> modelDB);
+	Model getEntityModel();
 
 	void updateEntityState();
 

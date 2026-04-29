@@ -36,7 +36,7 @@ public class JointBoundPart {
 			return;
 		}
 
-		Armature armature = dragonPatch.getEntityModel(Models.LOGICAL_SERVER).getArmature();
+		Armature armature = Models.SERVER_DRAGON.getArmature();
 
 		if (this.pathIndex == -1) {
 			this.pathIndex = armature.searchPathIndex(this.jointName);

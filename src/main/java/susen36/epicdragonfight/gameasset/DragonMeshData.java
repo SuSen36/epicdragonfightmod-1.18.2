@@ -14,8 +14,6 @@ import java.util.Base64;
 @OnlyIn(Dist.CLIENT)
 public class DragonMeshData {
     private static final int VERTEX_COUNT = 520;
-    private static final int NORMAL_COUNT = 26;
-    private static final int TRIANGLE_COUNT = 2340;
     private static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 
     private static final String POSITIONS_B64 =
@@ -494,15 +492,15 @@ public class DragonMeshData {
         return result;
     }
 
-    private static int[] decodeInts(String b64) {
-        byte[] bytes = Base64.getDecoder().decode(b64.replace("\n", ""));
+    private static int[] decodeInts() {
+        byte[] bytes = Base64.getDecoder().decode(DragonMeshData.JOINT_IDS_B64.replace("\n", ""));
         int[] result = new int[bytes.length / 4];
         ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().get(result);
         return result;
     }
 
-    private static int[] decodeShortsToInts(String b64) {
-        byte[] bytes = Base64.getDecoder().decode(b64.replace("\n", ""));
+    private static int[] decodeShortsToInts() {
+        byte[] bytes = Base64.getDecoder().decode(DragonMeshData.INDICES_B64.replace("\n", ""));
         int count = bytes.length / 2;
         int[] result = new int[count];
         java.nio.ShortBuffer sb = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
@@ -512,8 +510,8 @@ public class DragonMeshData {
         return result;
     }
 
-    private static float[] decodeNormalBytes(String b64) {
-        byte[] bytes = Base64.getDecoder().decode(b64.replace("\n", ""));
+    private static float[] decodeNormalBytes() {
+        byte[] bytes = Base64.getDecoder().decode(DragonMeshData.NORMALS_B64.replace("\n", ""));
         float[] result = new float[bytes.length];
         for (int i = 0; i < bytes.length; i++) {
             result[i] = (float)(bytes[i] & 0xFF) / 127.0F;
@@ -554,7 +552,7 @@ public class DragonMeshData {
             positionArray[k+2] = posVector.z;
         }
 
-        float[] normalArray = decodeNormalBytes(NORMALS_B64);
+        float[] normalArray = decodeNormalBytes();
         for (int i = 0; i < normalArray.length / 3; i++) {
             int k = i * 3;
             Vector4f normVector = new Vector4f(normalArray[k], normalArray[k+1], normalArray[k+2], 1.0F);
@@ -564,8 +562,8 @@ public class DragonMeshData {
             normalArray[k+2] = normVector.z;
         }
 
-        int[] drawingIndices = decodeShortsToInts(INDICES_B64);
-        int[] jointIds = decodeInts(JOINT_IDS_B64);
+        int[] drawingIndices = decodeShortsToInts();
+        int[] jointIds = decodeInts();
         int[] animationIndices = expandAnimationIndices(jointIds);
 
         return new Mesh(positionArray, normalArray, decodeFloats(UVS_B64), animationIndices, expandWeights(), drawingIndices, expandVcounts());

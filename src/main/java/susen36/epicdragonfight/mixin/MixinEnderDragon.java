@@ -554,13 +554,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		return this.groundPhase;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <M extends Model> M getEntityModel(Models<M> modelDB) {
-		if (modelDB == null) {
-			return (M) Models.LOGICAL_SERVER.dragon;
-		}
-		return modelDB.dragon;
+	public Model getEntityModel() {
+		return Models.SERVER_DRAGON;
 	}
 
 	@Override

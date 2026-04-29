@@ -60,7 +60,7 @@ public class Animations {
 	}
 
 	private static void build() {
-		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.getClientModels().dragon : Models.LOGICAL_SERVER.dragon;
+		Model dragon = FMLEnvironment.dist == Dist.CLIENT ? Models.getClientDragon() : Models.SERVER_DRAGON;
 
 		DRAGON_IDLE = new StaticAnimation(0.6F, true, "idle", dragon);
 		DRAGON_WALK = new EnderDragonWalkAnimation(0.35F, "walk", dragon,
@@ -114,7 +114,7 @@ public class Animations {
 					transformSheet.readFrom(transform);
 				})
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
-					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL, 0, 0);
+					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL);
 				}, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
 					LivingEntity original = entitypatch.getOriginal();
 					DamageSource damageSource = DamageSource.mobAttack(original);
@@ -132,7 +132,7 @@ public class Animations {
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(1, 2), 0.1344F, 0, new boolean[]{true})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
-					entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+					entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE);
 		}, Side.CLIENT)});
 
 		DRAGON_RIGHT_TAIL_SWEEP = new EnderDragonTailAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "legft_front_foot", "right_tail_sweep", dragon, new IKInfo[]{
@@ -141,7 +141,7 @@ public class Animations {
 				IKInfo.make("left_hind_leg", "left_hind_foot", null, null, 0.1344F, 0, new boolean[]{}),
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(1, 2), 0.1344F, 0, new boolean[]{true})
 		}).addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
-			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE);
 		}, Side.CLIENT)});
 
 		DRAGON_ATTACK1 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "right_front_foot", "attack1", dragon, new IKInfo[]{
@@ -175,7 +175,7 @@ public class Animations {
 				IKInfo.make("right_hind_leg", "right_hind_foot", null, Pair.of(3, 8), 0.1344F, 0, new boolean[]{false, false, false, false, true})
 		}).addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
 		   .addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.2F, (entitypatch) -> {
-			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
+			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE);
 		}, Side.CLIENT), Event.create(1.26F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
 			for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(2.0D, 0.D, 2.0D))) {
@@ -241,7 +241,7 @@ public class Animations {
 		})
 				.addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.15F, (entitypatch) -> {
-					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL, 0, 0);
+					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL);
 
 				}, Side.CLIENT)});
 

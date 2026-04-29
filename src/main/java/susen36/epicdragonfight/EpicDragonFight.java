@@ -52,15 +52,15 @@ public class EpicDragonFight {
 	private void doClientStuff(final FMLClientSetupEvent event) {
 		this.animatorProvider = ClientAnimator::getAnimator;
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		Models.LOGICAL_SERVER.loadArmatures(resourceManager);
-		Models.getClientModels().loadMeshData(resourceManager);
-		Models.getClientModels().copyArmaturesFromServer();
+		Models.loadArmatures(resourceManager);
+		Models.loadMeshData(resourceManager);
+		Models.copyArmaturesFromServer();
 		this.animationManager.loadAnimationsInit(resourceManager);
         ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);
     }
 	
 	private void doServerStuff(final FMLDedicatedServerSetupEvent event) {
-		Models.LOGICAL_SERVER.loadArmatures(null);
+		Models.loadArmatures(null);
 		this.animationManager.loadAnimationsInit(null);
 		this.animatorProvider = ServerAnimator::getAnimator;
 	}

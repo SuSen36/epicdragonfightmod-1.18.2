@@ -137,7 +137,7 @@ public class ActionAnimation extends MainFrameAnimation {
 	protected void modifyPose(Pose pose, IDragonPatch entitypatch, float time) {
 		JointTransform jt = pose.getOrDefaultTransform("root");
 		Vector3f jointPosition = jt.translation();
-		OpenMatrix4f toRootTransformApplied = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
+		OpenMatrix4f toRootTransformApplied = Models.SERVER_DRAGON.getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
 		OpenMatrix4f toOrigin = OpenMatrix4f.invert(toRootTransformApplied, null);
 		Vector3f worldPosition = OpenMatrix4f.transform3v(toRootTransformApplied, jointPosition, null);
 		worldPosition.x = 0.0F;
@@ -211,7 +211,7 @@ public class ActionAnimation extends MainFrameAnimation {
 		Vector4f currentpos = new Vector4f(jt.translation().x, jt.translation().y, jt.translation().z, 1.0F);
 		Vector4f prevpos = new Vector4f(prevJt.translation().x, prevJt.translation().y, prevJt.translation().z, 1.0F);
 		OpenMatrix4f rotationTransform = entitypatch.getModelMatrix(1.0F).removeTranslation();
-		OpenMatrix4f localTransform = entitypatch.getEntityModel(Models.LOGICAL_SERVER).getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
+		OpenMatrix4f localTransform = Models.SERVER_DRAGON.getArmature().searchJointByName("root").getLocalTrasnform().removeTranslation();
 		rotationTransform.mulBack(localTransform);
 		OpenMatrix4f.transform(rotationTransform, currentpos, currentpos);
 		OpenMatrix4f.transform(rotationTransform, prevpos, prevpos);
