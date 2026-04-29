@@ -28,7 +28,7 @@ public class DragonFightRenderTypes extends RenderType {
 				.setLightmapState(LIGHTMAP)
 				.setOverlayState(OVERLAY)
 			.createCompositeState(true);
-	    return create(EpicDragonFight.MODID + ":animated_model", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, true, false, state);
+	    return create(EpicDragonFight.MODID + ":animated_model", DefaultVertexFormat.NEW_ENTITY, Mode.QUADS, 256, true, false, state);
 	});
 
 	private static final Function<ResourceLocation, RenderType> ENTITY_DECAL_TRIANGLES = Util.memoize((p_173194_) -> {
@@ -40,7 +40,7 @@ public class DragonFightRenderTypes extends RenderType {
 				.setLightmapState(LIGHTMAP)
 				.setOverlayState(OVERLAY)
 				.createCompositeState(false);
-		return create(EpicDragonFight.MODID + ":entity_decal_triangles", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, false, false, state);
+		return create(EpicDragonFight.MODID + ":entity_decal_quads", DefaultVertexFormat.NEW_ENTITY, Mode.QUADS, 256, false, false, state);
 	});
 	
 	private static final Function<ResourceLocation, RenderType> DRAGON_EXPLOSION_ALPHA_TRIANGLES = Util.memoize((textureLocation) -> {
@@ -49,7 +49,7 @@ public class DragonFightRenderTypes extends RenderType {
 				.setTextureState(new TextureStateShard(textureLocation, false, false))
 				.setCullState(NO_CULL)
 				.createCompositeState(true);
-		return create(EpicDragonFight.MODID + ":dragon_explosion_triangles", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, false, false, state);
+		return create(EpicDragonFight.MODID + ":dragon_explosion_quads", DefaultVertexFormat.NEW_ENTITY, Mode.QUADS, 256, false, false, state);
 	});
 
 	private static final RenderType DEBUG_QUADS = create(EpicDragonFight.MODID + ":debug_quad", DefaultVertexFormat.POSITION_COLOR, Mode.QUADS, 256, false, false,
@@ -70,7 +70,7 @@ public class DragonFightRenderTypes extends RenderType {
 				.setWriteMaskState(COLOR_WRITE)
 				.setCullState(NO_CULL)
 				.createCompositeState(false);
-		return create(EpicDragonFight.MODID + ":eye_glow", DefaultVertexFormat.NEW_ENTITY, Mode.TRIANGLES, 256, false, true, state);
+		return create(EpicDragonFight.MODID + ":eye_glow", DefaultVertexFormat.NEW_ENTITY, Mode.QUADS, 256, false, true, state);
 	});
 
 	private static final Function<ResourceLocation, RenderType> FORCE_FIELD = Util.memoize((textureLocation) -> {
@@ -82,7 +82,7 @@ public class DragonFightRenderTypes extends RenderType {
 				.setLightmapState(LIGHTMAP)
 				.setOverlayState(OVERLAY)
 				.createCompositeState(true);
-		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.TRIANGLES, 256, true, false, state);
+		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.QUADS, 256, true, false, state);
 	});
 
 	public static RenderType animatedModel(ResourceLocation locationIn) {

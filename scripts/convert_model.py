@@ -33,6 +33,54 @@ def split_base64(b64_str, line_len=76):
         lines.append(b64_str[i:i+line_len])
     return "\n        + ".join(f'"{line}"' for line in lines)
 
+def triangles_to_quads(indices):
+    num_values = len(indices)
+    if num_values % 9 != 0:
+        raise ValueError(f"Index count ({num_values}) must be divisible by 9 (3 verts x 3 attrs per tri)")
+    num_tris = num_values // 9
+    tris = []
+    for i in range(num_tris):
+        offset = i * 9
+        tris.append([
+            (indices[offset], indices[offset + 1], indices[offset + 2]),
+            (indices[offset + 3], indices[offset + 4], indices[offset + 5]),
+            (indices[offset + 6], indices[offset + 7], indices[offset + 8]),
+        ])
+    quads = []
+    for i in range(0, len(tris), 2):
+        if i + 1 < len(tris):
+            quads.extend(merge_tri_pair(tris[i], tris[i + 1]))
+        else:
+            quads.extend(tris[i])
+            quads.append(tris[i][-1])
+    result = []
+    for v in quads:
+        result.extend(v)
+    return result
+
+def merge_tri_pair(tri_a, tri_b):
+    set_a = {v[0] for v in tri_a}
+    set_b = {v[0] for v in tri_b}
+    shared_pos = set_a & set_b
+    if len(shared_pos) != 2:
+        print(f"Warning: tri pair shares {len(shared_pos)} pos indices, expected 2")
+        return tri_a + tri_b[:1]
+    unique_a_vert = None
+    unique_b_vert = None
+    shared_list = []
+    for v in tri_a:
+        if v[0] in shared_pos:
+            shared_list.append(v)
+        else:
+            unique_a_vert = v
+    for v in tri_b:
+        if v[0] not in shared_pos:
+            unique_b_vert = v
+    idx_a = tri_a.index(unique_a_vert)
+    s0 = tri_a[(idx_a + 1) % 3]
+    s1 = tri_a[(idx_a + 2) % 3]
+    return [unique_a_vert, s0, unique_b_vert, s1]
+
 def write_file(filepath, content):
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(content)
@@ -43,6 +91,7 @@ def generate_mesh_data_class(data):
     normals_float = vertices["normals"]["array"]
     uvs = vertices["uvs"]["array"]
     indices = vertices["indices"]["array"]
+    quad_indices = triangles_to_quads(indices)
     vindices = vertices["vindices"]["array"]
 
     positions_b64 = floats_to_base64(positions)
@@ -52,13 +101,13 @@ def generate_mesh_data_class(data):
 
     uvs_b64 = floats_to_base64(uvs)
 
-    indices_short = [int(v) for v in indices]
+    indices_short = [int(v) for v in quad_indices]
     indices_b64 = shorts_to_base64(indices_short)
 
     joint_ids = [int(vindices[i * 2]) for i in range(len(vindices) // 2)]
     joint_ids_b64 = ints_to_base64(joint_ids)
 
-    vertex_count = len(positions) // 3
+    vertex_count = len(quad_indices) // 3
 
     return f"""package susen36.epicdragonfight.gameasset;
 
@@ -250,7 +299,8 @@ def main():
 
     joint_ids = [int(vindices[i * 2]) for i in range(len(vindices) // 2)]
     normals_byte = [round(v * 127.0) for v in normals_float]
-    indices_short = [int(v) for v in indices]
+    quad_indices = triangles_to_quads(indices)
+    indices_short = [int(v) for v in quad_indices]
 
     raw_positions = len(positions) * 4
     raw_normals_orig = len(normals_float) * 4
@@ -272,7 +322,7 @@ def main():
     print(f"  positions: {raw_positions} (unchanged)")
     print(f"  normals:   {raw_normals_orig} -> {raw_normals_new}  (byte vs float)")
     print(f"  uvs:       {raw_uvs} (unchanged)")
-    print(f"  indices:   {raw_indices_orig} -> {raw_indices_new}  (short vs int)")
+    print(f"  indices:   {raw_indices_orig} -> {raw_indices_new}  (tri->quad merged, short vs int)")
     print(f"  vcounts:   {raw_vcounts_orig} -> {raw_vcounts_new}  (runtime generated)")
     print(f"  weights:   {raw_weights_orig} -> {raw_weights_new}  (removed, single-joint binding)")
     print(f"  vindices:  {raw_vindices_orig} -> {raw_vindices_new}  (jointId only, no weight index)")
