@@ -188,6 +188,7 @@ public abstract class MixinEnderDragonModel {
 		}
 	}
 
+	@Unique
 	private OpenMatrix4f[] getPoseMatrices(IDragonPatch entitypatch, Armature armature, float partialTicks) {
 		armature.initializeTransform();
 		entitypatch.getClientAnimator().setPoseToModel(partialTicks);
@@ -208,7 +209,6 @@ public abstract class MixinEnderDragonModel {
 		}
 
 		OpenMatrix4f animTransform = joint.getAnimatedTransform();
-		OpenMatrix4f rotSource;
 		if (parentAnimTransform != null) {
 			OpenMatrix4f parentInv = new OpenMatrix4f();
 			OpenMatrix4f.invert(parentAnimTransform, parentInv);
@@ -216,15 +216,13 @@ public abstract class MixinEnderDragonModel {
 			part.x = relative.m30 * 16.0F;
 			part.y = relative.m31 * 16.0F;
 			part.z = relative.m32 * 16.0F;
-			rotSource = relative;
 		} else {
 			part.x = animTransform.m30 * 16.0F;
 			part.y = animTransform.m31 * 16.0F;
 			part.z = animTransform.m32 * 16.0F;
-			rotSource = poses[joint.getId()];
 		}
 
-		Quaternion quat = rotSource.toQuaternion();
+		Quaternion quat = poses[joint.getId()].toQuaternion();
 		quat.normalize();
 
 		float qx = quat.i();
