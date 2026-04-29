@@ -276,8 +276,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		builder.add(Attributes.MAX_HEALTH, 300.0D);
 		builder.add(Attributes.ARMOR, 4D);
 		builder.add(Attributes.ARMOR_TOUGHNESS, 2.5D);
+		builder.add(Attributes.KNOCKBACK_RESISTANCE, 0.75D);
 		builder.add(Attributes.ATTACK_DAMAGE, 10.0D);
-		builder.add(Attributes.ATTACK_KNOCKBACK, 0.35D);
+		builder.add(Attributes.ATTACK_KNOCKBACK, 0.5D);
 		builder.add(Attributes.FOLLOW_RANGE, 64.0D);
 		cir.setReturnValue(builder);
 	}
