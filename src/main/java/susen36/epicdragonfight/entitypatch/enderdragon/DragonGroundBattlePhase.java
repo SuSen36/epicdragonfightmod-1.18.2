@@ -3,7 +3,6 @@ package susen36.epicdragonfight.entitypatch.enderdragon;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
@@ -108,12 +107,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 			}
 		}
 	}
-	
-	@Override
-	public float onHurt(DamageSource damagesource, float amount) {
-		return super.onHurt(damagesource, amount * 0.8F);
-	}
-	
+
 	private boolean checkTargetPath(LivingEntity target) {
 		BlockPos blockpos = this.dragon.blockPosition();
 		

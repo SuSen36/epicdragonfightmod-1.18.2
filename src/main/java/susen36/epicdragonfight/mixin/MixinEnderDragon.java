@@ -274,8 +274,8 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	private static void onCreateAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
 		AttributeSupplier.Builder builder = cir.getReturnValue();
 		builder.add(Attributes.MAX_HEALTH, 300.0D);
-		builder.add(Attributes.ARMOR, 1.5D);
-		builder.add(Attributes.ARMOR_TOUGHNESS, 2.0D);
+		builder.add(Attributes.ARMOR, 4D);
+		builder.add(Attributes.ARMOR_TOUGHNESS, 2.5D);
 		builder.add(Attributes.ATTACK_DAMAGE, 10.0D);
 		builder.add(Attributes.ATTACK_KNOCKBACK, 0.35D);
 		builder.add(Attributes.FOLLOW_RANGE, 64.0D);

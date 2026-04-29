@@ -90,7 +90,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 
 	@Override
 	public float onHurt(net.minecraft.world.damagesource.DamageSource damagesource, float amount) {
-		return Math.max(amount - 4.0F, 0.0F);
+		return Math.min(Math.max(amount - 5.0F, 0.0F), 20.0F);
 	}
 
 	@Override

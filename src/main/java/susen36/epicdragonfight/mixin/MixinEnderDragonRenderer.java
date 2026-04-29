@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
@@ -56,14 +55,14 @@ public abstract class MixinEnderDragonRenderer{
 			poseStack.translate(entityIn.getRandom().nextGaussian() * 0.08D, 0.0D, entityIn.getRandom().nextGaussian() * 0.08D);
 			float deathTimeProgression = ((float) entityIn.dragonDeathTime + partialTicks) / 200.0F;
 
-			VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.dragonExplosionAlphaTriangles(EnderDragonRenderer.DRAGON_EXPLODING_LOCATION));
+			VertexConsumer builder = buffer.getBuffer(RenderType.dragonExplosionAlpha(EnderDragonRenderer.DRAGON_EXPLODING_LOCATION));
 			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, deathTimeProgression, OverlayTexture.NO_OVERLAY, poses);
-			VertexConsumer builder2 = buffer.getBuffer(DragonFightRenderTypes.entityDecalTriangles(EnderDragonRenderer.DRAGON_LOCATION));
+			VertexConsumer builder2 = buffer.getBuffer(RenderType.entityDecal(EnderDragonRenderer.DRAGON_LOCATION));
 			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses);
 		} else {
-			VertexConsumer builder = buffer.getBuffer(DragonFightRenderTypes.animatedModel(EnderDragonRenderer.DRAGON_LOCATION));
+			VertexConsumer builder = buffer.getBuffer(RenderType.entityCutoutNoCull(EnderDragonRenderer.DRAGON_LOCATION));
 			model.drawAnimatedModel(poseStack, builder, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, this.getOverlayCoord(entityIn), poses);
-			VertexConsumer builder2 = buffer.getBuffer(DragonFightRenderTypes.eyeGlow(new ResourceLocation("textures/entity/enderdragon/dragon_eyes.png")));
+			VertexConsumer builder2 = buffer.getBuffer(RenderType.eyes(EnderDragonRenderer.DRAGON_EYES_LOCATION));
 			model.drawAnimatedModel(poseStack, builder2, packedLight, 1.0F, 1.0F, 1.0F, 1.0F, OverlayTexture.NO_OVERLAY,poses);
 		}
 
@@ -143,8 +142,9 @@ public abstract class MixinEnderDragonRenderer{
 		DragonPhaseInstance currentPhase = entity.getPhaseManager().getCurrentPhase();
 		float chargingTick = DragonCrystalLinkPhase.CHARGING_TICK;
 		float progression = currentPhase.getPhase() == PatchedPhases.CRYSTAL_LINK ? (chargingTick - (float)((DragonCrystalLinkPhase)currentPhase).getChargingCount()) / chargingTick : 0.0F;
+		boolean isHurt = (entity.hurtTime > 5 || entity.deathTime > 0);
 
-		return OverlayTexture.pack(OverlayTexture.u(progression), OverlayTexture.v(entity.hurtTime > 5 || entity.deathTime > 0));
+		return OverlayTexture.pack(OverlayTexture.u(progression), OverlayTexture.v(isHurt));
 	}
 
 	private void renderForceField(EnderDragon dragon, DragonCrystalLinkPhase phase, MultiBufferSource buffer, PoseStack poseStack, float partialTicks, int packedLight) {
@@ -176,8 +176,8 @@ public abstract class MixinEnderDragonRenderer{
 
 	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
 		Matrix4f matrix4f = poseStack.last().pose();
-		int segments = 24;
-		int rings = 16;
+		int segments = 12;
+		int rings = 8;
 		float radius = 1.0F;
 
 		for (int ring = 0; ring < rings; ring++) {
