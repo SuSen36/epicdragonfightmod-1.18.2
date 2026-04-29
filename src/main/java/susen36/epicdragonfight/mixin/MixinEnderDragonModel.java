@@ -176,7 +176,7 @@ public abstract class MixinEnderDragonModel {
 		this.body.zRot = 0.0F;
 		this.body.render(poseStack, consumer, packedLight, overlayCoord, 1.0F, 1.0F, 1.0F, alpha);
 
-		float f1 = (float)(Math.sin((double)(flapTime * ((float)Math.PI * 2F) - 1.0F)) + 1.0D);
+		float f1 = (float)(Math.sin(flapTime * ((float)Math.PI * 2F) - 1.0F) + 1.0D);
 		f1 = (f1 * f1 + f1 * 2.0F) * 0.05F;
 		this.renderSide(poseStack, consumer, packedLight, overlayCoord, f1, this.leftWing, this.leftFrontLeg, this.leftFrontLegTip, this.leftFrontFoot, this.leftRearLeg, this.leftRearLegTip, this.leftRearFoot, alpha);
 		this.renderSide(poseStack, consumer, packedLight, overlayCoord, f1, this.rightWing, this.rightFrontLeg, this.rightFrontLegTip, this.rightFrontFoot, this.rightRearLeg, this.rightRearLegTip, this.rightRearFoot, alpha);
