@@ -520,27 +520,6 @@ public class DragonMeshData {
         return result;
     }
 
-    private static int[] expandVcounts() {
-        int[] vcounts = new int[VERTEX_COUNT];
-        java.util.Arrays.fill(vcounts, 1);
-        return vcounts;
-    }
-
-    private static float[] expandWeights() {
-        float[] weights = new float[VERTEX_COUNT];
-        java.util.Arrays.fill(weights, 1.0F);
-        return weights;
-    }
-
-    private static int[] expandAnimationIndices(int[] jointIds) {
-        int[] animationIndices = new int[jointIds.length * 2];
-        for (int i = 0; i < jointIds.length; i++) {
-            animationIndices[i * 2] = jointIds[i];
-            animationIndices[i * 2 + 1] = 0;
-        }
-        return animationIndices;
-    }
-
     public static Mesh createMesh() {
         float[] positionArray = decodeFloats(POSITIONS_B64);
         for (int i = 0; i < positionArray.length / 3; i++) {
@@ -564,8 +543,9 @@ public class DragonMeshData {
 
         int[] drawingIndices = decodeShortsToInts();
         int[] jointIds = decodeInts();
-        int[] animationIndices = expandAnimationIndices(jointIds);
+        int[] vcounts = new int[VERTEX_COUNT];
+        java.util.Arrays.fill(vcounts, 1);
 
-        return new Mesh(positionArray, normalArray, decodeFloats(UVS_B64), animationIndices, expandWeights(), drawingIndices, expandVcounts());
+        return new Mesh(positionArray, normalArray, decodeFloats(UVS_B64), jointIds, drawingIndices, vcounts);
     }
 }

@@ -43,8 +43,6 @@ def generate_mesh_data_class(data):
     normals_float = vertices["normals"]["array"]
     uvs = vertices["uvs"]["array"]
     indices = vertices["indices"]["array"]
-    vcounts = vertices["vcounts"]["array"]
-    weights = vertices["weights"]["array"]
     vindices = vertices["vindices"]["array"]
 
     positions_b64 = floats_to_base64(positions)
@@ -61,8 +59,6 @@ def generate_mesh_data_class(data):
     joint_ids_b64 = ints_to_base64(joint_ids)
 
     vertex_count = len(positions) // 3
-    normal_count_float = len(normals_float) // 3
-    index_count_tri = len(indices) // 3
 
     return f"""package susen36.epicdragonfight.gameasset;
 
@@ -80,8 +76,6 @@ import java.util.Base64;
 @OnlyIn(Dist.CLIENT)
 public class DragonMeshData {{
     private static final int VERTEX_COUNT = {vertex_count};
-    private static final int NORMAL_COUNT = {normal_count_float};
-    private static final int TRIANGLE_COUNT = {index_count_tri};
     private static final OpenMatrix4f CORRECTION = OpenMatrix4f.createRotatorDeg(-90.0F, Vector3f.XP);
 
     private static final String POSITIONS_B64 =
@@ -106,15 +100,15 @@ public class DragonMeshData {{
         return result;
     }}
 
-    private static int[] decodeInts(String b64) {{
-        byte[] bytes = Base64.getDecoder().decode(b64.replace("\\n", ""));
+    private static int[] decodeInts() {{
+        byte[] bytes = Base64.getDecoder().decode(DragonMeshData.JOINT_IDS_B64.replace("\\n", ""));
         int[] result = new int[bytes.length / 4];
         ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asIntBuffer().get(result);
         return result;
     }}
 
-    private static int[] decodeShortsToInts(String b64) {{
-        byte[] bytes = Base64.getDecoder().decode(b64.replace("\\n", ""));
+    private static int[] decodeShortsToInts() {{
+        byte[] bytes = Base64.getDecoder().decode(DragonMeshData.INDICES_B64.replace("\\n", ""));
         int count = bytes.length / 2;
         int[] result = new int[count];
         java.nio.ShortBuffer sb = ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer();
@@ -124,35 +118,14 @@ public class DragonMeshData {{
         return result;
     }}
 
-    private static float[] decodeNormalBytes(String b64) {{
-        byte[] bytes = Base64.getDecoder().decode(b64.replace("\\n", ""));
+    private static float[] decodeNormalBytes() {{
+        byte[] bytes = Base64.getDecoder().decode(DragonMeshData.NORMALS_B64.replace("\\n", ""));
         float[] result = new float[bytes.length];
         for (int i = 0; i < bytes.length; i++) {{
             result[i] = (float)(bytes[i] & 0xFF) / 127.0F;
             if (result[i] > 1.0F) result[i] -= 2.0F;
         }}
         return result;
-    }}
-
-    private static int[] expandVcounts() {{
-        int[] vcounts = new int[VERTEX_COUNT];
-        java.util.Arrays.fill(vcounts, 1);
-        return vcounts;
-    }}
-
-    private static float[] expandWeights() {{
-        float[] weights = new float[VERTEX_COUNT];
-        java.util.Arrays.fill(weights, 1.0F);
-        return weights;
-    }}
-
-    private static int[] expandAnimationIndices(int[] jointIds) {{
-        int[] animationIndices = new int[jointIds.length * 2];
-        for (int i = 0; i < jointIds.length; i++) {{
-            animationIndices[i * 2] = jointIds[i];
-            animationIndices[i * 2 + 1] = 0;
-        }}
-        return animationIndices;
     }}
 
     public static Mesh createMesh() {{
@@ -166,7 +139,7 @@ public class DragonMeshData {{
             positionArray[k+2] = posVector.z;
         }}
 
-        float[] normalArray = decodeNormalBytes(NORMALS_B64);
+        float[] normalArray = decodeNormalBytes();
         for (int i = 0; i < normalArray.length / 3; i++) {{
             int k = i * 3;
             Vector4f normVector = new Vector4f(normalArray[k], normalArray[k+1], normalArray[k+2], 1.0F);
@@ -176,11 +149,12 @@ public class DragonMeshData {{
             normalArray[k+2] = normVector.z;
         }}
 
-        int[] drawingIndices = decodeShortsToInts(INDICES_B64);
-        int[] jointIds = decodeInts(JOINT_IDS_B64);
-        int[] animationIndices = expandAnimationIndices(jointIds);
+        int[] drawingIndices = decodeShortsToInts();
+        int[] jointIds = decodeInts();
+        int[] vcounts = new int[VERTEX_COUNT];
+        java.util.Arrays.fill(vcounts, 1);
 
-        return new Mesh(positionArray, normalArray, decodeFloats(UVS_B64), animationIndices, expandWeights(), drawingIndices, expandVcounts());
+        return new Mesh(positionArray, normalArray, decodeFloats(UVS_B64), jointIds, drawingIndices, vcounts);
     }}
 }}
 """
@@ -300,8 +274,8 @@ def main():
     print(f"  uvs:       {raw_uvs} (unchanged)")
     print(f"  indices:   {raw_indices_orig} -> {raw_indices_new}  (short vs int)")
     print(f"  vcounts:   {raw_vcounts_orig} -> {raw_vcounts_new}  (runtime generated)")
-    print(f"  weights:   {raw_weights_orig} -> {raw_weights_new}  (runtime generated)")
-    print(f"  vindices:  {raw_vindices_orig} -> {raw_vindices_new}  (jointId only)")
+    print(f"  weights:   {raw_weights_orig} -> {raw_weights_new}  (removed, single-joint binding)")
+    print(f"  vindices:  {raw_vindices_orig} -> {raw_vindices_new}  (jointId only, no weight index)")
     print(f"  TOTAL:     {total_orig} -> {total_new}  ({100 - total_new * 100 // total_orig}% saved)")
 
     write_file(os.path.join(OUTPUT_DIR, "DragonMeshData.java"), generate_mesh_data_class(data))
