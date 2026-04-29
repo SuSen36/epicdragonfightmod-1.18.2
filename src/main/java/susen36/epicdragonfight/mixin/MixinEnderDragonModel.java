@@ -132,13 +132,11 @@ public abstract class MixinEnderDragonModel {
 	}
 
 	@Unique
-	private void renderAnimated(PoseStack poseStack, VertexConsumer consumer, int packedLight, int overlayCoord, float alpha, IDragonPatch dragonPatch) {
+	private void renderAnimated(PoseStack poseStack, VertexConsumer consumer, int packedLight, int overlayCoord,float alpha, IDragonPatch dragonPatch) {
 		ClientModel model = Models.getClientModels().dragon;
 		Armature armature = model.getArmature();
 		Map<String, Joint> jointMap = armature.getJointByNameMap();
 
-		poseStack.pushPose();
-		this.mulPoseStack(poseStack, this.entity, dragonPatch, this.a);
 		OpenMatrix4f[] poses = this.getPoseMatrices(dragonPatch, armature, this.a);
 
 		this.applyPoseToPart(this.jaw, poses, jointMap, "jaw", jointMap.get("head").getAnimatedTransform());
@@ -188,27 +186,6 @@ public abstract class MixinEnderDragonModel {
 			this.applyPoseToPart(this.neck, poses, jointMap, TAIL_JOINT_NAMES[j]);
 			this.neck.render(poseStack, consumer, packedLight, overlayCoord, 1.0F, 1.0F, 1.0F, alpha);
 		}
-
-		poseStack.popPose();
-	}
-
-	@SuppressWarnings("deprecation")
-	private void mulPoseStack(PoseStack matStack, EnderDragon entityIn, IDragonPatch entitypatch, float partialTicks) {
-		OpenMatrix4f modelMatrix;
-
-		if (!entitypatch.isGroundPhase() || entitypatch.getOriginal().dragonDeathTime > 0) {
-			float f = (float)entityIn.getLatencyPos(7, partialTicks)[0];
-			float f1 = (float)(entityIn.getLatencyPos(5, partialTicks)[1] - entityIn.getLatencyPos(10, partialTicks)[1]);
-			float f2 = entitypatch.getOriginal().dragonDeathTime > 0 ? 0.0F : Mth.rotWrap((entityIn.getLatencyPos(5, partialTicks)[0] - entityIn.getLatencyPos(10, partialTicks)[0]));
-			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
-		} else {
-			modelMatrix = entitypatch.getModelMatrix(partialTicks).scale(-1.0F, 1.0F, -1.0F);
-		}
-
-		OpenMatrix4f transpose = new OpenMatrix4f(modelMatrix).transpose();
-		MathUtils.translateStack(matStack, modelMatrix);
-		MathUtils.rotateStack(matStack, transpose);
-		MathUtils.scaleStack(matStack, transpose);
 	}
 
 	private OpenMatrix4f[] getPoseMatrices(IDragonPatch entitypatch, Armature armature, float partialTicks) {
