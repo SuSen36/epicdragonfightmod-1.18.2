@@ -16,7 +16,7 @@ public class FABRIK {
 	private List<Chain> chains = Lists.newArrayList();
 	private Vector3f target = new Vector3f();
 	private Vector3f startPos = new Vector3f();
-	private Pose pose;
+	Pose pose;
 	
 	public FABRIK(Pose pose, Armature armature, String startJoint, String endJoint) {
 		this.armature = armature;
@@ -110,7 +110,7 @@ public class FABRIK {
 		return list;
 	}
 
-	class Chain {
+	static class Chain {
 		final String jointName;
 		float length;
 		Vector3f tail;

@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,9 +37,10 @@ public abstract class MixinEndCrystalRenderer {
 		poseStack.popPose();
 	}
 
+	@Unique
 	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
 		Matrix4f matrix4f = poseStack.last().pose();
-		int segments = 16;
+		int segments = 24;
 		int rings = 16;
 
         for (int ring = 0; ring < rings; ring++) {

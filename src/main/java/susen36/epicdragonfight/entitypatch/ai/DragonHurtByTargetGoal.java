@@ -86,10 +86,10 @@ public class DragonHurtByTargetGoal extends TargetGoal {
 			if (this.mob instanceof TamableAnimal ownerA && nearby instanceof TamableAnimal ownerB && ownerA.getOwner() != ownerB.getOwner()) {
 				continue;
 			}
-			if (nearby.isAlliedTo(attacker)) {
-				continue;
-			}
-			if (this.toIgnoreAlert != null) {
+            if (attacker != null && nearby.isAlliedTo(attacker)) {
+                continue;
+            }
+            if (this.toIgnoreAlert != null) {
 				boolean shouldIgnore = false;
 				for (Class<?> ignoreClass : this.toIgnoreAlert) {
 					if (nearby.getClass() == ignoreClass) {

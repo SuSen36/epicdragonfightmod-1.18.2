@@ -1,8 +1,9 @@
 import json
 import os
 
-ANIM_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "main", "resources", "assets", "epicdragonfight", "animmodels", "animations")
-OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "src", "main", "java", "susen36", "epicdragonfight", "gameasset", "DragonAnimationData.java")
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ANIM_DIR = os.path.join(PROJECT_ROOT, "src", "main", "resources", "assets", "epicdragonfight", "animmodels", "animations")
+OUTPUT_FILE = os.path.join(PROJECT_ROOT, "src", "main", "java", "susen36", "epicdragonfight", "gameasset", "DragonAnimationData.java")
 
 def read_json(filepath):
     with open(filepath, 'r', encoding='utf-8-sig') as f:
@@ -19,43 +20,36 @@ def convert_animation(anim_name, anim_data):
     method_name = to_camel_case(anim_name)
     lines.append(f"    public static void load{method_name}(StaticAnimation animation) {{")
     lines.append(f"        Armature armature = animation.getModel().getArmature();")
-    lines.append(f"        boolean root = true;")
     lines.append(f"")
 
-    for joint_data in joints:
+    for idx, joint_data in enumerate(joints):
         joint_name = joint_data["name"]
         times = joint_data["time"]
         transforms = joint_data["transform"]
 
-        safe_joint = joint_name.replace(" ", "_")
-        times_var = f"{method_name}_{safe_joint}_times"
-        transforms_var = f"{method_name}_{safe_joint}_transforms"
+        t_var = f"t{idx}"
+        m_var = f"m{idx}"
 
-        lines.append(f"        {{")
-        lines.append(f"            float[] {times_var} = {{")
+        lines.append(f"        float[] {t_var} = {{")
         times_str = ", ".join(f"{t}F" for t in times)
-        lines.append(f"                {times_str}")
-        lines.append(f"            }};")
+        lines.append(f"            {times_str}")
+        lines.append(f"        }};")
         lines.append(f"")
 
-        lines.append(f"            float[] {transforms_var} = new float[]{{")
-        for ti, transform in enumerate(transforms):
-            padded = transform + [0.0, 0.0, 0.0, 1.0] if len(transform) < 16 else transform
-            mat_str = ", ".join(f"{v}F" for v in padded)
-            lines.append(f"                {mat_str},")
-        lines.append(f"            }};")
+        lines.append(f"        float[] {m_var} = new float[]{{")
+        for transform in transforms:
+            mat_str = ", ".join(f"{v}F" for v in transform)
+            lines.append(f"            {mat_str},")
+        lines.append(f"        }};")
         lines.append(f"")
 
-        lines.append(f"            Joint joint = armature.searchJointByName(\"{joint_name}\");")
-        lines.append(f"            if (joint == null) {{")
-        lines.append(f"                throw new IllegalArgumentException(\"[EpicDragonFight] Can't find the joint {joint_name} in animation data \" + animation);")
-        lines.append(f"            }}")
-        lines.append(f"            TransformSheet sheet = getTransformSheet({times_var}, {transforms_var}, OpenMatrix4f.invert(joint.getLocalTrasnform(), null), root);")
-        lines.append(f"            animation.addSheet(\"{joint_name}\", sheet);")
-        lines.append(f"            animation.setTotalTime({times_var}[{times_var}.length - 1]);")
-        lines.append(f"            root = false;")
-        lines.append(f"        }}")
+        lines.append(f"        addJoint(armature, animation, \"{joint_name}\", {t_var}, {m_var}, {'true' if idx == 0 else 'false'});")
         lines.append(f"")
+
+    if joints:
+        last_idx = len(joints) - 1
+        t_last = f"t{last_idx}"
+        lines.append(f"        animation.setTotalTime({t_last}[{t_last}.length - 1]);")
 
     lines.append(f"    }}")
     return "\n".join(lines)
@@ -107,6 +101,15 @@ public class DragonAnimationData {{
         }}
     }}
 
+    private static void addJoint(Armature armature, StaticAnimation animation, String name, float[] times, float[] matrices, boolean correct) {{
+        Joint joint = armature.searchJointByName(name);
+        if (joint == null) {{
+            throw new IllegalArgumentException("[EpicDragonFight] Can't find the joint " + name + " in animation data " + animation);
+        }}
+        TransformSheet sheet = getTransformSheet(times, matrices, OpenMatrix4f.invert(joint.getLocalTrasnform(), null), correct);
+        animation.addSheet(name, sheet);
+    }}
+
     private static TransformSheet getTransformSheet(float[] times, float[] transformMatrix, OpenMatrix4f invLocalTransform, boolean correct) {{
         List<Keyframe> keyframeList = new ArrayList<>();
 
@@ -117,7 +120,11 @@ public class DragonAnimationData {{
             }}
 
             float[] matrixElements = new float[16];
-            System.arraycopy(transformMatrix, i * 16, matrixElements, 0, 16);
+            System.arraycopy(transformMatrix, i * 12, matrixElements, 0, 12);
+            matrixElements[12] = 0.0F;
+            matrixElements[13] = 0.0F;
+            matrixElements[14] = 0.0F;
+            matrixElements[15] = 1.0F;
 
             OpenMatrix4f matrix = new OpenMatrix4f().load(FloatBuffer.wrap(matrixElements));
             matrix.transpose();
