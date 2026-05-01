@@ -36,29 +36,24 @@ public class EpicDragonFight {
     public EpicDragonFight() {
     	instance = this;
     	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+		bus.addListener(this::doClientStuff);
 		bus.addListener(this::doCommonStuff);
-    	bus.addListener(this::doClientStuff);
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {
 		MODEL.loadMeshAndProperties();
-		loadAnimationsInit();
     }
 
 	private void doCommonStuff(final FMLCommonSetupEvent event) {
 		MODEL.loadArmatureData();
-		event.enqueueWork(EpicDragonFight::registerAnimations);
 		event.enqueueWork(EpicDragonFight::loadAnimationsInit);
 		event.enqueueWork(DragoFightNetworkManager::registerPackets);
 	}
 
-	private static void registerAnimations() {
+	static void loadAnimationsInit() {
 		animationById.clear();
 		counter = 0;
 		Animations.build();
-	}
-
-	static void loadAnimationsInit() {
 		animationById.values().forEach(StaticAnimation::loadAnimation);
 	}
 

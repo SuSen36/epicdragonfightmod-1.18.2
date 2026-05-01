@@ -20,8 +20,8 @@ public class MainFrameAnimation extends StaticAnimation {
 		
 		if (entitypatch.isLogicalClient()) {
 			entitypatch.getAnimator().resetMotion();
-		entitypatch.getAnimator().resetCompositeMotion();
-		entitypatch.getAnimator().getPlayerFor(this).setReversed(false);
+			entitypatch.getAnimator().resetCompositeMotion();
+			entitypatch.getAnimator().getPlayerFor(this).setReversed(false);
 		}
 	}
 	
