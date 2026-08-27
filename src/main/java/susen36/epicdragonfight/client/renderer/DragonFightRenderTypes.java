@@ -18,16 +18,6 @@ public class DragonFightRenderTypes extends RenderType {
 		super(name, format, mode, bufferSize, useDelegate, sortOnUpload, setupState, teardownState);
 	}
 
-	private static final RenderType DEBUG_QUADS = create("debug_quad", DefaultVertexFormat.POSITION_COLOR, Mode.QUADS, 256, false, false,
-			CompositeState.builder()
-				.setShaderState(POSITION_COLOR_SHADER)
-				.setLayeringState(VIEW_OFFSET_Z_LAYERING)
-				.setTransparencyState(NO_TRANSPARENCY)
-				.setWriteMaskState(COLOR_DEPTH_WRITE)
-				.setCullState(NO_CULL)
-				.createCompositeState(false)
-	);
-
 	private static final Function<ResourceLocation, RenderType> FORCE_FIELD = Util.memoize((textureLocation) -> {
 		CompositeState state = CompositeState.builder()
 				.setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
@@ -39,9 +29,6 @@ public class DragonFightRenderTypes extends RenderType {
 		return create(EpicDragonFight.MODID + ":force_field", DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP, Mode.QUADS, 256, true, false, state);
 	});
 
-	public static RenderType debugQuads() {
-		return DEBUG_QUADS;
-	}
 
 	public static RenderType forceField(ResourceLocation locationIn) {
 		return FORCE_FIELD.apply(locationIn);

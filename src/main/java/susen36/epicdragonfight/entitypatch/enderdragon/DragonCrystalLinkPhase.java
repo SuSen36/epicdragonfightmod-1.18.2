@@ -14,7 +14,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.gameasset.Animations;
 
 import java.util.List;
 
@@ -30,7 +29,6 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 	
 	@Override
 	public void begin() {
-		this.dragonpatch.getAnimator().playAnimation(Animations.DRAGON_CRYSTAL_LINK, 0.0F);
 		this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_AMBIENT, this.dragon.getSoundSource(), 10.0F, 1.0F, false);
 		BlockPos blockpos = this.dragon.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
 		List<EndCrystal> list = this.dragon.level.getEntitiesOfClass(EndCrystal.class, new AABB(blockpos).inflate(200.0D));
@@ -49,7 +47,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		this.linkingCrystal = nearestCrystal;
 		this.chargingCount = CHARGING_TICK;
 		
-		if (this.dragonpatch.isLogicalClient()) {
+		if (this.dragonpatch.getOriginal().level.isClientSide) {
 			double x = -45.0D;
 			double z = 0.0D;
 			Vec3 correction = this.dragon.getLookAngle().multiply(2.0D, 0.0D, 2.0D).subtract(0.0D, 2.0D, 0.0D);
@@ -61,7 +59,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 				}
 			}
 		} else {
-			if (!this.dragonpatch.isLogicalClient()) {
+			if (!this.dragonpatch.getOriginal().level.isClientSide) {
 				List<Player> nearbyPlayers = this.dragon.level.getNearbyPlayers(
 					TargetingConditions.forCombat().ignoreLineOfSight(), 
 					this.dragon, 
@@ -81,7 +79,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		this.dragon.nearestCrystal = null;
 		this.linkingCrystal = null;
 
-		if (!this.dragonpatch.isLogicalClient()) {
+		if (!this.dragonpatch.getOriginal().level.isClientSide) {
 			this.dragon.level.explode(null, blockpos.getX(), blockpos.getY(), blockpos.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
 		} else {
 			this.dragonpatch.setShieldEndEffectAge(0);

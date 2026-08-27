@@ -2,10 +2,9 @@ package susen36.epicdragonfight.entitypatch.ai;
 
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.Entity;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.entitypatch.IDragonPatch.AnimationPacketProvider;
-import susen36.epicdragonfight.network.SPPlayAnimation;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -233,7 +232,6 @@ public class CombatBehaviors<T extends IDragonPatch> {
 				for (int pointer : cooldownSharingPointers) {
 					this.cooldownSharingPointers.add(pointer);
 				}
-				
 				return this;
 			}
 			
@@ -273,13 +271,11 @@ public class CombatBehaviors<T extends IDragonPatch> {
 					return false;
 				}
 			}
-			
 			return true;
 		}
 		
 		public void execute(T mobpatch) {
 			this.behavior.accept(mobpatch);
-        	mobpatch.updateEntityState();
 		}
 		
 		public static <T extends IDragonPatch> Builder<T> builder() {
@@ -289,28 +285,9 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		public static class Builder<T extends IDragonPatch> {
 			private Consumer<T> behavior;
 			private List<BehaviorPredicate<T>> predicate = Lists.newArrayList();
-			private AnimationPacketProvider packetProvider = SPPlayAnimation::new;
 			
 			public Builder<T> behavior(Consumer<T> behavior) {
 				this.behavior = behavior;
-				return this;
-			}
-			
-			public Builder<T> animationBehavior(StaticAnimation motion) {
-				this.behavior = (mobpatch) -> {
-					mobpatch.playAnimationSynchronized(motion, 0.0F, this.packetProvider);
-				};
-				
-				return this;
-			}
-			
-			public Builder<T> randomAnimationBehavior(StaticAnimation... animations) {
-				this.behavior = (mobpatch) -> {
-					if (animations.length == 0) return;
-					int randomIndex = mobpatch.getOriginal().getRandom().nextInt(animations.length);
-					mobpatch.playAnimationSynchronized(animations[randomIndex], 0.0F, this.packetProvider);
-				};
-				
 				return this;
 			}
 
@@ -320,7 +297,7 @@ public class CombatBehaviors<T extends IDragonPatch> {
 			}
 			
 			public Builder<T> withinDistance(double minDistance, double maxDistance) {
-				this.predicate(new TargetWithinDistance<>(minDistance * minDistance, maxDistance * maxDistance));
+				this.predicate(new TargetWithinDistance<>(minDistance, maxDistance));
 				return this;
 			}
 			
@@ -388,12 +365,16 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		private final double maxDistance;
 		
 		public TargetWithinDistance(double minDistance, double maxDistance) {
-			this.minDistance = minDistance;
-			this.maxDistance = maxDistance;
+			this.minDistance = minDistance * minDistance;
+			this.maxDistance = maxDistance * maxDistance;
 		}
 		
 		public boolean test(T mobpatch) {
-			double distanceSqr = mobpatch.getOriginal().distanceToSqr(mobpatch.getOriginal().getTarget());
+			LivingEntity target = mobpatch.getOriginal().getTarget();
+			if (target == null) {
+				return false;
+			}
+			double distanceSqr = mobpatch.getOriginal().distanceToSqr(target);
 			return this.minDistance < distanceSqr && distanceSqr < this.maxDistance;
 		}
 	}
@@ -411,7 +392,10 @@ public class CombatBehaviors<T extends IDragonPatch> {
 			Entity target = mobpatch.getOriginal().getTarget();
             double degree = 0;
             if (target != null) {
-                degree = mobpatch.getAngleTo(target);
+                Vec3 a = mobpatch.getOriginal().getLookAngle().scale(-1.0D);
+                Vec3 b = new Vec3(target.getX() - mobpatch.getOriginal().getX(), target.getY() - mobpatch.getOriginal().getY(), target.getZ() - mobpatch.getOriginal().getZ()).normalize();
+                double cosTheta = (a.x * b.x + a.y * b.y + a.z * b.z);
+                degree = Math.toDegrees(Math.acos(cosTheta));
             }
             return this.minDegree < degree && degree < this.maxDegree;
 		}
@@ -426,7 +410,10 @@ public class CombatBehaviors<T extends IDragonPatch> {
 				Entity target = mobpatch.getOriginal().getTarget();
                 double degree = 0;
                 if (target != null) {
-                    degree = mobpatch.getAngleToHorizontal(target);
+                    Vec3 a = mobpatch.getOriginal().getLookAngle().scale(-1.0D);
+                    Vec3 b = new Vec3(target.getX() - mobpatch.getOriginal().getX(), 0.0D, target.getZ() - mobpatch.getOriginal().getZ()).normalize();
+                    double cos = (a.x * b.x + a.y * b.y + a.z * b.z);
+                    degree = Math.toDegrees(Math.acos(cos));
                 }
                 return this.minDegree < degree && degree < this.maxDegree;
 			}

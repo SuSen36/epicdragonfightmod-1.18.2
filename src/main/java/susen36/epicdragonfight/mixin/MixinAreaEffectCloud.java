@@ -63,6 +63,7 @@ public abstract class MixinAreaEffectCloud {
         }
     }
 
+    @Unique
     private AreaEffectCloud getSelf() {
         return (AreaEffectCloud) (Object) this;
     }

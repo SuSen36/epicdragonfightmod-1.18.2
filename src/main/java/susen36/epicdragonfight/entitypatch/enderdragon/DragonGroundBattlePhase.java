@@ -14,8 +14,7 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.types.EntityState;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
+
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
 import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
@@ -57,12 +56,13 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 		LivingEntity target = this.dragon.getTarget();
 		
 		if (isValidTarget(target) && isInEndSpikes(target)) {
-			EntityState state = this.dragonpatch.getEntityState();
 			this.combatBehaviors.tick();
 			--this.aggroCounter;
 
+			boolean canAct = this.dragon.hurtTime <= 0;
+
 			if (this.combatBehaviors.hasActivatedMove()) {
-				if (state.canBasicAttack()) {
+				if (canAct) {
 					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.tryProceed();
 
 					if (result != null) {
@@ -70,7 +70,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 					}
 				}
 			} else {
-				if (!state.inaction()) {
+				if (canAct) {
 					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
 
 					if (result != null) {
@@ -89,7 +89,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 						double dx = target.getX() - this.dragon.getX();
 						double dz = target.getZ() - this.dragon.getZ();
 						float yRot = 180.0F - (float) Math.toDegrees(Mth.atan2(dx, dz));
-						this.dragon.setYRot(MathUtils.rotlerp(this.dragon.getYRot(), yRot, 6.0F));
+						this.dragon.setYRot(Mth.rotLerp(this.dragon.getYRot(), yRot, 6.0F));
 						Vec3 forward = this.dragon.getForward().scale(-0.25F);
 						this.dragon.move(MoverType.SELF, forward);
 					}
@@ -102,7 +102,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 			}
 		} else {
 			this.searchNearestTarget();
-			if ((target == null || !isInEndSpikes(target)) && !this.dragonpatch.getEntityState().inaction()) {
+			if ((target == null || !isInEndSpikes(target)) && this.dragon.hurtTime <= 0) {
 				this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_IDLE);
 			}
 		}
@@ -137,18 +137,18 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 		LivingEntity target = this.getSelectedTarget();
 
 		if (isValidTarget(target) && isInEndSpikes(target)) {
-			this.dragonpatch.setAttakTargetSync(target);
+			this.dragonpatch.setTarget(target);
 		} else {
-			this.dragonpatch.setAttakTargetSync(null);
+			this.dragonpatch.setTarget(null);
 		}
 	}
 	
 	public void fly() {
-		this.combatBehaviors.execute(6);
+		this.combatBehaviors.execute(MobCombatBehaviors.FLY_AWAY);
 	}
 	
 	public void resetFlyCooldown() {
-		this.combatBehaviors.resetCooldown(6, false);
+		this.combatBehaviors.resetCooldown(MobCombatBehaviors.FLY_AWAY, false);
 	}
 	
 	@Override

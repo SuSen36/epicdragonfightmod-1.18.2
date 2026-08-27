@@ -40,13 +40,15 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 	
 	@Override
 	public void begin() {
+		this.dragonpatch.setFlyingPhase();
 		this.currentPath = null;
 		this.targetLocation = null;
 	}
 	
-	@Nullable@Override
+	@Nullable
+	@Override
 	public Vec3 getFlyTargetLocation() {
-		return this.dragonpatch.getEntityState().inaction() ? null : this.targetLocation;
+		return this.dragon.hurtTime > 0 ? null : this.targetLocation;
 	}
 	
 	public void enableAirstrike() {
@@ -73,13 +75,13 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 				if (isInEndSpikes(target)) {
 					this.executeAirstrike = true;
 				}
-				this.dragonpatch.setAttakTargetSync(target);
+				this.dragonpatch.setTarget(target);
 				this.dragon.getPhaseManager().setPhase(PatchedPhases.CHARGE);
 			}else if (target != null && isWithinAltarVerticalRange(target) &&!this.executeAirstrike && this.dragon.getRandom().nextFloat() > crystalsAlive * 0.15F) {
 					if (isInEndSpikes(target)) {
 						this.executeAirstrike = true;
 					}
-					this.dragonpatch.setAttakTargetSync(target);
+					this.dragonpatch.setTarget(target);
 					this.dragon.getPhaseManager().setPhase(PatchedPhases.AIRSTRIKE);
 				} else {
 					//TODO:之后会做龙的飞行版的发射fireball

@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -15,9 +14,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
+
 
 public class DragonAirstrikePhase extends PatchedDragonPhase {
 	private Vec3 startpos;
@@ -36,60 +33,11 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 	
 	@Override
 	public void end() {
-		this.dragonpatch.setAttakTargetSync(null);
+		this.dragonpatch.setTarget(null);
 		
-		if (this.dragonpatch.isLogicalClient()) {
+		if (this.dragonpatch.getOriginal().level.isClientSide) {
 			Minecraft.getInstance().getSoundManager().stop(SoundEvents.ENDER_DRAGON_GROWL.getLocation(), SoundSource.HOSTILE);
 			this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_SHOOT, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
-		}
-	}
-	
-	@Override
-	public void doClientTick() {
-		super.doClientTick();
-		Vec3 dragonpos = this.dragon.position();
-		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel().getArmature(), "upperJaw");
-		
-		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
-		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);
-		@SuppressWarnings("deprecation")
-		float f2 = Mth.rotWrap((this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));
-		OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
-		mouthpos.mulFront(modelMatrix);
-		
-		if (this.dragon.getTarget() != null) {
-			Vec3 vec31 = this.dragon.getTarget().position().add(0.0D, 12.0D, 0.0D);
-			
-			if (!this.isActuallyAttacking && vec31.subtract(this.dragon.position()).lengthSqr() < 900.0F) {
-				this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_GROWL, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
-				this.isActuallyAttacking = true;
-			}
-		}
-
-		if (this.isActuallyAttacking) {
-			for (int i = 0; i < 60; i++) {
-				Vector3f particleDelta = new Vector3f(0.0F, -1.0F, 0.0F);
-
-				float xDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
-				float zDeg = this.dragon.getRandom().nextFloat() * 60.0F - 30.0F;
-
-				float speed = Math.min((60.0F - (Math.abs(xDeg) + Math.abs(zDeg))) / 20.0F, 1.0F);
-
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(xDeg, Vector3f.XP), particleDelta, particleDelta);
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(zDeg, Vector3f.ZP), particleDelta, particleDelta);
-
-				particleDelta.mul(speed);
-
-				this.dragon.level.addAlwaysVisibleParticle(
-						ParticleTypes.DRAGON_BREATH,
-						mouthpos.m30 + (float)dragonpos.x,
-						mouthpos.m31 + (float)dragonpos.y,
-						mouthpos.m32 + (float)dragonpos.z,
-						particleDelta.x,
-						particleDelta.y,
-						particleDelta.z
-				);
-			}
 		}
 	}
 	
@@ -128,7 +76,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 					double dx = target.getX() - this.dragon.getX();
 					double dz = target.getZ() - this.dragon.getZ();
 					float yRot = 180.0F - (float)Math.toDegrees(Mth.atan2(dx, dz));
-					this.dragon.setYRot(MathUtils.rotlerp(this.dragon.getYRot(), yRot, 6.0F));
+					this.dragon.setYRot(Mth.rotLerp(this.dragon.getYRot(), yRot, 6.0F));
 					double speed = (-0.5D - 1.0D / (1.0D + Math.pow(Math.E, -(d4 / 10.0D - 4.0F)))) * f6;
 					Vec3 forward = this.dragon.getForward().scale(speed);
 					this.dragon.move(MoverType.SELF, forward);
