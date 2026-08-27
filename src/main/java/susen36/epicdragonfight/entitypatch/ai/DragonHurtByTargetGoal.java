@@ -1,24 +1,18 @@
 package susen36.epicdragonfight.entitypatch.ai;
 
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.TargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.GameRules;
-import net.minecraft.world.phys.AABB;
 
-import javax.annotation.Nullable;
 import java.util.EnumSet;
-import java.util.Iterator;
-import java.util.List;
 
 public class DragonHurtByTargetGoal  extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
-    private static final int ALERT_RANGE_Y = 10;
-    private boolean alertSameType;
     private int timestamp;
     private final Class<?>[] toIgnoreDamage;
-    @Nullable
-    private Class<?>[] toIgnoreAlert;
 
     public DragonHurtByTargetGoal(Mob p_26039_, Class<?>... p_26040_) {
         super(p_26039_, true);
@@ -49,69 +43,12 @@ public class DragonHurtByTargetGoal  extends TargetGoal {
         }
     }
 
-    public DragonHurtByTargetGoal setAlertOthers(Class<?>... p_26045_) {
-        this.alertSameType = true;
-        this.toIgnoreAlert = p_26045_;
-        return this;
-    }
-
     public void start() {
         this.mob.setTarget(this.mob.getLastHurtByMob());
         this.targetMob = this.mob.getTarget();
         this.timestamp = this.mob.getLastHurtByMobTimestamp();
         this.unseenMemoryTicks = 300;
-        if (this.alertSameType) {
-            this.alertOthers();
-        }
 
         super.start();
-    }
-
-    protected void alertOthers() {
-        double $$0 = this.getFollowDistance();
-        AABB $$1 = AABB.unitCubeFromLowerCorner(this.mob.position()).inflate($$0, ALERT_RANGE_Y, $$0);
-        List<? extends Mob> $$2 = this.mob.level.getEntitiesOfClass(this.mob.getClass(), $$1, EntitySelector.NO_SPECTATORS);
-        Iterator<? extends Mob> var5 = $$2.iterator();
-
-        while(true) {
-            Mob $$3;
-            boolean $$4;
-            do {
-                do {
-                    do {
-                        do {
-                            do {
-                                if (!var5.hasNext()) {
-                                    return;
-                                }
-
-                                $$3 = (Mob)var5.next();
-                            } while(this.mob == $$3);
-                        } while($$3.getTarget() != null);
-                    } while(this.mob instanceof TamableAnimal && ((TamableAnimal)this.mob).getOwner() != ((TamableAnimal)$$3).getOwner());
-                } while($$3.isAlliedTo(this.mob.getLastHurtByMob()));
-
-                if (this.toIgnoreAlert == null) {
-                    break;
-                }
-
-                $$4 = false;
-                Class[] var8 = this.toIgnoreAlert;
-                int var9 = var8.length;
-
-                for (Class<?> $$5 : var8) {
-                    if ($$3.getClass() == $$5) {
-                        $$4 = true;
-                        break;
-                    }
-                }
-            } while($$4);
-
-            this.alertOther($$3, this.mob.getLastHurtByMob());
-        }
-    }
-
-    protected void alertOther(Mob p_26042_, LivingEntity p_26043_) {
-        p_26042_.setTarget(p_26043_);
     }
 }

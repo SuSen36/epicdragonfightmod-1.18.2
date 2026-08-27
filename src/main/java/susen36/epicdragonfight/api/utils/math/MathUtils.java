@@ -17,7 +17,7 @@ public class MathUtils {
 	}
 
 	public static float lerpBetween(float f1, float f2, float zero2one) {
-		float f = net.minecraft.util.Mth.wrapDegrees(f2 - f1);
+		float f = Mth.wrapDegrees(f2 - f1);
 		return f1 + zero2one * f;
 	}
 	

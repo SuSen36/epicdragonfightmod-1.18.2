@@ -5,11 +5,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.fml.ModLoader;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.client.animation.AnimationDataReader;
-import susen36.epicdragonfight.api.forgeevent.AnimationRegistryEvent;
+import susen36.epicdragonfight.gameasset.Animations;
 
 import java.util.Map;
 
@@ -32,37 +30,23 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 
 
 	public void registerAnimations() {
-		Map<String, Runnable> registryMap = Maps.newHashMap();
-		ModLoader.get().postEvent(new AnimationRegistryEvent(registryMap));
-
-		registryMap.forEach((key, value) -> {
-            this.modid = key;
-            this.namespaceHash = this.modid.hashCode();
-            this.animationById.put(this.namespaceHash, Maps.newHashMap());
-            this.counter = 0;
-            value.run();
-        });
+		this.modid = EpicDragonFight.MODID;
+		this.namespaceHash = this.modid.hashCode();
+		this.animationById.put(this.namespaceHash, Maps.newHashMap());
+		this.counter = 0;
+		Animations.registerAnimations();
 	}
 
-	public void loadAnimationsInit(ResourceManager resourceManager) {
+	public void loadAnimationsInit() {
 		this.animationById.values().forEach((map) -> {
 			map.values().forEach((animation) -> {
 				animation.loadAnimation();
-				this.setAnimationProperties(resourceManager, animation);
 			});
 		});
 	}
 
 	@Override
 	protected Map<Integer, Map<Integer, StaticAnimation>> prepare(ResourceManager resourceManager, ProfilerFiller profilerIn) {
-		if (EpicDragonFight.isPhysicalClient()) {
-			this.animationById.values().forEach((map) -> {
-				map.values().forEach((animation) -> {
-					this.setAnimationProperties(resourceManager, animation);
-				});
-			});
-		}
-
 		return this.animationById;
 	}
 
@@ -73,23 +57,6 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 				animation.loadAnimation();
 			});
 		});
-	}
-
-	private void setAnimationProperties(ResourceManager resourceManager, StaticAnimation animation) {
-		if (resourceManager == null) {
-			return;
-		}
-
-		ResourceLocation location = animation.getLocation();
-		String path = location.getPath();
-		int last = location.getPath().lastIndexOf('/');
-
-		if (last > 0) {
-			ResourceLocation dataLocation = new ResourceLocation(location.getNamespace(), String.format("%s/data%s.json", path.substring(0, last), path.substring(last)));
-			if (resourceManager.getResource(dataLocation).isPresent()) {
-                AnimationDataReader.readAndApply(animation, resourceManager.getResource(dataLocation).get());
-            }
-		}
 	}
 
 	public String getModid() {

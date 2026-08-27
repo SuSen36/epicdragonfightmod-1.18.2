@@ -61,7 +61,7 @@ public class EpicDragonFight {
 	
 	private void doServerStuff(final FMLDedicatedServerSetupEvent event) {
 		Models.LOGICAL_SERVER.loadArmatures();
-		this.animationManager.loadAnimationsInit(null);
+		this.animationManager.loadAnimationsInit();
 		this.animatorProvider = ServerAnimator::getAnimator;
 	}
 	
