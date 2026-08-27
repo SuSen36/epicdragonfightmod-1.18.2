@@ -8,6 +8,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.Animator;
+import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
@@ -63,22 +64,22 @@ public class JointBoundPart {
 			float f = (float)dragon.getLatencyPos(7, partialTicks)[0];
 			float f1 = (float)(dragon.getLatencyPos(5, partialTicks)[1] - dragon.getLatencyPos(10, partialTicks)[1]);
 			float f2 = dragon.dragonDeathTime > 0 ? 0.0F : Mth.rotWrap((float)(dragon.getLatencyPos(5, partialTicks)[0] - dragon.getLatencyPos(10, partialTicks)[0]));
-			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP).scale(-1.0F, 1.0F, -1.0F);
+			modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, partialTicks, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP).rotateDeg(-180.0F, Vector3f.YP);
 		} else {
 			modelMatrix = dragonPatch.getModelMatrix(partialTicks);
 		}
 
+		Joint rootJoint = armature.getJointHierarcy();
+		OpenMatrix4f rootLocal = rootJoint.getLocalTrasnform();
+		OpenMatrix4f.translate(new Vector3f(-rootLocal.m30, -rootLocal.m31, -rootLocal.m32), modelMatrix, modelMatrix);
+
 		OpenMatrix4f worldTransform = OpenMatrix4f.mul(modelMatrix, jointTransform, null);
 		Vector3f jointPos = worldTransform.toTranslationVector();
 
-		float worldX = -jointPos.x();
-		float worldY = jointPos.y();
-		float worldZ = -jointPos.z();
-
-		return new Vec3(
-			dragon.getX() + worldX + this.offset.x(),
-			dragon.getY() + worldY + this.offset.y(),
-			dragon.getZ() + worldZ + this.offset.z()
+        return new Vec3(
+			dragon.getX() -jointPos.x() + this.offset.x(),
+			dragon.getY() -jointPos.y() + this.offset.y(),
+			dragon.getZ() -jointPos.z() + this.offset.z()
 		);
 	}
 }
