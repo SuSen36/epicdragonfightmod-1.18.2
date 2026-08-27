@@ -222,7 +222,7 @@ public class StaticAnimation extends DynamicAnimation {
 		}
 		
 		public void testAndExecute(IDragonPatch entitypatch) {
-			if (this.executionSide.predicate.test(entitypatch.isLogicalClient())) {
+            if (this.executionSide.predicate.test(entitypatch.getOriginal().level.isClientSide())) {
 				this.event.accept(entitypatch);
 			}
 		}

@@ -22,7 +22,7 @@ import java.util.Map;
 @OnlyIn(Dist.CLIENT)
 public class ClientAnimator extends Animator {
 	public static Animator getAnimator(IDragonPatch entitypatch) {
-		return entitypatch.isLogicalClient() ? new ClientAnimator(entitypatch) : ServerAnimator.getAnimator(entitypatch);
+        return entitypatch.getOriginal().level.isClientSide() ? new ClientAnimator(entitypatch) : ServerAnimator.getAnimator(entitypatch);
 	}
 
 	private final Map<LivingMotions, StaticAnimation> compositeLivingAnimations;

@@ -48,8 +48,8 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		
 		this.linkingCrystal = nearestCrystal;
 		this.chargingCount = CHARGING_TICK;
-		
-		if (this.dragonpatch.isLogicalClient()) {
+
+        if (this.dragonpatch.getOriginal().level.isClientSide()) {
 			double x = -45.0D;
 			double z = 0.0D;
 			Vec3 correction = this.dragon.getLookAngle().multiply(2.0D, 0.0D, 2.0D).subtract(0.0D, 2.0D, 0.0D);
@@ -61,7 +61,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 				}
 			}
 		} else {
-			if (!this.dragonpatch.isLogicalClient()) {
+            if (!this.dragonpatch.getOriginal().level.isClientSide()) {
 				List<Player> nearbyPlayers = this.dragon.level.getNearbyPlayers(
 					TargetingConditions.forCombat().ignoreLineOfSight(), 
 					this.dragon, 
@@ -81,7 +81,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		this.dragon.nearestCrystal = null;
 		this.linkingCrystal = null;
 
-		if (!this.dragonpatch.isLogicalClient()) {
+        if (!this.dragonpatch.getOriginal().level.isClientSide()) {
 			this.dragon.level.explode(null, blockpos.getX(), blockpos.getY(), blockpos.getZ(), 6.0F, Explosion.BlockInteraction.DESTROY);
 		} else {
 			this.dragonpatch.setShieldEndEffectAge(0);

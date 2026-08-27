@@ -25,7 +25,7 @@ public class LayerOffAnimation extends DynamicAnimation {
 	
 	@Override
 	public void end(IDragonPatch entitypatch, boolean isEnd) {
-		if (entitypatch.isLogicalClient()) {
+        if (entitypatch.getOriginal().level.isClientSide()) {
 			entitypatch.getClientAnimator().baseLayer.disableLayer(this.layerPriority);
 		}
 	}

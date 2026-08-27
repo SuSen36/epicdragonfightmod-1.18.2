@@ -4,7 +4,6 @@ import com.mojang.math.Vector3f;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import susen36.epicdragonfight.api.animation.*;
@@ -92,8 +91,8 @@ public class AttackAnimation extends ActionAnimation {
 	@Override
 	public void tick(IDragonPatch entitypatch) {
 		super.tick(entitypatch);
-		
-		if (!entitypatch.isLogicalClient()) {
+
+        if (!entitypatch.getOriginal().level.isClientSide()) {
 			AnimationPlayer player = entitypatch.getAnimator().getPlayerFor(this);
 			float elapsedTime = player.getElapsedTime();
 			float prevElapsedTime = player.getPrevElapsedTime();
@@ -103,7 +102,7 @@ public class AttackAnimation extends ActionAnimation {
 			
 			if (state.getLevel() == 1 && !state.turningLocked()) {
 				if (entitypatch instanceof IDragonPatch) {
-					((Mob)entitypatch.getOriginal()).getNavigation().stop();
+					entitypatch.getOriginal().getNavigation().stop();
 					entitypatch.getOriginal().attackAnim = 2;
 					LivingEntity target = entitypatch.getOriginal().getTarget();
 					

@@ -18,7 +18,6 @@ import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.ServerAnimator;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.Animations;
 import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
 import susen36.epicdragonfight.network.DragonFightDataSerializers;
@@ -45,7 +44,6 @@ public class EpicDragonFight {
     	bus.addListener(this::doClientStuff);
     	bus.addListener(this::doCommonStuff);
     	bus.addListener(this::doServerStuff);
-    	bus.addListener(Animations::registerAnimations);
 		DragonFightDataSerializers.VEC.register(bus);
      }
     
@@ -53,9 +51,8 @@ public class EpicDragonFight {
 		this.animatorProvider = ClientAnimator::getAnimator;
 		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
 		Models.LOGICAL_SERVER.loadArmatures();
-		Models.getClientModels().loadMeshData();
 		Models.getClientModels().copyArmaturesFromServer();
-		this.animationManager.loadAnimationsInit(resourceManager);
+		this.animationManager.loadAnimationsInit();
         ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);
     }
 	

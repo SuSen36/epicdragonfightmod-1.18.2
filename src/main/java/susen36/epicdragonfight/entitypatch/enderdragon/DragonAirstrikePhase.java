@@ -37,8 +37,8 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 	@Override
 	public void end() {
 		this.dragonpatch.setAttakTargetSync(null);
-		
-		if (this.dragonpatch.isLogicalClient()) {
+
+		if (this.dragonpatch.getOriginal().level.isClientSide()) {
 			Minecraft.getInstance().getSoundManager().stop(SoundEvents.ENDER_DRAGON_GROWL.getLocation(), SoundSource.HOSTILE);
 			this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_SHOOT, this.dragon.getSoundSource(), 5.0F, 1.0F, false);
 		}

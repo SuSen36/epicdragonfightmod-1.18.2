@@ -34,8 +34,8 @@ public class DragonLandingPhase extends PatchedDragonPhase {
 	public void begin() {
 		this.actualLandingPhase = false;
 		this.landingPosition = this.getFarthestLandingPosition();
-		
-		if (!this.dragonpatch.isLogicalClient()) {
+
+        if (!this.dragonpatch.getOriginal().level.isClientSide()) {
 			this.dragonpatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.GROUND_BATTLE).resetFlyCooldown();
 		}
 	}

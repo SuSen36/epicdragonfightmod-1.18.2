@@ -179,7 +179,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		this.updateTipPoints();
 		this.animator.tick();
 
-		if (this.isLogicalClient()) {
+        if (this.getOriginal().level.isClientSide()) {
 			this.xRootO = this.xRoot;
 			this.zRootO = this.zRoot;
 			//super.clientTick();
@@ -437,7 +437,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			this.zRoot += Mth.clamp(((float)Math.toDegrees(Math.atan2(xdiff, xdistance)) - this.zRoot), -1.0F, 1.0F);
 			float averageY = (yFrontL + yFrontR + yBackL + yBackR) * 0.25F;
 
-			if (!this.isLogicalClient()) {
+            if (!this.getOriginal().level.isClientSide()) {
 				float dy = averageY - entityPosY;
 				this.move(MoverType.SELF, new Vec3(0.0F, dy, 0.0F));
 			}
@@ -501,7 +501,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	@Unique
 	private void updateArmorModifier() {
-		if (!this.isLogicalClient()) {
+        if (!this.getOriginal().level.isClientSide()) {
 			AttributeInstance armorAttribute = this.getAttribute(Attributes.ARMOR);
 			if (armorAttribute != null) {
 				armorAttribute.removeModifier(LANDED_ARMOR_MODIFIER);
@@ -515,7 +515,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	@Unique
 	private void updateFollowRangeModifier() {
-		if (!this.isLogicalClient()) {
+        if (!this.getOriginal().level.isClientSide()) {
 			AttributeInstance followRangeAttr = this.getAttribute(Attributes.FOLLOW_RANGE);
 			if (followRangeAttr != null){
 				followRangeAttr.removeModifier(FLYING_FOLLOW_RANGE_MODIFIER);

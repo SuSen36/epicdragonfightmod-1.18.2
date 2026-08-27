@@ -16,9 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import susen36.epicdragonfight.api.animation.Joint;
-import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.model.Armature;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
+import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Models;
@@ -133,7 +132,7 @@ public abstract class MixinEnderDragonModel {
 
 	@Unique
 	private void renderAnimated(PoseStack poseStack, VertexConsumer consumer, int packedLight, int overlayCoord,float alpha, IDragonPatch dragonPatch) {
-		ClientModel model = Models.getClientModels().dragon;
+		Model model = Models.getClientModels().dragon;
 		Armature armature = model.getArmature();
 		Map<String, Joint> jointMap = armature.getJointByNameMap();
 

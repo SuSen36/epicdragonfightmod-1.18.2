@@ -108,8 +108,8 @@ public class EnderDragonAttackAnimation extends AttackAnimation implements Proce
 
 			entitypatch.addTipPointAnimation(ikInfo.endJoint, firstposeTransform.translation(), tipAnim, ikInfo);
 		}
-		
-		if (entitypatch.isLogicalClient()) {
+
+        if (entitypatch.getOriginal().level.isClientSide()) {
 			entitypatch.getClientAnimator().resetMotion();
 			entitypatch.getClientAnimator().resetCompositeMotion();
 		}

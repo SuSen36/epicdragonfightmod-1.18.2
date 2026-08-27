@@ -34,10 +34,6 @@ public interface IDragonPatch {
 	@NotNull
 	EnderDragon getOriginal();
 
-	default boolean isLogicalClient() {
-		return this.getOriginal().level.isClientSide();
-	}
-
 	@OnlyIn(Dist.CLIENT)
     void initAnimator(ClientAnimator clientAnimator);
 

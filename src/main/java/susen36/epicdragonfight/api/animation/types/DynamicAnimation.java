@@ -44,7 +44,7 @@ public abstract class DynamicAnimation {
 		Pose pose = new Pose();
 		
 		for (String jointName : this.jointTransforms.keySet()) {
-			if (!entitypatch.isLogicalClient() || this.isJointEnabled(entitypatch, jointName)) {
+			if (!entitypatch.getOriginal().level.isClientSide() || this.isJointEnabled(entitypatch, jointName)) {
 				pose.putJointData(jointName, this.jointTransforms.get(jointName).getInterpolatedTransform(time));
 			}
 		}
@@ -59,7 +59,7 @@ public abstract class DynamicAnimation {
 	}
 	
 	public void setLinkAnimation(Pose pose1, float convertTimeModifier, IDragonPatch entitypatch, LinkAnimation dest) {
-		if (!entitypatch.isLogicalClient()) {
+		if (!entitypatch.getOriginal().level.isClientSide()) {
 			pose1 = Animations.DUMMY_ANIMATION.getPoseByTime(entitypatch, 0.0F, 1.0F);
 		}
 		

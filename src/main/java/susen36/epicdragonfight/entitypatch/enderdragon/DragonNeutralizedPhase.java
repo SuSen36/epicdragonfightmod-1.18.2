@@ -17,8 +17,8 @@ public class DragonNeutralizedPhase extends PatchedDragonPhase {
 	@Override
 	public void begin() {
 		this.dragonpatch.getAnimator().playAnimation(Animations.DRAGON_NEUTRALIZED, 0.0F);
-		
-		if (this.dragonpatch.isLogicalClient()) {
+
+        if (this.dragonpatch.getOriginal().level.isClientSide()) {
 			Minecraft.getInstance().getSoundManager().stop(SoundEvents.ENDER_DRAGON_SHOOT.getLocation(), SoundSource.HOSTILE);
 			this.dragon.level.addParticle(ParticleTypes.END_ROD, this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), 0, 0, 0);
 		}

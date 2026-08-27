@@ -96,8 +96,8 @@ public class ActionAnimation extends MainFrameAnimation {
 	
 	private boolean validateMovement(IDragonPatch entitypatch, DynamicAnimation animation) {
 		LivingEntity livingentity = entitypatch.getOriginal();
-		
-		if (entitypatch.isLogicalClient()) {
+
+        if (entitypatch.getOriginal().level.isClientSide()) {
 			if (!(livingentity instanceof LocalPlayer)) {
 				return false;
 			}

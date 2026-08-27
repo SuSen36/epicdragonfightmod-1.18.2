@@ -4,14 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,17 +15,10 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import susen36.epicdragonfight.api.animation.AnimationPlayer;
-import susen36.epicdragonfight.api.client.animation.Layer;
-import susen36.epicdragonfight.api.client.model.ClientModel;
-import susen36.epicdragonfight.api.model.Armature;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.client.renderer.LightningRenderHelper;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.enderdragon.DragonCrystalLinkPhase;
 import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
-import susen36.epicdragonfight.gameasset.Models;
 
 @Mixin(value = EnderDragonRenderer.class)
 public abstract class MixinEnderDragonRenderer{

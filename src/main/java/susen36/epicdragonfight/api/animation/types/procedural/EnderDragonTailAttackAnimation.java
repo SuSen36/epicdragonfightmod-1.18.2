@@ -17,7 +17,7 @@ public class EnderDragonTailAttackAnimation extends EnderDragonAttackAnimation {
 	public void tick(IDragonPatch entitypatch) {
 		super.tick(entitypatch);
 
-		if (!entitypatch.isLogicalClient()) {
+        if (!entitypatch.getOriginal().level.isClientSide()) {
 			EnderDragon original = entitypatch.getOriginal();
 			float elapsedTime = entitypatch.getAnimator().getPlayerFor(this).getElapsedTime();
 

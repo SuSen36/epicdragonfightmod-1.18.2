@@ -46,7 +46,7 @@ public class JointBoundPart {
 				this.part.xo = this.part.getX();
 				this.part.yo = this.part.getY();
 				this.part.zo = this.part.getZ();
-				this.part.setPos(worldPos.x, worldPos.y - this.part.getBbHeight() * 0.5F, worldPos.z);
+				this.part.setPos(worldPos.x, worldPos.y, worldPos.z);
 			}
 		}
 	}

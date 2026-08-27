@@ -1,15 +1,12 @@
 package susen36.epicdragonfight.gameasset;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.client.model.ClientModel;
 import susen36.epicdragonfight.api.model.Model;
 
-import java.util.List;
 import java.util.Map;
 
 public abstract class Models<T extends Model> {
@@ -43,17 +40,9 @@ public abstract class Models<T extends Model> {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static class ClientModels extends Models<ClientModel> {
-		public final List<ClientModel> registeredModels = Lists.newArrayList();
-
+	public static class ClientModels extends Models<Model> {
 		public ClientModels() {
 			this.dragon = this.register(new ResourceLocation(EpicDragonFight.MODID, "dragon"));
-		}
-
-		public void loadMeshData() {
-			this.registeredModels.forEach((model) -> {
-				model.loadMeshAndProperties();
-			});
 		}
 		
 		public void copyArmaturesFromServer() {
@@ -61,10 +50,9 @@ public abstract class Models<T extends Model> {
 		}
 		
 		@Override
-		public ClientModel register(ResourceLocation rl) {
-			ClientModel model = new ClientModel();
+		public Model register(ResourceLocation rl) {
+			Model model = new Model();
 			this.models.put(rl, model);
-			this.registeredModels.add(model);
 			return model;
 		}
 	}
