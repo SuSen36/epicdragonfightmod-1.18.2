@@ -14,8 +14,6 @@ import java.util.Map;
 public class AnimationManager extends SimplePreparableReloadListener<Map<Integer, Map<Integer, StaticAnimation>>> {
 	private final Map<Integer, Map<Integer, StaticAnimation>> animationById = Maps.newHashMap();
 	private final Map<ResourceLocation, StaticAnimation> animationByName = Maps.newHashMap();
-	private String modid;
-	private int namespaceHash;
 	private int counter = 0;
 
 	public StaticAnimation findAnimationById(int namespaceId, int animationId) {
@@ -30,18 +28,14 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 
 
 	public void registerAnimations() {
-		this.modid = EpicDragonFight.MODID;
-		this.namespaceHash = this.modid.hashCode();
-		this.animationById.put(this.namespaceHash, Maps.newHashMap());
+		this.animationById.put(EpicDragonFight.MODID.hashCode(), Maps.newHashMap());
 		this.counter = 0;
 		Animations.registerAnimations();
 	}
 
 	public void loadAnimationsInit() {
 		this.animationById.values().forEach((map) -> {
-			map.values().forEach((animation) -> {
-				animation.loadAnimation();
-			});
+			map.values().forEach(StaticAnimation::loadAnimation);
 		});
 	}
 
@@ -53,18 +47,16 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 	@Override
 	protected void apply(Map<Integer, Map<Integer, StaticAnimation>> objectIn, ResourceManager resourceManager, ProfilerFiller profilerIn) {
 		objectIn.values().forEach((map) -> {
-			map.values().forEach((animation) -> {
-				animation.loadAnimation();
-			});
+			map.values().forEach(StaticAnimation::loadAnimation);
 		});
 	}
 
 	public String getModid() {
-		return this.modid;
+		return EpicDragonFight.MODID;
 	}
 
 	public int getNamespaceHash() {
-		return this.namespaceHash;
+		return EpicDragonFight.MODID.hashCode();
 	}
 
 	public int getIdCounter() {
@@ -72,7 +64,7 @@ public class AnimationManager extends SimplePreparableReloadListener<Map<Integer
 	}
 
 	public Map<Integer, StaticAnimation> getIdMap() {
-		return this.animationById.get(this.namespaceHash);
+		return this.animationById.get(EpicDragonFight.MODID.hashCode());
 	}
 
 	public Map<ResourceLocation, StaticAnimation> getNameMap() {

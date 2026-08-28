@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -11,9 +10,7 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 
 public class DragonChargePhase extends PatchedDragonPhase {
 	private Vec3 startpos;
@@ -43,14 +40,6 @@ public class DragonChargePhase extends PatchedDragonPhase {
 	@Override
 	public void doClientTick() {
 		super.doClientTick();
-		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel(null).getArmature(), "upperJaw");
-
-		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
-		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);
-		@SuppressWarnings("deprecation")
-		float f2 = Mth.rotWrap((this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));
-		OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
-		mouthpos.mulFront(modelMatrix);
 
 		if (this.dragon.getTarget() != null) {
 			Vec3 vec31 = this.dragon.getTarget().position().add(0.0D, 12.0D, 0.0D);

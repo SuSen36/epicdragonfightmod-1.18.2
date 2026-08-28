@@ -1,28 +1,21 @@
 package susen36.epicdragonfight.api.client.animation;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.util.Pair;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
-import susen36.epicdragonfight.api.client.animation.Layer.Priority;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientAnimator extends Animator {
 	public static Animator getAnimator(IDragonPatch entitypatch) {
-        return entitypatch.getOriginal().level.isClientSide() ? new ClientAnimator(entitypatch) : ServerAnimator.getAnimator(entitypatch);
+        return entitypatch.getOriginal().level.isClientSide() ? new ClientAnimator(entitypatch):null;
 	}
 
 	private final Map<LivingMotions, StaticAnimation> compositeLivingAnimations;
@@ -118,20 +111,6 @@ public class ClientAnimator extends Animator {
 		return this.compositeLivingAnimations.getOrDefault(motion, Animations.DUMMY_ANIMATION);
 	}
 
-	public void setPoseToModel(float partialTicks) {
-		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
-		this.applyPoseToJoint(rootJoint, new OpenMatrix4f(), this.getPose(partialTicks));
-	}
-
-	public void applyPoseToJoint(Joint joint, OpenMatrix4f parentTransform, Pose pose) {
-		OpenMatrix4f result = pose.getOrDefaultTransform(joint.getName()).getAnimationBindedMatrix(joint, parentTransform);
-		joint.setAnimatedTransform(result);
-
-		for (Joint joints : joint.getSubJoints()) {
-			this.applyPoseToJoint(joints, result, pose);
-		}
-	}
-
 	@Override
 	public void init() {
 		this.entitypatch.initAnimator(this);
@@ -180,8 +159,6 @@ public class ClientAnimator extends Animator {
 	public Pose getComposedLayerPose(float partialTicks) {
 		Pose composedPose = new Pose();
 		Pose currentBasePose = this.baseLayer.animationPlayer.getCurrentPose(this.entitypatch, partialTicks);
-		Map<Layer.Priority, Pair<DynamicAnimation, Pose>> layerPoses = Maps.newLinkedHashMap();
-		layerPoses.put(Layer.Priority.LOWEST, Pair.of(this.baseLayer.animationPlayer.getAnimation(), currentBasePose));
 
 		for (Map.Entry<String, JointTransform> transformEntry : currentBasePose.getJointTransformData().entrySet()) {
 			composedPose.putJointData(transformEntry.getKey(), transformEntry.getValue());
@@ -192,30 +169,24 @@ public class ClientAnimator extends Animator {
 
 			if (!compositeLayer.isDisabled()) {
 				Pose layerPose = compositeLayer.animationPlayer.getCurrentPose(this.entitypatch, compositeLayer.paused ? 1.0F : partialTicks);
-				layerPoses.put(priority, Pair.of(compositeLayer.animationPlayer.getAnimation(), layerPose));
 
 				for (Map.Entry<String, JointTransform> transformEntry : layerPose.getJointTransformData().entrySet()) {
 					composedPose.getJointTransformData().put(transformEntry.getKey(), transformEntry.getValue());
 				}
 			}
 		}
-
-		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
-		this.applyBindModifier(composedPose, rootJoint, layerPoses);
 
 		return composedPose;
 	}
 
 	public Pose getComposedLayerPoseBelow(Layer.Priority priorityLimit, float partialTicks) {
 		Pose composedPose = this.baseLayer.animationPlayer.getCurrentPose(this.entitypatch, partialTicks);
-		Map<Layer.Priority, Pair<DynamicAnimation, Pose>> layerPoses = Maps.newLinkedHashMap();
 
 		for (Layer.Priority priority : priorityLimit.lowers()) {
 			Layer compositeLayer = this.baseLayer.compositeLayers.get(priority);
 
 			if (!compositeLayer.isDisabled()) {
 				Pose layerPose = compositeLayer.animationPlayer.getCurrentPose(this.entitypatch, compositeLayer.paused ? 1.0F : partialTicks);
-				layerPoses.put(priority, Pair.of(compositeLayer.animationPlayer.getAnimation(), layerPose));
 
 				for (Map.Entry<String, JointTransform> transformEntry : layerPose.getJointTransformData().entrySet()) {
 					composedPose.getJointTransformData().put(transformEntry.getKey(), transformEntry.getValue());
@@ -223,33 +194,7 @@ public class ClientAnimator extends Animator {
 			}
 		}
 
-		Joint rootJoint = this.entitypatch.getEntityModel(null).getArmature().getJointHierarcy();
-		this.applyBindModifier(composedPose, rootJoint, layerPoses);
-
 		return composedPose;
-	}
-
-	public void applyBindModifier(Pose result, Joint joint, Map<Layer.Priority, Pair<DynamicAnimation, Pose>> poses) {
-		List<Priority> list = Lists.newArrayList(poses.keySet());
-		Collections.reverse(list);
-
-		for (Layer.Priority priority : list) {
-			DynamicAnimation nowPlaying = poses.get(priority).getFirst();
-
-			if (nowPlaying.isJointEnabled(this.entitypatch, joint.getName())) {
-				BindModifier bindModifier = nowPlaying.getBindModifier(this.entitypatch, joint.getName());
-
-				if (bindModifier != null) {
-					bindModifier.modify(this, result, priority, joint, poses);
-				}
-
-				break;
-			}
-		}
-
-		for (Joint subJoints : joint.getSubJoints()) {
-			this.applyBindModifier(result, subJoints, poses);
-		}
 	}
 
 	public boolean compareMotion(LivingMotions motion) {

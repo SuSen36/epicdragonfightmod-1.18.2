@@ -7,11 +7,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
 import susen36.epicdragonfight.api.animation.*;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationCoordSetter;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty.ActionAnimationProperty;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty.AttackAnimationProperty;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
-import susen36.epicdragonfight.api.model.Model;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationCoordSetter;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationProperty;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.AttackAnimationProperty;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
@@ -46,12 +45,12 @@ public class AttackAnimation extends ActionAnimation {
 	
 	public final Phase[] phases;
 	
-	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String name, Model model) {
-		this(convertTime, name, model, new Phase(0.0F, antic, preDelay, contact, recovery, Float.MAX_VALUE, index));
+	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String name) {
+		this(convertTime, name, new Phase(0.0F, antic, preDelay, contact, recovery, Float.MAX_VALUE, index));
 	}
 
-	public AttackAnimation(float convertTime, String name, Model model, Phase... phases) {
-		super(convertTime, name, model);
+	public AttackAnimation(float convertTime, String name, Phase... phases) {
+		super(convertTime, name);
 		
 		this.addProperty(ActionAnimationProperty.COORD_SET_BEGIN, COMMON_COORD_SETTER);
 		this.addProperty(ActionAnimationProperty.COORD_SET_TICK, COMMON_COORD_SETTER);

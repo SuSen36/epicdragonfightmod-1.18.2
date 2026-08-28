@@ -5,9 +5,7 @@
   "package": "susen36.epicdragonfight.mixin",
   "client": [
     "MixinEndCrystalRenderer",
-    "MixinEnderDragonClient",
-    "MixinEnderDragonRenderer",
-    "MixinEnderDragonModel"
+    "MixinEnderDragonClient"
   ],
   "mixins": [
     "MixinAreaEffectCloud",

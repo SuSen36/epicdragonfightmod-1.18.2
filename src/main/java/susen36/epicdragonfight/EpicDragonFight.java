@@ -2,7 +2,6 @@ package susen36.epicdragonfight;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -15,10 +14,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.AnimationManager;
 import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.animation.ServerAnimator;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
 import susen36.epicdragonfight.network.DragonFightDataSerializers;
 
@@ -49,17 +46,12 @@ public class EpicDragonFight {
     
 	private void doClientStuff(final FMLClientSetupEvent event) {
 		this.animatorProvider = ClientAnimator::getAnimator;
-		ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
-		Models.LOGICAL_SERVER.loadArmatures();
-		Models.getClientModels().copyArmaturesFromServer();
 		this.animationManager.loadAnimationsInit();
-        ((ReloadableResourceManager)resourceManager).registerReloadListener(this.animationManager);
+        ((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener(this.animationManager);
     }
 	
 	private void doServerStuff(final FMLDedicatedServerSetupEvent event) {
-		Models.LOGICAL_SERVER.loadArmatures();
 		this.animationManager.loadAnimationsInit();
-		this.animatorProvider = ServerAnimator::getAnimator;
 	}
 	
 	private void doCommonStuff(final FMLCommonSetupEvent event) {

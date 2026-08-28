@@ -1,11 +1,9 @@
 package susen36.epicdragonfight.entitypatch;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
@@ -14,16 +12,11 @@ import org.jetbrains.annotations.NotNull;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.LivingMotions;
-import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.animation.types.procedural.IKInfo;
-import susen36.epicdragonfight.api.animation.types.procedural.TipPointAnimation;
 import susen36.epicdragonfight.api.client.animation.ClientAnimator;
-import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.gameasset.Models;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
 
 import java.util.List;
@@ -39,27 +32,11 @@ public interface IDragonPatch {
 
     void updateMotion(boolean considerInaction);
 	
-	void updateTipPoints();
-
-    void resetTipAnimations();
-
     void setFlyingPhase();
 
     void setGroundPhase();
 
     boolean isGroundPhase();
-
-	EnderDragonPart getHeadPart();
-
-	EnderDragonPart getBodyPart();
-
-	EnderDragonPart[] getTailParts();
-
-	EnderDragonPart[] getNeckParts();
-
-	EnderDragonPart[] getWingParts();
-
-	<M extends Model> M getEntityModel(Models<M> modelDB);
 
 	void updateEntityState();
 
@@ -81,19 +58,7 @@ public interface IDragonPatch {
 
 	Map<LivingMotions, StaticAnimation> getLivingMotions();
 
-	TipPointAnimation getTipPointAnimation(String jointName);
-
-    void addTipPointAnimation(String jointName, Vector3f initpos, TransformSheet transformSheet, IKInfo ikSetter);
-
 	List<LivingEntity> getCurrentlyAttackedEntity();
-
-	float getXRoot();
-
-	float getXRootO();
-
-	float getZRoot();
-
-	float getZRootO();
 
 	int getShieldEndEffectAge();
 
@@ -158,7 +123,7 @@ public interface IDragonPatch {
 	}
 
 	default OpenMatrix4f getModelMatrix(float partialTicks) {
-		return MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, this.getOriginal().yRotO, this.getOriginal().getYRot(), partialTicks, -1.0F, 1.0F, -1.0F);
+		return MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, this.getOriginal().yRotO, this.getOriginal().getYRot(), partialTicks, 1.0F, 1.0F, 1.0F);
 	}
 
 	default double getAngleTo(Entity entityIn) {

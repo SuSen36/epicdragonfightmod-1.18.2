@@ -15,7 +15,6 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 
@@ -48,15 +47,10 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 	public void doClientTick() {
 		super.doClientTick();
 		Vec3 dragonpos = this.dragon.position();
-		OpenMatrix4f mouthpos = Animator.getBindedJointTransformByName(this.dragonpatch.getAnimator().getPose(1.0F), this.dragonpatch.getEntityModel(null).getArmature(), "upperJaw");
-		
-		float f = (float)this.dragon.getLatencyPos(7, 1.0F)[0];
-		float f1 = (float)(this.dragon.getLatencyPos(5, 1.0F)[1] - this.dragon.getLatencyPos(10, 1.0F)[1]);
-		@SuppressWarnings("deprecation")
-		float f2 = Mth.rotWrap((this.dragon.getLatencyPos(5, 1.0F)[0] - this.dragon.getLatencyPos(10, 1.0F)[0]));
-		OpenMatrix4f modelMatrix = MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, f1, f1, f, f, 1.0F, 1.0F, 1.0F, 1.0F).rotateDeg(-f2 * 1.5F, Vector3f.ZP);
-		mouthpos.mulFront(modelMatrix);
-		
+
+		// 嘴部固定偏移（相对身体），替代原骨架 jaw 关节绑定位置
+		Vec3 mouthOffset = new Vec3(dragonpos.x, dragonpos.y + 1.4F, dragonpos.z - 2.5F);
+
 		if (this.dragon.getTarget() != null) {
 			Vec3 vec31 = this.dragon.getTarget().position().add(0.0D, 12.0D, 0.0D);
 			
@@ -82,9 +76,9 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 
 				this.dragon.level.addAlwaysVisibleParticle(
 						ParticleTypes.DRAGON_BREATH,
-						mouthpos.m30 + (float)dragonpos.x,
-						mouthpos.m31 + (float)dragonpos.y,
-						mouthpos.m32 + (float)dragonpos.z,
+						mouthOffset.x,
+						mouthOffset.y,
+						mouthOffset.z,
 						particleDelta.x,
 						particleDelta.y,
 						particleDelta.z

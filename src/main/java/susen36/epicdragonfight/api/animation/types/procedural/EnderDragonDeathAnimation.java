@@ -1,16 +1,14 @@
 package susen36.epicdragonfight.api.animation.types.procedural;
 
 import susen36.epicdragonfight.api.animation.Pose;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.EntityState;
-import susen36.epicdragonfight.api.model.Model;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 public class EnderDragonDeathAnimation extends ActionAnimation {
-	public EnderDragonDeathAnimation(float convertTime, String name, Model model) {
-		super(convertTime, name, model);
+	public EnderDragonDeathAnimation(float convertTime, String name) {
+		super(convertTime, name);
 		this.addProperty(AnimationProperty.ActionAnimationProperty.STOP_MOVEMENT, true);
 
 		this.stateSpectrumBlueprint.clear()
@@ -22,15 +20,7 @@ public class EnderDragonDeathAnimation extends ActionAnimation {
 				.addState(EntityState.INACTION, true)
 				.addState(EntityState.HURT,	true);
 	}
-	
+
 	@Override
-	public void loadAnimation() {
-		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
-		this.onLoaded();
-	}
-	
-	@Override
-	protected void modifyPose(Pose pose, IDragonPatch entitypatch, float time) {
-		
-	}
+	protected void modifyPose(Pose pose, IDragonPatch entitypatch, float time) {}
 }

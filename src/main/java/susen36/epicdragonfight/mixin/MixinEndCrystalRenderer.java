@@ -8,6 +8,7 @@ import com.mojang.math.Vector3f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EndCrystalRenderer;
 import net.minecraft.client.renderer.entity.EnderDragonRenderer;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,20 +21,20 @@ import susen36.epicdragonfight.entitypatch.IEndCrystalPatch;
 public abstract class MixinEndCrystalRenderer {
 	@Inject(at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;popPose()V", ordinal = 0, shift = At.Shift.BEFORE), method = "render(Lnet/minecraft/world/entity/boss/enderdragon/EndCrystal;FFLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;I)V")
 	private void renderCrystalShield(EndCrystal enderCrystal, float yRot, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, CallbackInfo ci) {
-		if (!(enderCrystal instanceof IEndCrystalPatch patch) || !patch.hasShield()) return;
+		if (enderCrystal instanceof IEndCrystalPatch patch && patch.hasShield()) {
+			float pulseScale = 1.0F + Mth.sin((enderCrystal.tickCount + partialTicks) * 0.15F) * 0.08F;
 
-		float pulseScale = 1.0F + ((float)Math.sin((enderCrystal.tickCount + partialTicks) * 0.15F) * 0.08F);
+			poseStack.pushPose();
+			poseStack.mulPose(Vector3f.YP.rotationDegrees(enderCrystal.tickCount * 2.0F + partialTicks * 2.0F));
+			poseStack.scale(pulseScale * 1.2F, pulseScale * 1.2F, pulseScale * 1.2F);
 
-		poseStack.pushPose();
-		poseStack.mulPose(Vector3f.YP.rotationDegrees(enderCrystal.tickCount * 2.0F + partialTicks * 2.0F));
-		poseStack.scale(pulseScale * 1.2F, pulseScale * 1.2F, pulseScale * 1.2F);
+			RenderSystem.setShaderTexture(0, EnderDragonRenderer.CRYSTAL_BEAM_LOCATION);
+			VertexConsumer shieldBuilder = buffer.getBuffer(DragonFightRenderTypes.forceField(EnderDragonRenderer.CRYSTAL_BEAM_LOCATION));
 
-		RenderSystem.setShaderTexture(0, EnderDragonRenderer.CRYSTAL_BEAM_LOCATION);
-		VertexConsumer shieldBuilder = buffer.getBuffer(DragonFightRenderTypes.forceField(EnderDragonRenderer.CRYSTAL_BEAM_LOCATION));
-
-		float uvOffset = (enderCrystal.tickCount + partialTicks) * 0.02F;
-		this.renderSphereShield(poseStack, shieldBuilder, uvOffset, packedLight);
-		poseStack.popPose();
+			float uvOffset = (enderCrystal.tickCount + partialTicks) * 0.02F;
+			this.renderSphereShield(poseStack, shieldBuilder, uvOffset, packedLight);
+			poseStack.popPose();
+		}
 	}
 
 	private void renderSphereShield(PoseStack poseStack, VertexConsumer builder, float uvOffset, int packedLight) {
@@ -46,10 +47,10 @@ public abstract class MixinEndCrystalRenderer {
 		for (int ring = 0; ring < rings; ring++) {
 			float phi1 = (float)ring / rings * (float)Math.PI;
 			float phi2 = (float)(ring + 1) / rings * (float)Math.PI;
-			float y1 = (float)Math.cos(phi1);
-			float y2 = (float)Math.cos(phi2);
-			float ringRadius1 = (float)Math.sin(phi1);
-			float ringRadius2 = (float)Math.sin(phi2);
+			float y1 = Mth.cos(phi1);
+			float y2 = Mth.cos(phi2);
+			float ringRadius1 = Mth.sin(phi1);
+			float ringRadius2 = Mth.sin(phi2);
 
 			float ringProgress1 = (float)ring / rings;
 			float ringProgress2 = (float)(ring + 1) / rings;
@@ -58,14 +59,14 @@ public abstract class MixinEndCrystalRenderer {
 				float theta1 = (float)seg / segments * 2.0F * (float)Math.PI;
 				float theta2 = (float)(seg + 1) / segments * 2.0F * (float)Math.PI;
 
-				float x1 = (float)Math.cos(theta1) * ringRadius1;
-				float z1 = (float)Math.sin(theta1) * ringRadius1;
-				float x2 = (float)Math.cos(theta2) * ringRadius1;
-				float z2 = (float)Math.sin(theta2) * ringRadius1;
-				float x3 = (float)Math.cos(theta2) * ringRadius2;
-				float z3 = (float)Math.sin(theta2) * ringRadius2;
-				float x4 = (float)Math.cos(theta1) * ringRadius2;
-				float z4 = (float)Math.sin(theta1) * ringRadius2;
+				float x1 = Mth.cos(theta1) * ringRadius1;
+				float z1 = Mth.sin(theta1) * ringRadius1;
+				float x2 = Mth.cos(theta2) * ringRadius1;
+				float z2 = Mth.sin(theta2) * ringRadius1;
+				float x3 = Mth.cos(theta2) * ringRadius2;
+				float z3 = Mth.sin(theta2) * ringRadius2;
+				float x4 = Mth.cos(theta1) * ringRadius2;
+				float z4 = Mth.sin(theta1) * ringRadius2;
 
 				float u1 = (float)seg / segments * uTile + uvOffset;
 				float u2 = (float)(seg + 1) / segments * uTile + uvOffset;

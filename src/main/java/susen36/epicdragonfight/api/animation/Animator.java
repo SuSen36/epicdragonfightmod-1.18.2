@@ -5,8 +5,6 @@ import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.model.Armature;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.Map;
@@ -44,23 +42,5 @@ public abstract class Animator {
 
 	public void resetMotions() {
 		this.livingAnimations.clear();
-	}
-	
-	/** Get binded position of joint **/
-	public static OpenMatrix4f getBindedJointTransformByName(Pose pose, Armature armature, String jointName) {
-		return getBindedJointTransformByIndex(pose, armature, armature.searchPathIndex(jointName));
-	}
-	
-	/** Get binded position of joint **/
-	public static OpenMatrix4f getBindedJointTransformByIndex(Pose pose, Armature armature, long pathIndex) {
-		armature.initializeTransform();
-		return getBindedJointTransformByIndexInternal(pose, armature.getJointHierarcy(), new OpenMatrix4f(), pathIndex);
-	}
-
-	private static OpenMatrix4f getBindedJointTransformByIndexInternal(Pose pose, Joint joint, OpenMatrix4f parentTransform, long pathIndex) {
-		JointTransform jt = pose.getOrDefaultTransform(joint.getName());
-		OpenMatrix4f result = jt.getAnimationBindedMatrix(joint, parentTransform);
-		long nextIndex = pathIndex % 10;
-		return nextIndex > 0 ? getBindedJointTransformByIndexInternal(pose, joint.getSubJoints().get((int)(nextIndex - 1)), result, pathIndex / 10) : result;
 	}
 }

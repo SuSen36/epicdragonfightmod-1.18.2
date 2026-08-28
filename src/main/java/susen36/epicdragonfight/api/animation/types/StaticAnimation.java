@@ -8,16 +8,14 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.AnimationManager;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
 import susen36.epicdragonfight.api.client.animation.JointMask;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
-import susen36.epicdragonfight.api.model.Model;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.DragonAnimationData;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +27,6 @@ public class StaticAnimation extends DynamicAnimation {
 	protected final Map<AnimationProperty<?>, Object> properties = Maps.newHashMap();
 	protected final StateSpectrum.Blueprint stateSpectrumBlueprint = new StateSpectrum.Blueprint();
 	protected final ResourceLocation resourceLocation;
-	protected final Model model;
 	protected final int namespaceId;
 	protected final int animationId;
 	
@@ -40,14 +37,13 @@ public class StaticAnimation extends DynamicAnimation {
 		this.namespaceId = -1;
 		this.animationId = -1;
 		this.resourceLocation = null;
-		this.model = null;
 	}
 	
-	public StaticAnimation(boolean repeatPlay, String name, Model model) {
-		this(0.15F, repeatPlay, name, model);
+	public StaticAnimation(boolean repeatPlay, String name) {
+		this(0.15F, repeatPlay, name);
 	}
 	
-	public StaticAnimation(float convertTime, boolean isRepeat, String name, Model model) {
+	public StaticAnimation(float convertTime, boolean isRepeat, String name) {
 		super(convertTime, isRepeat);
 		
 		AnimationManager animationManager = EpicDragonFight.getInstance().animationManager;
@@ -57,19 +53,16 @@ public class StaticAnimation extends DynamicAnimation {
 		animationManager.getIdMap().put(this.animationId, this);
 		this.resourceLocation = new ResourceLocation(animationManager.getModid(), name);
 		animationManager.getNameMap().put(this.resourceLocation, this);
-		this.model = model;
 	}
 	
-	public StaticAnimation(float convertTime, boolean repeatPlay, String name, Model model, boolean notRegisteredInAnimationManager) {
+	public StaticAnimation(float convertTime, boolean repeatPlay, String name, boolean notRegisteredInAnimationManager) {
 		super(convertTime, repeatPlay);
 		this.namespaceId = -1;
 		this.animationId = -1;
 		this.resourceLocation = new ResourceLocation(EpicDragonFight.getInstance().animationManager.getModid(), name);
-		this.model = model;
 	}
 	
 	public void loadAnimation() {
-		DragonAnimationData.loadByName(this.resourceLocation.getPath(), this);
 		this.onLoaded();
 	}
 	
@@ -161,10 +154,6 @@ public class StaticAnimation extends DynamicAnimation {
 	
 	public ResourceLocation getLocation() {
 		return this.resourceLocation;
-	}
-	
-	public Model getModel() {
-		return this.model;
 	}
 	
 	@Override

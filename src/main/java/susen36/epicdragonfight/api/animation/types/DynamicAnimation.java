@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.*;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;

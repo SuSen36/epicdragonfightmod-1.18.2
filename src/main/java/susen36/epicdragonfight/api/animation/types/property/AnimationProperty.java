@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.api.animation.property;
+package susen36.epicdragonfight.api.animation.types.property;
 
 import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;

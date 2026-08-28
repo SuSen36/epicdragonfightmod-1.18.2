@@ -2,7 +2,7 @@ package susen36.epicdragonfight.api.client.animation;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import susen36.epicdragonfight.api.animation.property.AnimationProperty.StaticAnimationProperty;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientAnimationProperties {
