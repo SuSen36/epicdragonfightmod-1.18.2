@@ -251,7 +251,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.Joint;
 import susen36.epicdragonfight.api.client.model.Mesh;
 import susen36.epicdragonfight.api.model.Armature;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
+import susen36.epicdragonfight.math.utils.OpenMatrix4f;
 
 import java.nio.FloatBuffer;
 import java.util.Map;

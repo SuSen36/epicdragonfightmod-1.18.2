@@ -2,68 +2,64 @@ package susen36.epicdragonfight.entitypatch;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.animation.LivingMotions;
-import susen36.epicdragonfight.api.animation.types.EntityState;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.network.server.SPPlayAnimation;
-
-import java.util.List;
-import java.util.Map;
 
 public interface IDragonPatch {
 
 	@NotNull
 	EnderDragon getOriginal();
 
-    void updateMotion(boolean considerInaction);
-	
-    void setFlyingPhase();
+	void setFlyingPhase();
 
-    void setGroundPhase();
+	void setGroundPhase();
 
-    boolean isGroundPhase();
+	boolean isGroundPhase();
 
-	void updateEntityState();
+	boolean isInAction();
 
-	void playAnimationSynchronized(StaticAnimation animation, float convertTimeModifier, AnimationPacketProvider packetProvider);
+	void playAnimation(byte event, int actionTicks);
 
-    @FunctionalInterface
-    interface AnimationPacketProvider {
-		SPPlayAnimation get(StaticAnimation animation, float convertTimeModifier, IDragonPatch entitypatch);
-	}
+	void scheduleSetFlyingPhase(int ticks);
 
-	<A extends Animator> A getAnimator();
+	void scheduleLanding(int ticks);
 
-	EntityState getEntityState();
-
-    LivingMotions getCurrentLivingMotion();
-
-	Map<LivingMotions, StaticAnimation> getLivingMotions();
-
-	List<LivingEntity> getCurrentlyAttackedEntity();
+	void scheduleServerEvent(int event, int ticks);
 
 	int getShieldEndEffectAge();
 
 	void setShieldEndEffectAge(int age);
 
-	void setCurrentLivingMotion(LivingMotions motion);
+	AnimationState getIdleAnimationState();
 
-	LivingMotions getCurrentCompositeMotion();
+	AnimationState getWalkAnimationState();
 
-	void setCurrentCompositeMotion(LivingMotions motion);
+	AnimationState getFlyAnimationState();
 
-	default float getYRotLimit() {
-		return 20.0F;
-	}
+	AnimationState getAirstrikeAnimationState();
+
+	AnimationState getAttack1AnimationState();
+
+	AnimationState getAttack2AnimationState();
+
+	AnimationState getLeftTailSweepAnimationState();
+
+	AnimationState getRightTailSweepAnimationState();
+
+	AnimationState getFireballAnimationState();
+
+	AnimationState getGroundToFlyAnimationState();
+
+	AnimationState getFlyToGroundAnimationState();
+
+	AnimationState getCrystalLinkAnimationState();
+
+	AnimationState getDeathAnimationState();
 
 	default float getAttackDirectionPitch() {
 		Entity attackTarget = this.getOriginal().getTarget();
@@ -113,10 +109,6 @@ public interface IDragonPatch {
 		entity.yBodyRot = f1;
 	}
 
-	default OpenMatrix4f getModelMatrix(float partialTicks) {
-		return MathUtils.getModelMatrixIntegral(0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, 0.0F, this.getOriginal().yRotO, this.getOriginal().getYRot(), partialTicks, 1.0F, 1.0F, 1.0F);
-	}
-
 	default double getAngleTo(Entity entityIn) {
 		Vec3 a = this.getOriginal().getLookAngle().scale(-1.0D);
 		Vec3 b = new Vec3(entityIn.getX() - this.getOriginal().getX(), entityIn.getY() - this.getOriginal().getY(), entityIn.getZ() - this.getOriginal().getZ()).normalize();
@@ -137,9 +129,5 @@ public interface IDragonPatch {
 		if (!this.getOriginal().level.isClientSide()) {
 			this.getOriginal().setTarget(entityIn);
 		}
-	}
-
-	default void playAnimationSynchronized(StaticAnimation animation, float convertTimeModifier) {
-		this.playAnimationSynchronized(animation, convertTimeModifier, SPPlayAnimation::new);
 	}
 }

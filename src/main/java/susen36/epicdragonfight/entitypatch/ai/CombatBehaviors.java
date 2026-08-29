@@ -2,10 +2,8 @@ package susen36.epicdragonfight.entitypatch.ai;
 
 import com.google.common.collect.Lists;
 import net.minecraft.world.entity.Entity;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+import susen36.epicdragonfight.client.anim.Animations;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.entitypatch.IDragonPatch.AnimationPacketProvider;
-import susen36.epicdragonfight.network.server.SPPlayAnimation;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -279,7 +277,6 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		
 		public void execute(T mobpatch) {
 			this.behavior.accept(mobpatch);
-        	mobpatch.updateEntityState();
 		}
 		
 		public static <T extends IDragonPatch> Builder<T> builder() {
@@ -289,28 +286,31 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		public static class Builder<T extends IDragonPatch> {
 			private Consumer<T> behavior;
 			private List<BehaviorPredicate<T>> predicate = Lists.newArrayList();
-			private AnimationPacketProvider packetProvider = SPPlayAnimation::new;
-			
+
 			public Builder<T> behavior(Consumer<T> behavior) {
 				this.behavior = behavior;
 				return this;
 			}
-			
-			public Builder<T> animationBehavior(StaticAnimation motion) {
+
+			public Builder<T> animationBehavior(byte event, int actionTicks) {
 				this.behavior = (mobpatch) -> {
-					mobpatch.playAnimationSynchronized(motion, 0.0F, this.packetProvider);
+					mobpatch.playAnimation(event, actionTicks);
+					mobpatch.scheduleServerEvent(Animations.SERVER_ATTACK_HIT, Animations.ATTACK_HIT_TICKS);
 				};
-				
+
 				return this;
 			}
-			
-			public Builder<T> randomAnimationBehavior(StaticAnimation... animations) {
+
+			public Builder<T> randomAnimationBehavior(RandomAnimation... animations) {
 				this.behavior = (mobpatch) -> {
-					if (animations.length == 0) return;
-					int randomIndex = mobpatch.getOriginal().getRandom().nextInt(animations.length);
-					mobpatch.playAnimationSynchronized(animations[randomIndex], 0.0F, this.packetProvider);
+					if (animations.length > 0) {
+						int randomIndex = mobpatch.getOriginal().getRandom().nextInt(animations.length);
+						RandomAnimation randomAnimation = animations[randomIndex];
+						mobpatch.playAnimation(randomAnimation.event, randomAnimation.actionTicks);
+						mobpatch.scheduleServerEvent(Animations.SERVER_ATTACK_HIT, Animations.ATTACK_HIT_TICKS);
+					}
 				};
-				
+
 				return this;
 			}
 
@@ -454,6 +454,16 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		
 		public enum Comparator {
 			GREATER_ABSOLUTE, LESS_ABSOLUTE, GREATER_RATIO, LESS_RATIO
+		}
+	}
+
+	public static class RandomAnimation {
+		private final byte event;
+		private final int actionTicks;
+
+		public RandomAnimation(byte event, int actionTicks) {
+			this.event = event;
+			this.actionTicks = actionTicks;
 		}
 	}
 }

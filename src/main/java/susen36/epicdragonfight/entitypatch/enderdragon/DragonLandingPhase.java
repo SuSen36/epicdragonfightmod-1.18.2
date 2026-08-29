@@ -9,7 +9,7 @@ import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.gameasset.Animations;
+import susen36.epicdragonfight.client.anim.Animations;
 
 public class DragonLandingPhase extends PatchedDragonPhase {
 	private final BlockPos[] landingCandidates;
@@ -105,7 +105,8 @@ public class DragonLandingPhase extends PatchedDragonPhase {
 			this.dragon.setDeltaMovement(this.dragon.getDeltaMovement().multiply(d6, 0.91F, d6));
 			
 			if (squaredD < 400.0D && Math.abs(dy) < 14.0D && (new Vec3(dx, 0, dz)).normalize().dot(Vec3.directionFromRotation(new Vec2(0, 180 + this.dragon.getYRot()))) > 0.95D) {
-				this.dragonpatch.playAnimationSynchronized(Animations.DRAGON_FLY_TO_GROUND, 0.0F);
+				this.dragonpatch.playAnimation(Animations.FLY_TO_GROUND_EVENT, Animations.FLY_TO_GROUND_TICKS);
+				this.dragonpatch.scheduleLanding(Animations.FLY_TO_GROUND_LAND_TICKS);
 				this.actualLandingPhase = true;
 			}
 		}

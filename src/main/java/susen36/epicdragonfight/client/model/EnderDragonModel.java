@@ -1,7 +1,5 @@
 package susen36.epicdragonfight.client.model;
 
-import net.minecraft.client.animation.AnimationDefinition;
-import net.minecraft.client.animation.KeyframeAnimations;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -10,11 +8,8 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.animation.AnimationPlayer;
-import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+import susen36.epicdragonfight.client.anim.DragonAnimKeyFrames;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.DragonAnimKeyFrames;
 
 public class EnderDragonModel extends HierarchicalModel<EnderDragon> {
 	public static final ModelLayerLocation DRAGON = new ModelLayerLocation(new ResourceLocation(EpicDragonFight.MODID, "dragon"), "main");
@@ -212,25 +207,19 @@ public class EnderDragonModel extends HierarchicalModel<EnderDragon> {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
 		if (entity instanceof IDragonPatch dragonPatch) {
-			AnimationPlayer animationPlayer = dragonPatch.getAnimator().getPlayerFor(null);
-			DynamicAnimation currentAnim = animationPlayer.getAnimation();
-			StaticAnimation renderTarget = null;
-
-			if (currentAnim instanceof StaticAnimation staticAnim) {
-				renderTarget = staticAnim;
-			}
-
-			if (renderTarget != null && renderTarget.getLocation() != null) {
-				String animName = renderTarget.getLocation().getPath();
-
-				try {
-					AnimationDefinition def = DragonAnimKeyFrames.get(animName);
-					float elapsedSec = animationPlayer.getElapsedTime();
-					KeyframeAnimations.animate(this, def, (long)(elapsedSec * 1000.0F), 1.0F, ANIMATION_VECTOR_CACHE);
-				} catch (IllegalArgumentException e) {
-					EpicDragonFight.LOGGER.warn("§c[Anim] no keyframe for {}", animName);
-				}
-			}
+			this.animate(dragonPatch.getIdleAnimationState(), DragonAnimKeyFrames.get("idle"), ageInTicks);
+			this.animate(dragonPatch.getWalkAnimationState(), DragonAnimKeyFrames.get("walk"), ageInTicks);
+			this.animate(dragonPatch.getFlyAnimationState(), DragonAnimKeyFrames.get("fly"), ageInTicks);
+			this.animate(dragonPatch.getAirstrikeAnimationState(), DragonAnimKeyFrames.get("airstrike"), ageInTicks);
+			this.animate(dragonPatch.getAttack1AnimationState(), DragonAnimKeyFrames.get("attack1"), ageInTicks);
+			this.animate(dragonPatch.getAttack2AnimationState(), DragonAnimKeyFrames.get("attack2"), ageInTicks);
+			this.animate(dragonPatch.getLeftTailSweepAnimationState(), DragonAnimKeyFrames.get("left_tail_sweep"), ageInTicks);
+			this.animate(dragonPatch.getRightTailSweepAnimationState(), DragonAnimKeyFrames.get("right_tail_sweep"), ageInTicks);
+			this.animate(dragonPatch.getFireballAnimationState(), DragonAnimKeyFrames.get("fireball"), ageInTicks);
+			this.animate(dragonPatch.getGroundToFlyAnimationState(), DragonAnimKeyFrames.get("ground_to_fly"), ageInTicks);
+			this.animate(dragonPatch.getFlyToGroundAnimationState(), DragonAnimKeyFrames.get("fly_to_ground"), ageInTicks);
+			this.animate(dragonPatch.getCrystalLinkAnimationState(), DragonAnimKeyFrames.get("crystal_link"), ageInTicks);
+			this.animate(dragonPatch.getDeathAnimationState(), DragonAnimKeyFrames.get("death"), ageInTicks);
 		}
 	}
 

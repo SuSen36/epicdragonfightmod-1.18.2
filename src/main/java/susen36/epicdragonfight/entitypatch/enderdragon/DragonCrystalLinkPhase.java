@@ -14,7 +14,7 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.gameasset.Animations;
+import susen36.epicdragonfight.client.anim.Animations;
 
 import java.util.List;
 
@@ -30,7 +30,8 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 	
 	@Override
 	public void begin() {
-		this.dragonpatch.getAnimator().playAnimation(Animations.DRAGON_CRYSTAL_LINK, 0.0F);
+		this.dragonpatch.playAnimation(Animations.CRYSTAL_LINK_EVENT, Animations.CRYSTAL_LINK_TICKS);
+		this.dragonpatch.scheduleServerEvent(Animations.SERVER_CRYSTAL_COMPLETE, Animations.CRYSTAL_LINK_HEAL_TICKS);
 		this.dragon.level.playLocalSound(this.dragon.getX(), this.dragon.getY(), this.dragon.getZ(), SoundEvents.ENDER_DRAGON_AMBIENT, this.dragon.getSoundSource(), 10.0F, 1.0F, false);
 		BlockPos blockpos = this.dragon.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(EndPodiumFeature.END_PODIUM_LOCATION));
 		List<EndCrystal> list = this.dragon.level.getEntitiesOfClass(EndCrystal.class, new AABB(blockpos).inflate(200.0D));

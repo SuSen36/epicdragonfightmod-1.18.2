@@ -15,11 +15,9 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.types.EntityState;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors;
-import susen36.epicdragonfight.gameasset.MobCombatBehaviors;
+import susen36.epicdragonfight.entitypatch.ai.MobCombatBehaviors;
 
 public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	private static final int GROUND_BATTLE_MAX_TICKS = 600;
@@ -58,12 +56,12 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 		LivingEntity target = this.dragon.getTarget();
 		
 		if (isValidTarget(target) && isInEndSpikes(target)) {
-			EntityState state = this.dragonpatch.getEntityState();
+			boolean isInAction = this.dragonpatch.isInAction();
 			this.combatBehaviors.tick();
 			--this.aggroCounter;
 
 			if (this.combatBehaviors.hasActivatedMove()) {
-				if (state.canBasicAttack()) {
+				if (!isInAction) {
 					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.tryProceed();
 
 					if (result != null) {
@@ -71,7 +69,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 					}
 				}
 			} else {
-				if (!state.inaction()) {
+				if (!isInAction) {
 					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
 
 					if (result != null) {
@@ -90,7 +88,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 						double dx = target.getX() - this.dragon.getX();
 						double dz = target.getZ() - this.dragon.getZ();
 						float yRot = 180.0F - (float) Math.toDegrees(Mth.atan2(dx, dz));
-						this.dragon.setYRot(MathUtils.rotlerp(this.dragon.getYRot(), yRot, 6.0F));
+						this.dragon.setYRot(Mth.approachDegrees(this.dragon.getYRot(), yRot, 6.0F));
 						Vec3 forward = this.dragon.getForward().scale(-0.25F);
 						this.dragon.move(MoverType.SELF, forward);
 					}
@@ -103,7 +101,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 			}
 		} else {
 			this.searchNearestTarget();
-			if ((target == null || !isInEndSpikes(target)) && !this.dragonpatch.getEntityState().inaction()) {
+			if ((target == null || !isInEndSpikes(target)) && !this.dragonpatch.isInAction()) {
 				this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_IDLE);
 			}
 		}
@@ -150,11 +148,11 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	}
 	
 	public void fly() {
-		this.combatBehaviors.execute(5);
+		this.combatBehaviors.execute(4);
 	}
 	
 	public void resetFlyCooldown() {
-		this.combatBehaviors.resetCooldown(5, false);
+		this.combatBehaviors.resetCooldown(4, false);
 	}
 	
 	@Override

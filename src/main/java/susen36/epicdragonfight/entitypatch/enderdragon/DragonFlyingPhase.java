@@ -46,7 +46,7 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 	
 	@Nullable@Override
 	public Vec3 getFlyTargetLocation() {
-		return this.dragonpatch.getEntityState().inaction() ? null : this.targetLocation;
+		return this.dragonpatch.isInAction() ? null : this.targetLocation;
 	}
 	
 	public void enableAirstrike() {
@@ -82,9 +82,7 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 					this.dragonpatch.setAttakTargetSync(target);
 					this.dragon.getPhaseManager().setPhase(PatchedPhases.AIRSTRIKE);
 				} else {
-					//TODO:之后会做龙的飞行版的发射fireball
-					//this.dragonpatch.setAttakTargetSync(target);
-					//this.dragonpatch.getAnimator().playAnimation(Animations.DRAGON_FLYING_FIREBALL, 0);
+					//TODO: 之后会做龙的飞行版的发射 fireball
 				}
 				return;
 		}

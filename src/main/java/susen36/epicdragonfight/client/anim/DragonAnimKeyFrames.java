@@ -1,4 +1,4 @@
-package susen36.epicdragonfight.gameasset;
+package susen36.epicdragonfight.client.anim;
 
 import net.minecraft.client.animation.AnimationChannel;
 import net.minecraft.client.animation.AnimationDefinition;
@@ -398,6 +398,7 @@ public class DragonAnimKeyFrames {
 				new Keyframe(0.0F, KeyframeAnimations.degreeVec(6.83F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
 				new Keyframe(0.933F, KeyframeAnimations.degreeVec(6.83F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
 		));
+		builder.looping();
 		return builder.build();
 	}
 

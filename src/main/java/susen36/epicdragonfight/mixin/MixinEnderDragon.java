@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.mixin;
 
-import com.google.common.collect.Maps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
@@ -21,6 +20,7 @@ import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
@@ -35,19 +35,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import susen36.epicdragonfight.EpicDragonFight;
-import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.animation.LivingMotions;
-import susen36.epicdragonfight.api.animation.types.EntityState;
-import susen36.epicdragonfight.api.animation.types.StaticAnimation;
+import susen36.epicdragonfight.client.anim.Animations;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.ai.DragonHurtByTargetGoal;
-import susen36.epicdragonfight.entitypatch.enderdragon.*;
-import susen36.epicdragonfight.gameasset.Animations;
-import susen36.epicdragonfight.network.DragoFightNetworkManager;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedDragonPhase;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
+import susen36.epicdragonfight.entitypatch.enderdragon.PhaseManagerPatch;
 
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Mixin(EnderDragon.class)
 public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
@@ -69,22 +67,34 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Shadow @Final private EnderDragonPart tail3;
 	@Shadow @Final private EnderDragonPart wing1;
 	@Shadow @Final private EnderDragonPart wing2;
-	EntityState state = EntityState.DEFAULT;
-	public Animator animator;
-	public LivingMotions currentLivingMotion = LivingMotions.IDLE;
-	public LivingMotions currentCompositeMotion = LivingMotions.IDLE;
-	public List<LivingEntity> currentlyAttackedEntity;
 
-	Map<LivingMotions, StaticAnimation> livingMotions = Maps.newHashMap();
+	boolean groundPhase;
+	int shieldEndEffectAge = 10;
+	int actionTimer = 0;
+	int pendingServerEvent = 0;
+	int pendingServerEventTicks = 0;
+	int phaseSwitchDelay = 0;
+	int pendingPhaseSwitch = 0;
+	boolean deathAnimationPlayed = false;
 
-	private boolean groundPhase;
-	public int shieldEndEffectAge = 10;
-	public LivingMotions prevMotion = LivingMotions.IDLE;
+	AnimationState idleAnimationState = new AnimationState();
+	AnimationState walkAnimationState = new AnimationState();
+	AnimationState flyAnimationState = new AnimationState();
+	AnimationState airstrikeAnimationState = new AnimationState();
+	AnimationState attack1AnimationState = new AnimationState();
+	AnimationState attack2AnimationState = new AnimationState();
+	AnimationState leftTailSweepAnimationState = new AnimationState();
+	AnimationState rightTailSweepAnimationState = new AnimationState();
+	AnimationState fireballAnimationState = new AnimationState();
+	AnimationState groundToFlyAnimationState = new AnimationState();
+	AnimationState flyToGroundAnimationState = new AnimationState();
+	AnimationState crystalLinkAnimationState = new AnimationState();
+	AnimationState deathAnimationState = new AnimationState();
 
 	private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(false).setCreateWorldFog(false);
 
 	private static final AttributeModifier LANDED_ARMOR_MODIFIER = new AttributeModifier(UUID.fromString("A1B2C3D4-E5F6-7890-ABCD-EF1234567890"), "Landed armor bonus", 5.0, AttributeModifier.Operation.ADDITION);
-	
+
 	private static final AttributeModifier FLYING_FOLLOW_RANGE_MODIFIER = new AttributeModifier(UUID.fromString("C2D3E4F5-A6B7-8901-CDEF-234567890123"), "Flying follow range", 36.0, AttributeModifier.Operation.ADDITION);
 	private static final AttributeModifier CRYSTAL_LINK_FOLLOW_RANGE_MODIFIER = new AttributeModifier(UUID.fromString("D3E4F5A6-B7C8-9012-DEFA-345678901234"), "Crystal link follow range", 86.0, AttributeModifier.Operation.ADDITION);
 
@@ -94,22 +104,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void onInit(CallbackInfo ci) {
-		this.livingMotions.put(LivingMotions.IDLE, Animations.DRAGON_IDLE);
-		this.livingMotions.put(LivingMotions.WALK, Animations.DRAGON_WALK);
-		this.livingMotions.put(LivingMotions.FLY, Animations.DRAGON_FLY);
-		this.livingMotions.put(LivingMotions.CHASE, Animations.DRAGON_AIRSTRIKE);
-		this.livingMotions.put(LivingMotions.DEATH, Animations.DRAGON_DEATH);
-
-		this.animator = EpicDragonFight.getAnimator(this);
-		for (Map.Entry<LivingMotions, StaticAnimation> entry : this.livingMotions.entrySet()) {
-			this.animator.addLivingAnimation(entry.getKey(), entry.getValue());
-		}
-		this.animator.init();
-		this.currentlyAttackedEntity = new ArrayList<>();
-
-		if (this.currentLivingMotion != LivingMotions.FLY && this.currentLivingMotion != LivingMotions.IDLE) {
-			this.currentLivingMotion = LivingMotions.WALK;
-		}
 		DragonPhaseInstance currentPhase = this.getSelf().phaseManager.getCurrentPhase();
 		EnderDragonPhase<?> startPhase = (currentPhase == null || !(currentPhase instanceof PatchedDragonPhase)) ? PatchedPhases.FLYING : this.phaseManager.getCurrentPhase().getPhase();
 		this.getSelf().phaseManager = new PhaseManagerPatch(this.getSelf());
@@ -120,25 +114,59 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	public void tick() {
 		super.tick();
-
 		this.updateFootLanding();
-		this.animator.tick();
 
-        if (this.getOriginal().level.isClientSide()) {
-			//super.clientTick();
+		if (this.level.isClientSide()) {
 			if (this.shieldEndEffectAge < 10) {
 				this.shieldEndEffectAge++;
 			}
-			this.updateMotion(false);
 
-			if (this.prevMotion != this.currentLivingMotion && !this.animator.getEntityState().inaction()) {
-				if (this.livingMotions.containsKey(this.currentLivingMotion)) {
-					StaticAnimation anim = this.livingMotions.get(this.currentLivingMotion);
-					if (anim != null) {
-						this.animator.playAnimation(anim, 0.0F);
+			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
+			boolean oneShotActive = this.attack1AnimationState.isStarted() || this.attack2AnimationState.isStarted()
+				|| this.leftTailSweepAnimationState.isStarted() || this.rightTailSweepAnimationState.isStarted()
+				|| this.fireballAnimationState.isStarted() || this.groundToFlyAnimationState.isStarted()
+				|| this.flyToGroundAnimationState.isStarted() || this.crystalLinkAnimationState.isStarted()
+				|| this.deathAnimationState.isStarted();
+
+			this.stopAnimationAfterDuration(this.attack1AnimationState, Animations.ATTACK1_TICKS);
+			this.stopAnimationAfterDuration(this.attack2AnimationState, Animations.ATTACK2_TICKS);
+			this.stopAnimationAfterDuration(this.leftTailSweepAnimationState, Animations.LEFT_TAIL_SWEEP_TICKS);
+			this.stopAnimationAfterDuration(this.rightTailSweepAnimationState, Animations.RIGHT_TAIL_SWEEP_TICKS);
+			this.stopAnimationAfterDuration(this.fireballAnimationState, Animations.FIREBALL_TICKS);
+			this.stopAnimationAfterDuration(this.groundToFlyAnimationState, Animations.GROUND_TO_FLY_TICKS);
+			this.stopAnimationAfterDuration(this.flyToGroundAnimationState, Animations.FLY_TO_GROUND_TICKS);
+			this.stopAnimationAfterDuration(this.crystalLinkAnimationState, Animations.CRYSTAL_LINK_TICKS);
+			this.stopAnimationAfterDuration(this.deathAnimationState, Animations.DEATH_TICKS);
+
+			if (!oneShotActive) {
+				if (!this.groundPhase) {
+					boolean isAirstrike = currentPhase == PatchedPhases.AIRSTRIKE || currentPhase == PatchedPhases.CHARGE;
+					if (isAirstrike) {
+						this.airstrikeAnimationState.startIfStopped(this.tickCount);
+						this.flyAnimationState.stop();
+					} else {
+						this.flyAnimationState.startIfStopped(this.tickCount);
+						this.airstrikeAnimationState.stop();
 					}
+					this.idleAnimationState.stop();
+					this.walkAnimationState.stop();
+				} else {
+					boolean isWalking = currentPhase == PatchedPhases.GROUND_BATTLE;
+					if (isWalking) {
+						this.walkAnimationState.startIfStopped(this.tickCount);
+						this.idleAnimationState.stop();
+					} else {
+						this.idleAnimationState.startIfStopped(this.tickCount);
+						this.walkAnimationState.stop();
+					}
+					this.flyAnimationState.stop();
+					this.airstrikeAnimationState.stop();
 				}
-				this.prevMotion = this.currentLivingMotion;
+			} else {
+				this.idleAnimationState.stop();
+				this.walkAnimationState.stop();
+				this.flyAnimationState.stop();
+				this.airstrikeAnimationState.stop();
 			}
 		} else {
 			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
@@ -149,24 +177,30 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			if (this.level instanceof ServerLevel serverLevel) {
 				EndDragonFight dragonFight = serverLevel.dragonFight();
 				if (dragonFight != null && this.getUUID().equals(dragonFight.dragonUUID)) {
-					this.bossEvent.setColor(net.minecraft.world.BossEvent.BossBarColor.PURPLE);
+					this.bossEvent.setColor(BossEvent.BossBarColor.PURPLE);
 				} else {
-					this.bossEvent.setColor(net.minecraft.world.BossEvent.BossBarColor.PINK);
+					this.bossEvent.setColor(BossEvent.BossBarColor.PINK);
 				}
 			}
 
 			this.getSensing().tick();
-			this.updateMotion(true);
 
-			if (this.prevMotion != this.currentLivingMotion && !this.animator.getEntityState().inaction()) {
-				if (this.livingMotions.containsKey(this.currentLivingMotion)) {
-					StaticAnimation anim = this.livingMotions.get(this.currentLivingMotion);
-					if (anim != null) {
-						this.animator.playAnimation(anim, 0.0F);
-					}
+			if (this.actionTimer > 0) {
+				this.actionTimer--;
+			}
+
+			if (this.pendingServerEventTicks > 0) {
+				this.pendingServerEventTicks--;
+				if (this.pendingServerEventTicks == 0) {
+					this.executePendingServerEvent();
 				}
+			}
 
-				this.prevMotion = this.currentLivingMotion;
+			if (this.phaseSwitchDelay > 0) {
+				this.phaseSwitchDelay--;
+				if (this.phaseSwitchDelay == 0) {
+					this.executePendingPhaseSwitch();
+				}
 			}
 
 			Entity bodyPart = Objects.requireNonNull(this.getSelf().getParts())[2];
@@ -206,13 +240,89 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
+	public void handleEntityEvent(byte event) {
+		if (this.level.isClientSide()) {
+			switch (event) {
+				case 100 -> this.groundToFlyAnimationState.start(this.tickCount);
+				case 101 -> this.flyToGroundAnimationState.start(this.tickCount);
+				case 102 -> this.attack1AnimationState.start(this.tickCount);
+				case 103 -> this.attack2AnimationState.start(this.tickCount);
+				case 104 -> this.leftTailSweepAnimationState.start(this.tickCount);
+				case 105 -> this.rightTailSweepAnimationState.start(this.tickCount);
+				case 106 -> this.fireballAnimationState.start(this.tickCount);
+				case 107 -> this.crystalLinkAnimationState.start(this.tickCount);
+				case 108 -> this.deathAnimationState.start(this.tickCount);
+			}
+		}
+	}
+
+	@Unique
+	private void stopAnimationAfterDuration(AnimationState state, int durationTicks) {
+		if (state.isStarted()) {
+			long accumulatedMs = state.getAccumulatedTime();
+			long durationMs = durationTicks * 50L;
+			if (accumulatedMs >= durationMs) {
+				state.stop();
+			}
+		}
+	}
+
+	@Unique
+	private void executePendingServerEvent() {
+		switch (this.pendingServerEvent) {
+			case Animations.SERVER_ATTACK_HIT -> {
+				LivingEntity target = this.getTarget();
+				if (target != null && this.distanceToSqr(target) < 64.0D) {
+					this.doHurtTarget(target);
+				}
+			}
+			case Animations.SERVER_FIREBALL -> {
+				LivingEntity target = this.getTarget();
+				if (target != null) {
+					Vec3 headPos = this.head.position();
+					Vec3 targetPos = target.getEyePosition();
+					Vec3 dir = targetPos.subtract(headPos).normalize();
+					DragonFireball fireball = new DragonFireball(this.level, this, dir.x, dir.y, dir.z);
+					fireball.setPos(headPos);
+					this.level.addFreshEntity(fireball);
+				}
+			}
+			case Animations.SERVER_CRYSTAL_COMPLETE -> {
+				this.heal(100.0F);
+				this.phaseManager.setPhase(PatchedPhases.GROUND_BATTLE);
+			}
+		}
+		this.pendingServerEvent = 0;
+	}
+
+	@Unique
+	private void executePendingPhaseSwitch() {
+		if (this.pendingPhaseSwitch == 1) {
+			this.setFlyingPhase();
+		} else if (this.pendingPhaseSwitch == 2) {
+			this.setGroundPhase();
+			AABB aabb = this.getBoundingBox().inflate(4.0D);
+			List<Entity> list = this.level.getEntities(this, aabb);
+			for (Entity entity : list) {
+				if (entity instanceof LivingEntity living && !entity.is(this)) {
+					entity.hurt(DamageSource.mobAttack(this), 6.0F);
+				}
+			}
+		}
+		this.pendingPhaseSwitch = 0;
+	}
+
+	@Override
 	public EntityDimensions getDimensions(Pose pose) {
 		return EntityDimensions.scalable(3.75F, 4.25F);
 	}
 
 	@Inject(method = "tickDeath", at = @At("HEAD"))
 	private void onTickDeath(CallbackInfo ci) {
-		this.currentLivingMotion = LivingMotions.DEATH;
+		if (!this.level.isClientSide() && !this.deathAnimationPlayed) {
+			this.deathAnimationPlayed = true;
+			this.playAnimation(Animations.DEATH_EVENT, Animations.DEATH_TICKS);
+		}
 	}
 
 	@ModifyVariable(method = "tickDeath", name = "i", at = @At(value = "STORE", ordinal = 0))
@@ -237,8 +347,8 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	/**
-	 * @author SuSen
-	 * @reason 允许非玩家实体伤害龙,但非特定来源伤害衰减为50%。
+	 * @author
+	 * @reason
 	 */
 	@Overwrite
 	public boolean hurt(EnderDragonPart pPart, DamageSource pSource, float pDamage) {
@@ -311,32 +421,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Inject(method = "checkWalls",at = @At("HEAD"), cancellable = true)
 	private void checkWalls(AABB pArea, CallbackInfoReturnable<Boolean> cir) {
 		cir.setReturnValue(false);
-	}
-
-	@Override
-	public void updateMotion(boolean considerInaction) {
-		if (this.getHealth() <= 0.0F) {
-			currentLivingMotion = LivingMotions.DEATH;
-		} else if (!this.state.inaction() || !considerInaction) {
-			// 动作(攻击等)进行中保持当前运动姿态，避免 living motion 切换覆盖正在播放的动作动画
-			DragonPhaseInstance phase = this.getSelf().getPhaseManager().getCurrentPhase();
-
-			if (!this.groundPhase) {
-				if (phase.getPhase() == PatchedPhases.AIRSTRIKE && ((DragonAirstrikePhase)phase).isActuallyAttacking()) {
-					this.currentLivingMotion = LivingMotions.CHASE;
-				} else if (phase.getPhase() == PatchedPhases.CHARGE && ((DragonChargePhase)phase).isActuallyAttacking()) {
-					this.currentLivingMotion = LivingMotions.CHASE;
-				} else {
-					this.currentLivingMotion = LivingMotions.FLY;
-				}
-			} else {
-				if (phase.getPhase() == PatchedPhases.GROUND_BATTLE) {
-					this.currentLivingMotion = LivingMotions.WALK;
-				} else if (phase.getPhase() == PatchedPhases.GROUND_IDLE) {
-					this.currentLivingMotion = LivingMotions.IDLE;
-				}
-			}
-		}
 	}
 
 	@Unique
@@ -434,40 +518,34 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
-	public void playAnimationSynchronized(StaticAnimation animation, float convertTimeModifier, AnimationPacketProvider packetProvider) {
-		this.animator.playAnimation(animation, convertTimeModifier);
-		DragoFightNetworkManager.sendToAllPlayerTrackingThisEntity(packetProvider.get(animation, convertTimeModifier, this), this);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <A extends Animator> A getAnimator() {
-		return (A) this.animator;
+	public void playAnimation(byte event, int actionTicks) {
+		if (!this.level.isClientSide()) {
+			this.actionTimer = actionTicks;
+			this.level.broadcastEntityEvent(this, event);
+		}
 	}
 
 	@Override
-	public EntityState getEntityState() {
-		return this.state;
+	public void scheduleSetFlyingPhase(int ticks) {
+		this.pendingPhaseSwitch = 1;
+		this.phaseSwitchDelay = ticks;
 	}
 
 	@Override
-	public void updateEntityState() {
-		this.state = this.animator.getEntityState();
+	public void scheduleLanding(int ticks) {
+		this.pendingPhaseSwitch = 2;
+		this.phaseSwitchDelay = ticks;
 	}
 
 	@Override
-	public LivingMotions getCurrentLivingMotion() {
-		return this.currentLivingMotion;
+	public void scheduleServerEvent(int event, int ticks) {
+		this.pendingServerEvent = event;
+		this.pendingServerEventTicks = ticks;
 	}
 
 	@Override
-	public Map<LivingMotions, StaticAnimation> getLivingMotions() {
-		return this.livingMotions;
-	}
-
-	@Override
-	public List<LivingEntity> getCurrentlyAttackedEntity() {
-		return this.currentlyAttackedEntity;
+	public boolean isInAction() {
+		return this.actionTimer > 0;
 	}
 
 	@Override
@@ -481,18 +559,68 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
-	public void setCurrentLivingMotion(LivingMotions motion) {
-		this.currentLivingMotion = motion;
+	public AnimationState getIdleAnimationState() {
+		return this.idleAnimationState;
 	}
 
 	@Override
-	public LivingMotions getCurrentCompositeMotion() {
-		return this.currentCompositeMotion;
+	public AnimationState getWalkAnimationState() {
+		return this.walkAnimationState;
 	}
 
 	@Override
-	public void setCurrentCompositeMotion(LivingMotions motion) {
-		this.currentCompositeMotion = motion;
+	public AnimationState getFlyAnimationState() {
+		return this.flyAnimationState;
+	}
+
+	@Override
+	public AnimationState getAirstrikeAnimationState() {
+		return this.airstrikeAnimationState;
+	}
+
+	@Override
+	public AnimationState getAttack1AnimationState() {
+		return this.attack1AnimationState;
+	}
+
+	@Override
+	public AnimationState getAttack2AnimationState() {
+		return this.attack2AnimationState;
+	}
+
+	@Override
+	public AnimationState getLeftTailSweepAnimationState() {
+		return this.leftTailSweepAnimationState;
+	}
+
+	@Override
+	public AnimationState getRightTailSweepAnimationState() {
+		return this.rightTailSweepAnimationState;
+	}
+
+	@Override
+	public AnimationState getFireballAnimationState() {
+		return this.fireballAnimationState;
+	}
+
+	@Override
+	public AnimationState getGroundToFlyAnimationState() {
+		return this.groundToFlyAnimationState;
+	}
+
+	@Override
+	public AnimationState getFlyToGroundAnimationState() {
+		return this.flyToGroundAnimationState;
+	}
+
+	@Override
+	public AnimationState getCrystalLinkAnimationState() {
+		return this.crystalLinkAnimationState;
+	}
+
+	@Override
+	public AnimationState getDeathAnimationState() {
+		return this.deathAnimationState;
 	}
 
 	@Override
@@ -502,8 +630,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Unique
-	private EnderDragon getSelf()
-	{
+	private EnderDragon getSelf() {
 		return (EnderDragon)(Object)this;
 	}
 }

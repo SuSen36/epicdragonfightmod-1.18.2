@@ -1,5 +1,6 @@
 package susen36.epicdragonfight.entitypatch.enderdragon;
 
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
@@ -15,8 +16,6 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.boss.enderdragon.phases.DragonPhaseInstance;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 
 public class DragonAirstrikePhase extends PatchedDragonPhase {
 	private Vec3 startpos;
@@ -69,8 +68,8 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 
 				float speed = Math.min((60.0F - (Math.abs(xDeg) + Math.abs(zDeg))) / 20.0F, 1.0F);
 
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(xDeg, Vector3f.XP), particleDelta, particleDelta);
-				OpenMatrix4f.transform3v(OpenMatrix4f.createRotatorDeg(zDeg, Vector3f.ZP), particleDelta, particleDelta);
+				particleDelta.transform(new Quaternion(Vector3f.XP, xDeg, true));
+				particleDelta.transform(new Quaternion(Vector3f.ZP, zDeg, true));
 
 				particleDelta.mul(speed);
 
@@ -122,7 +121,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 					double dx = target.getX() - this.dragon.getX();
 					double dz = target.getZ() - this.dragon.getZ();
 					float yRot = 180.0F - (float)Math.toDegrees(Mth.atan2(dx, dz));
-					this.dragon.setYRot(MathUtils.rotlerp(this.dragon.getYRot(), yRot, 6.0F));
+					this.dragon.setYRot(Mth.approachDegrees(this.dragon.getYRot(), yRot, 6.0F));
 					double speed = (-0.5D - 1.0D / (1.0D + Math.pow(Math.E, -(d4 / 10.0D - 4.0F)))) * f6;
 					Vec3 forward = this.dragon.getForward().scale(speed);
 					this.dragon.move(MoverType.SELF, forward);

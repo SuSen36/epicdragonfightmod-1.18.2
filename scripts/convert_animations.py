@@ -371,7 +371,7 @@ import susen36.epicdragonfight.api.animation.Keyframe;
 import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.model.Armature;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
+import susen36.epicdragonfight.math.utils.OpenMatrix4f;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
