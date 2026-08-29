@@ -109,7 +109,7 @@ public class DragonCrystalLinkPhase extends PatchedDragonPhase {
 		this.dragon.nearestCrystal = this.linkingCrystal;
 
 		if (this.chargingCount > 0) {
-			this.dragon.setHealth(this.dragon.getHealth() + 0.5F);
+			this.dragon.heal(0.5F);
 		}
 	}
 	

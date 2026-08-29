@@ -495,6 +495,11 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
+	public boolean shouldShowName() {
+		return false;
+	}
+
+	@Override
 	public void startSeenByPlayer(ServerPlayer player) {
 		super.startSeenByPlayer(player);
 		this.bossEvent.addPlayer(player);

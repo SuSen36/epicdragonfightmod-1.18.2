@@ -127,7 +127,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
         PathNavigationRegion pathnavigationregion = new PathNavigationRegion(this.dragon.level, blockpos.offset(-sight, -sight, -sight), blockpos.offset(sight, sight, sight));
         
         Path path = this.pathFinder.findPath(pathnavigationregion, this.dragon, ImmutableSet.of(target.blockPosition()), sight, 0, 1.0F);
-        
+        //TODO 方法调用 'getNode' 可能产生 'NullPointerException'
         BlockPos pathEnd = path.getNode(path.getNodeCount() - 1).asBlockPos();
         BlockPos targetPos = path.getTarget();
         double xd = Math.abs(pathEnd.getX() - targetPos.getX());

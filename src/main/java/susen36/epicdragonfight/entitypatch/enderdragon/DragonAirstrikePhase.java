@@ -47,7 +47,7 @@ public class DragonAirstrikePhase extends PatchedDragonPhase {
 		super.doClientTick();
 		Vec3 dragonpos = this.dragon.position();
 
-		// 嘴部固定偏移（相对身体），替代原骨架 jaw 关节绑定位置
+		//TODO 需要修改为head子实体
 		Vec3 mouthOffset = new Vec3(dragonpos.x, dragonpos.y + 1.4F, dragonpos.z - 2.5F);
 
 		if (this.dragon.getTarget() != null) {

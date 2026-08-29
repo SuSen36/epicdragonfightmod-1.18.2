@@ -65,10 +65,8 @@ public class DragonLandingPhase extends PatchedDragonPhase {
 		double squaredD = dx * dx + dy * dy + dz * dz;
 		double squaredHorizontalD = dx * dx + dz * dz;
 		
-		if (this.actualLandingPhase) {
-			if (squaredHorizontalD < 50.0D) {
-				this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);
-			}
+		if (this.actualLandingPhase && squaredHorizontalD < 50.0D) {
+			this.dragon.getPhaseManager().setPhase(PatchedPhases.GROUND_BATTLE);
 		} else {
 			float f5 = this.getFlySpeed();
 			double horizontalD = Math.sqrt(squaredHorizontalD);
