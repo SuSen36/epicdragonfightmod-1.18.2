@@ -15,11 +15,9 @@ public interface IDragonPatch {
 	@NotNull
 	EnderDragon getOriginal();
 
-	void setFlyingPhase();
+	boolean isFlyingPhase();
 
-	void setGroundPhase();
-
-	boolean isGroundPhase();
+	void setFlyingPhase(boolean isFlying);
 
 	boolean isInAction();
 

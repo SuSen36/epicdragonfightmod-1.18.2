@@ -4,7 +4,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.BossEvent;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
@@ -21,12 +20,9 @@ import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhaseManager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.DragonFireball;
-import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.*;
@@ -44,7 +40,6 @@ import susen36.epicdragonfight.entitypatch.enderdragon.PhaseManagerPatch;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Mixin(EnderDragon.class)
@@ -102,19 +97,18 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		super(pEntityType, pLevel);
 	}
 
-	@Inject(method = "<init>", at = @At("RETURN"))
+	@Inject(method = "<init>", at = @At("TAIL"))
 	private void onInit(CallbackInfo ci) {
 		DragonPhaseInstance currentPhase = this.getSelf().phaseManager.getCurrentPhase();
 		EnderDragonPhase<?> startPhase = (currentPhase == null || !(currentPhase instanceof PatchedDragonPhase)) ? PatchedPhases.FLYING : this.phaseManager.getCurrentPhase().getPhase();
 		this.getSelf().phaseManager = new PhaseManagerPatch(this.getSelf());
 		this.getSelf().phaseManager.setPhase(startPhase);
-		this.maxUpStep = 1.0F;
+		this.maxUpStep = 1.25F;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		this.updateFootLanding();
 
 		if (this.level.isClientSide()) {
 			if (this.shieldEndEffectAge < 10) {
@@ -170,9 +164,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			}
 		} else {
 			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
-			boolean isFlying = currentPhase == PatchedPhases.FLYING || currentPhase == PatchedPhases.AIRSTRIKE || currentPhase == PatchedPhases.CHARGE;
-
-			this.hurtTime = isFlying ? hurtTime : 2;
 			this.bossEvent.setProgress(this.getHealth() / this.getMaxHealth());
 			if (this.level instanceof ServerLevel serverLevel) {
 				EndDragonFight dragonFight = serverLevel.dragonFight();
@@ -183,6 +174,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 				}
 			}
 
+			//TODO 可能重复了
 			this.getSensing().tick();
 
 			if (this.actionTimer > 0) {
@@ -202,42 +194,13 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 					this.executePendingPhaseSwitch();
 				}
 			}
-
-			Entity bodyPart = Objects.requireNonNull(this.getSelf().getParts())[2];
-			AABB bodyBoundingBox = bodyPart.getBoundingBox();
-			List<Entity> list = this.level.getEntities(this, bodyBoundingBox, EntitySelector.pushableBy(this));
-			if (!list.isEmpty()) {
-				for (Entity entity : list) {
-					double d0 = entity.getX() - this.getX();
-					double d1 = entity.getZ() - this.getZ();
-					double d2 = Mth.absMax(d0, d1);
-
-					if (d2 >= 0.01D) {
-						d2 = Math.sqrt(d2);
-						d0 = d0 / d2;
-						d1 = d1 / d2;
-						double d3 = 1.0D / d2;
-
-						if (d3 > 1.0D) {
-							d3 = 1.0D;
-						}
-
-						d0 = d0 * d3 * 0.2D;
-						d1 = d1 * d3 * 0.2D;
-
-						if (!entity.isVehicle()) {
-							entity.push(d0, 0.0D, d1);
-							entity.hurtMarked = true;
-						}
-					}
-				}
-			}
 		}
 
 		if (this.getSelf().getPhaseManager().getCurrentPhase().isSitting() && this.getSelf().getPhaseManager().getCurrentPhase().getPhase() != PatchedPhases.CRYSTAL_LINK) {
 			this.getSelf().nearestCrystal = null;
 		}
 	}
+
 
 	@Override
 	public void handleEntityEvent(byte event) {
@@ -298,9 +261,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Unique
 	private void executePendingPhaseSwitch() {
 		if (this.pendingPhaseSwitch == 1) {
-			this.setFlyingPhase();
+			this.setFlyingPhase(true);
 		} else if (this.pendingPhaseSwitch == 2) {
-			this.setGroundPhase();
+			this.setFlyingPhase(false);
 			AABB aabb = this.getBoundingBox().inflate(4.0D);
 			List<Entity> list = this.level.getEntities(this, aabb);
 			for (Entity entity : list) {
@@ -314,7 +277,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	@Override
 	public EntityDimensions getDimensions(Pose pose) {
-		return EntityDimensions.scalable(3.75F, 4.25F);
+		return EntityDimensions.scalable(5.0F, 4F);
 	}
 
 	@Inject(method = "tickDeath", at = @At("HEAD"))
@@ -337,11 +300,12 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	)
 	private static void onCreateAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
 		AttributeSupplier.Builder builder = cir.getReturnValue();
-		builder.add(Attributes.MAX_HEALTH, 300.0D);
-		builder.add(Attributes.ARMOR, 1.5D);
+		builder.add(Attributes.MAX_HEALTH, 400.0D);
+		builder.add(Attributes.ARMOR, 2D);
 		builder.add(Attributes.ARMOR_TOUGHNESS, 2.0D);
 		builder.add(Attributes.ATTACK_DAMAGE, 10.0D);
 		builder.add(Attributes.ATTACK_KNOCKBACK, 0.35D);
+		builder.add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
 		builder.add(Attributes.FOLLOW_RANGE, 64.0D);
 		cir.setReturnValue(builder);
 	}
@@ -397,8 +361,8 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	protected void registerGoals() {
 		this.targetSelector.addGoal(1, new DragonHurtByTargetGoal(this, EnderDragon.class));
-		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, 10, false, false, (entity) -> !(entity instanceof EnderDragon)));
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolem.class, 10, true, false, (entity) -> !(entity instanceof EnderDragon)));
+		this.targetSelector.addGoal(1, new NearestAttackableTargetGoal<>(this, Player.class, false));
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
 	}
 
 	@Inject(method = "aiStep", at = @At("TAIL"))
@@ -406,11 +370,21 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		if (this.isEffectiveAi()) {
 			this.targetSelector.tick();
 		}
+		this.xxa *= 0.98F;
+		this.zza *= 0.98F;
+		this.travel(new Vec3(this.xxa, this.yya, this.zza));
+		this.noPhysics = this.isFlyingPhase();
+		this.setNoGravity(this.isFlyingPhase());
 	}
+
 
 	@Override
 	public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
 		return false;
+	}
+
+	@Override
+	public void push(Entity pEntity) {
 	}
 
 	@Inject(method = "knockBack",at = @At("HEAD"), cancellable = true)
@@ -423,48 +397,17 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		cir.setReturnValue(false);
 	}
 
-	@Unique
-	private void updateFootLanding() {
-		if (!this.level.isClientSide() && this.groundPhase) {
-			float entityPosY = (float)this.position().y;
-			float yFrontL = this.getFootGroundY(5.0F, -6.0F, entityPosY);
-			float yFrontR = this.getFootGroundY(-5.0F, -6.0F, entityPosY);
-			float yBackL = this.getFootGroundY(9.0F, 34.0F, entityPosY);
-			float yBackR = this.getFootGroundY(-9.0F, 34.0F, entityPosY);
-			float averageY = (yFrontL + yFrontR + yBackL + yBackR) * 0.25F;
-			float dy = averageY - entityPosY;
-			this.move(MoverType.SELF, new Vec3(0.0F, dy, 0.0F));
-		}
-	}
-
-	@Unique
-	private float getFootGroundY(float dx, float dz, float entityPosY) {
-		BlockHitResult clipResult = this.level.clip(new ClipContext(new Vec3(this.getX() + dx, entityPosY + 4.0F, this.getZ() + dz), new Vec3(this.getX() + dx, entityPosY - 8.0F, this.getZ() + dz), ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
-		if (clipResult.getType() != HitResult.Type.MISS) {
-			return (float)clipResult.getBlockPos().getY() + 1.0F + 0.12F;
-		}
-		return entityPosY;
-	}
-
 	@Override
-	public void setFlyingPhase() {
-		this.groundPhase = false;
-		this.horizontalCollision = false;
-		this.verticalCollision = false;
-		this.updateArmorModifier();
-		this.updateFollowRangeModifier();
-	}
-
-	@Override
-	public void setGroundPhase() {
-		this.groundPhase = true;
-		this.updateArmorModifier();
-		this.updateFollowRangeModifier();
+	public void setFlyingPhase(boolean isFlying) {
+		this.groundPhase = !isFlying;
+		this.horizontalCollision = !isFlying;
+		this.verticalCollision = !isFlying;
+		this.updateGroundPhaseAttributes();
 	}
 
 	@Unique
-	private void updateArmorModifier() {
-        if (!this.getOriginal().level.isClientSide()) {
+	private void updateGroundPhaseAttributes() {
+		if (!this.getOriginal().level.isClientSide()) {
 			AttributeInstance armorAttribute = this.getAttribute(Attributes.ARMOR);
 			if (armorAttribute != null) {
 				armorAttribute.removeModifier(LANDED_ARMOR_MODIFIER);
@@ -473,14 +416,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 					armorAttribute.addPermanentModifier(LANDED_ARMOR_MODIFIER);
 				}
 			}
-		}
-	}
 
-	@Unique
-	private void updateFollowRangeModifier() {
-        if (!this.getOriginal().level.isClientSide()) {
 			AttributeInstance followRangeAttr = this.getAttribute(Attributes.FOLLOW_RANGE);
-			if (followRangeAttr != null){
+			if (followRangeAttr != null) {
 				followRangeAttr.removeModifier(FLYING_FOLLOW_RANGE_MODIFIER);
 				followRangeAttr.removeModifier(CRYSTAL_LINK_FOLLOW_RANGE_MODIFIER);
 
@@ -518,8 +456,8 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
-	public boolean isGroundPhase() {
-		return this.groundPhase;
+	public boolean isFlyingPhase() {
+		return !this.groundPhase;
 	}
 
 	@Override

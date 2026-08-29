@@ -41,7 +41,7 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	
 	@Override
 	public void begin() {
-		this.dragonpatch.setGroundPhase();
+		this.dragonpatch.setFlyingPhase(false);
 		int crystalsAlive = this.dragon.getDragonFight() != null ? this.dragon.getDragonFight().getCrystalsAlive() : 0;
 		int crystalsDestroyed = 10 - crystalsAlive;
 		this.groundBattleTickCounter = GROUND_BATTLE_MAX_TICKS + crystalsDestroyed * 120;

@@ -44,9 +44,13 @@ public class DragonFlyingPhase extends PatchedDragonPhase {
 		this.targetLocation = null;
 	}
 	
-	@Nullable@Override
+	@Nullable
+	@Override
 	public Vec3 getFlyTargetLocation() {
-		return this.dragonpatch.isInAction() ? null : this.targetLocation;
+		if (this.dragonpatch.isInAction()) {
+			return null;
+		}
+		return this.targetLocation;
 	}
 	
 	public void enableAirstrike() {
