@@ -11,13 +11,10 @@ import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
-import susen36.epicdragonfight.api.client.animation.JointMask;
-import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.client.animation.Layer;
 import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -117,29 +114,6 @@ public class StaticAnimation extends DynamicAnimation {
 	@Override
 	public final EntityState getState(float time) {
 		return this.stateSpectrum.bindStates(time);
-	}
-	
-	@Override
-	public boolean isJointEnabled(IDragonPatch entitypatch, String joint) {
-		if (!super.isJointEnabled(entitypatch, joint)) {
-			return false;
-		} else {
-            return this.getProperty(ClientAnimationProperties.JOINT_MASK).map((bindModifier) -> !bindModifier.isMasked(entitypatch.getCurrentLivingMotion(), joint)).orElse(true);
-		}
-	}
-	
-	@Override
-	public BindModifier getBindModifier(IDragonPatch entitypatch, String joint) {
-		return this.getProperty(ClientAnimationProperties.JOINT_MASK).map((jointMaskEntry) -> {
-			List<JointMask> list = jointMaskEntry.getMask(entitypatch.getCurrentLivingMotion());
-			int position = list.indexOf(JointMask.of(joint));
-			
-			if (position >= 0) {
-				return list.get(position).getBindModifier();
-			} else {
-				return null;
-			}
-		}).orElse(null);
 	}
 	
 	@Override

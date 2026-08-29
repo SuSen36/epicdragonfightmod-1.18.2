@@ -443,21 +443,16 @@ public class CombatBehaviors<T extends IDragonPatch> {
 		}
 		
 		public boolean test(T mobpatch) {
-			switch (this.comparator) {
-			case LESS_ABSOLUTE:
-				return this.value > mobpatch.getOriginal().getHealth();
-			case GREATER_ABSOLUTE:
-				return this.value < mobpatch.getOriginal().getHealth();
-			case LESS_RATIO:
-				return this.value > mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
-			case GREATER_RATIO:
-				return this.value < mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
-			}
+            return switch (this.comparator) {
+                case LESS_ABSOLUTE -> this.value > mobpatch.getOriginal().getHealth();
+                case GREATER_ABSOLUTE -> this.value < mobpatch.getOriginal().getHealth();
+                case LESS_RATIO -> this.value > mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
+                case GREATER_RATIO -> this.value < mobpatch.getOriginal().getHealth() / mobpatch.getOriginal().getMaxHealth();
+            };
 
-			return true;
-		}
+        }
 		
-		public static enum Comparator {
+		public enum Comparator {
 			GREATER_ABSOLUTE, LESS_ABSOLUTE, GREATER_RATIO, LESS_RATIO
 		}
 	}

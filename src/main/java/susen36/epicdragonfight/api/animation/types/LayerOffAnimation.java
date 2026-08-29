@@ -3,7 +3,6 @@ package susen36.epicdragonfight.api.animation.types;
 import net.minecraft.client.Minecraft;
 import susen36.epicdragonfight.api.animation.Pose;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
-import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
 import susen36.epicdragonfight.api.client.animation.Layer.Priority;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
@@ -48,11 +47,6 @@ public class LayerOffAnimation extends DynamicAnimation {
 	
 	public void setLastAnimation(DynamicAnimation animation) {
 		this.lastAnimation = animation;
-	}
-	
-	@Override
-	public BindModifier getBindModifier(IDragonPatch entitypatch, String joint) {
-		return this.lastAnimation.getBindModifier(entitypatch, joint);
 	}
 	
 	@Override

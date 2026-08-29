@@ -83,21 +83,6 @@ public class JointTransform {
 		this.entries.put(RESULT2, new TransformEntry(OpenMatrix4f::mul, transform));
 	}
 	
-	public OpenMatrix4f getAnimationBindedMatrix(Joint joint, OpenMatrix4f parentTransform) {
-		OpenMatrix4f.AnimationTransformEntry animationTransformEntry = new OpenMatrix4f.AnimationTransformEntry();
-		
-		for (Map.Entry<String, TransformEntry> entry : this.entries.entrySet()) {
-			animationTransformEntry.put(entry.getKey(), entry.getValue().transform.toMatrix(), entry.getValue().multiplyFunction);
-		}
-		
-		animationTransformEntry.put(ANIMATION_TRANSFROM, this.toMatrix(), OpenMatrix4f::mul);
-		animationTransformEntry.put(JOINT_LOCAL_TRANSFORM, joint.getLocalTrasnform());
-		animationTransformEntry.put(PARENT, parentTransform);
-		animationTransformEntry.put(ANIMATION_TRANSFROM, joint.getAnimatedTransform());
-		
-		return animationTransformEntry.getResult();
-	}
-	
 	public OpenMatrix4f toMatrix() {
 		return new OpenMatrix4f().translate(this.translation).mulBack(OpenMatrix4f.fromQuaternion(this.rotation)).scale(this.scale);
 	}

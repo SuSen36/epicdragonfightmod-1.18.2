@@ -1,17 +1,11 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import com.mojang.math.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
-import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -97,11 +91,7 @@ public abstract class DynamicAnimation {
 	public boolean isJointEnabled(IDragonPatch entitypatch, String joint) {
 		return this.jointTransforms.containsKey(joint);
 	}
-	
-	public BindModifier getBindModifier(IDragonPatch entitypatch, String joint) {
-		return null;
-	}
-	
+
 	public EntityState getState(float time) {
 		return EntityState.DEFAULT;
 	}
@@ -162,24 +152,4 @@ public abstract class DynamicAnimation {
 		return false;
 	}
 
-	@OnlyIn(Dist.CLIENT)
-	private void collectJointData(Joint joint, OpenMatrix4f[] poses, List<Vector3f> positions, List<int[]> connections, int parentIndex) {
-		OpenMatrix4f pose = poses[joint.getId()];
-		if (pose == null) {
-			return;
-		}
-
-		Vector3f pos = new Vector3f(pose.m30, -pose.m31, pose.m32);
-
-		int currentIndex = positions.size();
-		positions.add(pos);
-
-		if (parentIndex >= 0) {
-			connections.add(new int[]{parentIndex, currentIndex});
-		}
-
-		for (Joint subJoint : joint.getSubJoints()) {
-			this.collectJointData(subJoint, poses, positions, connections, currentIndex);
-		}
-	}
 }

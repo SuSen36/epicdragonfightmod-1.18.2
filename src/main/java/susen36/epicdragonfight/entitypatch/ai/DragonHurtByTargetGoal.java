@@ -28,7 +28,6 @@ public class DragonHurtByTargetGoal  extends TargetGoal {
                 return false;
             } else {
                 Class[] var3 = this.toIgnoreDamage;
-                int var4 = var3.length;
 
                 for (Class<?> $$2 : var3) {
                     if ($$2.isAssignableFrom($$1.getClass())) {
