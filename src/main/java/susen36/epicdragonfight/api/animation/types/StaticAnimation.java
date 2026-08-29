@@ -3,16 +3,11 @@ package susen36.epicdragonfight.api.animation.types;
 
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.AnimationManager;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
-import susen36.epicdragonfight.api.client.animation.ClientAnimationProperties;
-import susen36.epicdragonfight.api.client.animation.Layer;
-import susen36.epicdragonfight.api.client.animation.Layer.LayerType;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 import java.util.Map;
@@ -101,8 +96,7 @@ public class StaticAnimation extends DynamicAnimation {
 				for (Event event : events) {
 					if (event.time != Event.ON_BEGIN && event.time != Event.ON_END) {
 						if (event.time < prevElapsed || event.time >= elapsed) {
-							continue;
-						} else {
+                        } else {
 							event.testAndExecute(entitypatch);
 						}
 					}
@@ -150,16 +144,6 @@ public class StaticAnimation extends DynamicAnimation {
 	@Override
 	public <V> Optional<V> getProperty(AnimationProperty<V> propertyType) {
 		return (Optional<V>) Optional.ofNullable(this.properties.get(propertyType));
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	public Layer.Priority getPriority() {
-		return this.getProperty(ClientAnimationProperties.PRIORITY).orElse(Layer.Priority.LOWEST);
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	public LayerType getLayerType() {
-		return this.getProperty(ClientAnimationProperties.LAYER_TYPE).orElse(LayerType.BASE_LAYER);
 	}
 	
 	public static class Event implements Comparable<Event> {

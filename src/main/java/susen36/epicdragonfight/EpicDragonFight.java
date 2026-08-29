@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import susen36.epicdragonfight.api.animation.AnimationManager;
 import susen36.epicdragonfight.api.animation.Animator;
-import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.network.DragoFightNetworkManager;
 import susen36.epicdragonfight.network.DragonFightDataSerializers;
@@ -32,11 +31,12 @@ public class EpicDragonFight {
 	}
 	
 	public final AnimationManager animationManager;
-	private Function<IDragonPatch, Animator> animatorProvider;
+	private final Function<IDragonPatch, Animator> animatorProvider;
 	
     public EpicDragonFight() {
     	this.animationManager = new AnimationManager();
     	instance = this;
+    	this.animatorProvider = Animator::getAnimator;
     	IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
     	bus.addListener(this::doClientStuff);
     	bus.addListener(this::doCommonStuff);
@@ -45,7 +45,6 @@ public class EpicDragonFight {
      }
     
 	private void doClientStuff(final FMLClientSetupEvent event) {
-		this.animatorProvider = ClientAnimator::getAnimator;
 		this.animationManager.loadAnimationsInit();
         ((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener(this.animationManager);
     }

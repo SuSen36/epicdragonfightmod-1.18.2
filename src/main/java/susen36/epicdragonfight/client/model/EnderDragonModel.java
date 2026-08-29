@@ -12,7 +12,6 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
-import susen36.epicdragonfight.api.animation.types.LinkAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.DragonAnimKeyFrames;
@@ -213,25 +212,20 @@ public class EnderDragonModel extends HierarchicalModel<EnderDragon> {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
 		if (entity instanceof IDragonPatch dragonPatch) {
-			AnimationPlayer animationPlayer = dragonPatch.getClientAnimator().baseLayer.animationPlayer;
+			AnimationPlayer animationPlayer = dragonPatch.getAnimator().getPlayerFor(null);
 			DynamicAnimation currentAnim = animationPlayer.getAnimation();
 			StaticAnimation renderTarget = null;
 
 			if (currentAnim instanceof StaticAnimation staticAnim) {
 				renderTarget = staticAnim;
-			} else if (currentAnim instanceof LinkAnimation linkAnim && linkAnim.getRealAnimation() instanceof StaticAnimation target) {
-				// 过渡期应用目标动画首帧，避免切换时模型回到绑定姿势形成真空
-				renderTarget = target;
 			}
 
 			if (renderTarget != null && renderTarget.getLocation() != null) {
 				String animName = renderTarget.getLocation().getPath();
-				EpicDragonFight.LOGGER.info("§e[Anim] staticAnim path={}", animName);
 
 				try {
 					AnimationDefinition def = DragonAnimKeyFrames.get(animName);
-					EpicDragonFight.LOGGER.info("§d[Anim] found AnimationDefinition, length={}s", def.lengthInSeconds());
-					float elapsedSec = currentAnim instanceof LinkAnimation ? 0.0F : animationPlayer.getElapsedTime();
+					float elapsedSec = animationPlayer.getElapsedTime();
 					KeyframeAnimations.animate(this, def, (long)(elapsedSec * 1000.0F), 1.0F, ANIMATION_VECTOR_CACHE);
 				} catch (IllegalArgumentException e) {
 					EpicDragonFight.LOGGER.warn("§c[Anim] no keyframe for {}", animName);

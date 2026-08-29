@@ -4,12 +4,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import susen36.epicdragonfight.api.animation.types.AttackAnimation;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
-public class EnderDragonTailAttackAnimation extends EnderDragonAttackAnimation {
+public class EnderDragonTailAttackAnimation extends AttackAnimation {
 	public EnderDragonTailAttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String rightFrontFoot, String name) {
-		super(convertTime, antic, preDelay, contact, recovery, rightFrontFoot, name);
-	}
+        super(convertTime, antic, preDelay, contact, recovery, rightFrontFoot, name);
+    }
 
 	@Override
 	public void tick(IDragonPatch entitypatch) {

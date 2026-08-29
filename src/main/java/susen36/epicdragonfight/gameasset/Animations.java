@@ -1,6 +1,5 @@
 package susen36.epicdragonfight.gameasset;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
@@ -9,20 +8,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.EnderDragonPart;
 import net.minecraft.world.entity.projectile.DragonFireball;
 import net.minecraft.world.phys.Vec3;
-import susen36.epicdragonfight.api.animation.JointTransform;
-import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
-import susen36.epicdragonfight.api.animation.types.ActionAnimation.ActionTime;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event.Side;
-import susen36.epicdragonfight.api.animation.types.procedural.EnderDragonAttackAnimation;
 import susen36.epicdragonfight.api.animation.types.procedural.EnderDragonDeathAnimation;
 import susen36.epicdragonfight.api.animation.types.procedural.EnderDragonTailAttackAnimation;
+import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
-import susen36.epicdragonfight.api.utils.math.MathUtils;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
@@ -44,8 +38,6 @@ public class Animations {
 	public static StaticAnimation DRAGON_FIREBALL;
 	public static StaticAnimation DRAGON_AIRSTRIKE;
 	public static StaticAnimation DRAGON_CRYSTAL_LINK;
-	public static StaticAnimation DRAGON_NEUTRALIZED;
-	public static StaticAnimation DRAGON_NEUTRALIZED_RECOVERY;
 
 	public static void registerAnimations() {
 		build();
@@ -58,36 +50,17 @@ public class Animations {
 		DRAGON_FLY = new StaticAnimation(0.35F,true, "fly")
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.4F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
 
-		DRAGON_DEATH = new EnderDragonDeathAnimation(1.0F, "death");
+		DRAGON_DEATH = new EnderDragonDeathAnimation(1.0F, "death")
+				.addProperty(AnimationProperty.ActionAnimationProperty.STOP_MOVEMENT, true);
 
 		DRAGON_GROUND_TO_FLY = new ActionAnimation(0.25F, "ground_to_fly")
 				.addProperty(ActionAnimationProperty.STOP_MOVEMENT, true)
-				.addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.25F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.05F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.45F, (entitypatch) -> {
 					entitypatch.setFlyingPhase();
 				}, Side.BOTH)});
 
 		DRAGON_FLY_TO_GROUND = new ActionAnimation(0.35F, "fly_to_ground")
 				.addProperty(ActionAnimationProperty.STOP_MOVEMENT, true)
-				.addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
-				.addProperty(ActionAnimationProperty.MOVE_ON_LINK, false)
-				.addProperty(ActionAnimationProperty.MOVE_TIME, new ActionTime[]{ActionTime.crate(0.0F, 1.35F)})
-				.addProperty(ActionAnimationProperty.COORD_SET_BEGIN, (self, entitypatch, transformSheet) -> {
-					TransformSheet transform = self.getTransfroms().get("root").copyAll();
-					Vec3 dragonpos = entitypatch.getOriginal().position();
-					Vec3 targetpos = entitypatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.LANDING).getLandingPosition();
-					float horizontalDistance = (float) dragonpos.subtract(0, dragonpos.y, 0).distanceTo(targetpos.subtract(0, targetpos.y, 0));
-					float verticalDistance = (float) Math.abs(dragonpos.y - targetpos.y);
-					JointTransform jt0 = transform.getKeyframes()[0].transform();
-					JointTransform jt1 = transform.getKeyframes()[1].transform();
-					JointTransform jt2 = transform.getKeyframes()[2].transform();
-					OpenMatrix4f coordReverse = OpenMatrix4f.createRotatorDeg(0, Vector3f.XP);
-					Vector3f jointCoord = OpenMatrix4f.transform3v(coordReverse, new Vector3f(jt0.translation().x, verticalDistance, horizontalDistance), null);
-					jt0.translation().set(jointCoord.x, jointCoord.y, jointCoord.z);
-					Vector3f jt1Translation = MathUtils.lerpVector(jt0.translation(), jt2.translation(), transform.getKeyframes()[1].time());
-					jt1.translation().set(jt1Translation.x, jt1Translation.y, jt1Translation.z);
-					transformSheet.readFrom(transform);
-				})
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
 					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL, 0, 0);
 				}, Side.CLIENT), Event.create(1.1F, (entitypatch) -> {
@@ -99,6 +72,7 @@ public class Animations {
 							entity.hurt(damageSource, 6.0F);
 						}
 					}
+					entitypatch.setGroundPhase();
 				}, Side.SERVER)});
 
 		DRAGON_LEFT_TAIL_SWEEP = new EnderDragonTailAttackAnimation(0.35F, 0.4F, 0.65F, 0.76F, 1.9F, "front_right_foot", "left_tail_sweep").addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.65F, (entitypatch) -> {
@@ -109,7 +83,7 @@ public class Animations {
 			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT)});
 
-		DRAGON_ATTACK1 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "front_right_foot", "attack1").addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.66F, (entitypatch) -> {
+		DRAGON_ATTACK1 = new EnderDragonTailAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "front_right_foot", "attack1").addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.66F, (entitypatch) -> {
 				LivingEntity original = entitypatch.getOriginal();
 				Entity target = entitypatch.getOriginal().getTarget();
 				if(target != null && original.distanceTo(target)<=8) {
@@ -117,7 +91,7 @@ public class Animations {
 				}
 		}, Side.SERVER)});
 
-		DRAGON_ATTACK2 = new EnderDragonAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "front_left_foot", "attack2").addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.66F, (entitypatch) -> {
+		DRAGON_ATTACK2 = new EnderDragonTailAttackAnimation(0.35F, 0.25F, 0.45F, 0.66F, 0.75F, "front_left_foot", "attack2").addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.66F, (entitypatch) -> {
 			LivingEntity original = entitypatch.getOriginal();
 			Entity target = entitypatch.getOriginal().getTarget();
 			if(target != null && original.distanceTo(target)<=8) {
@@ -125,7 +99,7 @@ public class Animations {
 			}
 		}, Side.SERVER)});
 
-		DRAGON_ATTACK3 = new EnderDragonAttackAnimation(0.35F, 0.5F, 1.15F, 1.26F, 1.9F, "root", "attack3").addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
+		DRAGON_ATTACK3 = new EnderDragonTailAttackAnimation(0.35F, 0.5F, 1.15F, 1.26F, 1.9F, "root", "attack3")
 		   .addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.2F, (entitypatch) -> {
 			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
 		}, Side.CLIENT), Event.create(1.26F, (entitypatch) -> {
@@ -167,15 +141,6 @@ public class Animations {
 					original.level.addParticle(ParticleTypes.EXPLOSION, original.getX(), original.getY() + 2.0D, original.getZ(), 0, 0, 0);
 				}, Side.CLIENT)});
 
-		DRAGON_NEUTRALIZED = new ActionAnimation(0.1F, "neutralized")
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(3.95F, (entitypatch) -> {
-					entitypatch.getAnimator().playAnimation(DRAGON_NEUTRALIZED_RECOVERY, 0);
-				}, Side.BOTH)});
-
-		DRAGON_NEUTRALIZED_RECOVERY = new ActionAnimation(0.05F, "neutralized_recovery")
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.6F, (entitypatch) -> {
-					entitypatch.getOriginal().getPhaseManager().getPhase(PatchedPhases.GROUND_BATTLE).fly();
-				}, Side.SERVER)});
 	}
 
 	private static class ReuseableEvents {

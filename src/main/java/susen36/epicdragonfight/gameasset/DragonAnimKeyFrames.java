@@ -190,10 +190,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(0.933F, KeyframeAnimations.posVec(-0.0003F, 0.0002F, -0.0003F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("left_wing", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-69.13F, 14.48F, 5.48F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.433F, KeyframeAnimations.degreeVec(57.17F, -7.45F, -4.1F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.8F, KeyframeAnimations.degreeVec(-24.97F, 1.32F, -0.29F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.933F, KeyframeAnimations.degreeVec(-69.13F, 14.48F, 5.48F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-19.3F, -14.32F, -5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.233F, KeyframeAnimations.degreeVec(3.36F, -13.59F, -56.66F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.467F, KeyframeAnimations.degreeVec(28.62F, -14.32F, -5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.7F, KeyframeAnimations.degreeVec(7.31F, -17.01F, 56.84F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.933F, KeyframeAnimations.degreeVec(-19.3F, -14.32F, -5.73F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("left_wing_tip", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR),
@@ -268,10 +269,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(0.933F, KeyframeAnimations.posVec(0.0003F, 0.0002F, -0.0002F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("right_wing", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-69.75F, -14.93F, -5.48F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.433F, KeyframeAnimations.degreeVec(59.38F, 9.82F, 0.03F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.8F, KeyframeAnimations.degreeVec(-24.96F, -1.38F, 0.01F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.933F, KeyframeAnimations.degreeVec(-69.75F, -14.93F, -5.48F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-19.3F, 14.32F, 5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.233F, KeyframeAnimations.degreeVec(3.36F, 13.59F, 56.66F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.467F, KeyframeAnimations.degreeVec(28.62F, 14.32F, 5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.7F, KeyframeAnimations.degreeVec(7.31F, 17.01F, -56.84F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.933F, KeyframeAnimations.degreeVec(-19.3F, 14.32F, 5.73F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("right_wing_tip", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR),
@@ -282,12 +284,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(0.933F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("right_wing_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-35.17F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.25F, KeyframeAnimations.degreeVec(-44.83F, -0.19F, 0.18F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.433F, KeyframeAnimations.degreeVec(44.99F, -0.17F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.65F, KeyframeAnimations.degreeVec(38.57F, -0.34F, 0.43F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.8F, KeyframeAnimations.degreeVec(24.96F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.933F, KeyframeAnimations.degreeVec(-35.17F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -60.57F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.233F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -39.36F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.467F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 27.58F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.7F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -3.61F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.933F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -60.57F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, -2.2408F, 0.0005F), AnimationChannel.Interpolations.LINEAR),
@@ -4047,10 +4048,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(1.167F, KeyframeAnimations.posVec(-0.0003F, 0.0002F, -0.0003F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("left_wing", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-69.13F, 14.48F, 5.48F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.533F, KeyframeAnimations.degreeVec(57.21F, -7.45F, -4.11F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.0F, KeyframeAnimations.degreeVec(-24.97F, 1.32F, -0.29F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.167F, KeyframeAnimations.degreeVec(-69.13F, 14.48F, 5.48F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-19.3F, -14.32F, -5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.292F, KeyframeAnimations.degreeVec(3.36F, -13.59F, -56.66F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.584F, KeyframeAnimations.degreeVec(28.62F, -14.32F, -5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.875F, KeyframeAnimations.degreeVec(7.31F, -17.01F, 56.84F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(1.167F, KeyframeAnimations.degreeVec(-19.3F, -14.32F, -5.73F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("left_wing_tip", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR),
@@ -4061,12 +4063,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(1.167F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("left_wing_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-36.51F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.317F, KeyframeAnimations.degreeVec(-47.64F, 0.0F, -0.07F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.533F, KeyframeAnimations.degreeVec(47.56F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.817F, KeyframeAnimations.degreeVec(39.27F, 0.1F, -0.09F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.0F, KeyframeAnimations.degreeVec(24.96F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.167F, KeyframeAnimations.degreeVec(-36.51F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 60.57F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.292F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 39.36F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.584F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -27.58F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.875F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 3.61F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(1.167F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 60.57F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("neck1", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR),
@@ -4135,10 +4136,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(1.167F, KeyframeAnimations.posVec(0.0003F, 0.0002F, -0.0002F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("right_wing", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-69.75F, -14.96F, -5.51F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.533F, KeyframeAnimations.degreeVec(59.38F, 9.79F, 0.01F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.0F, KeyframeAnimations.degreeVec(-24.96F, -1.38F, 0.01F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.167F, KeyframeAnimations.degreeVec(-69.75F, -14.96F, -5.51F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-19.3F, 14.32F, 5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.292F, KeyframeAnimations.degreeVec(3.36F, 13.59F, 56.66F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.584F, KeyframeAnimations.degreeVec(28.62F, 14.32F, 5.73F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.875F, KeyframeAnimations.degreeVec(7.31F, 17.01F, -56.84F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(1.167F, KeyframeAnimations.degreeVec(-19.3F, 14.32F, 5.73F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("right_wing_tip", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR),
@@ -4149,12 +4151,11 @@ public class DragonAnimKeyFrames {
 				new Keyframe(1.167F, KeyframeAnimations.posVec(0.0F, 0.0F, -0.0002F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("right_wing_tip", new AnimationChannel(AnimationChannel.Targets.ROTATION,
-				new Keyframe(0.0F, KeyframeAnimations.degreeVec(-35.17F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.317F, KeyframeAnimations.degreeVec(-44.83F, -0.22F, 0.19F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.533F, KeyframeAnimations.degreeVec(44.99F, -0.17F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(0.817F, KeyframeAnimations.degreeVec(38.61F, -0.34F, 0.43F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.0F, KeyframeAnimations.degreeVec(24.96F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR),
-				new Keyframe(1.167F, KeyframeAnimations.degreeVec(-35.17F, 0.0F, 0.0F), AnimationChannel.Interpolations.LINEAR)
+				new Keyframe(0.0F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -60.57F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.292F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -39.36F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.584F, KeyframeAnimations.degreeVec(0.0F, 0.0F, 27.58F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(0.875F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -3.61F), AnimationChannel.Interpolations.LINEAR),
+				new Keyframe(1.167F, KeyframeAnimations.degreeVec(0.0F, 0.0F, -60.57F), AnimationChannel.Interpolations.LINEAR)
 		));
 		builder.addAnimation("root", new AnimationChannel(AnimationChannel.Targets.POSITION,
 				new Keyframe(0.0F, KeyframeAnimations.posVec(0.0F, -2.2408F, -0.0005F), AnimationChannel.Interpolations.LINEAR),

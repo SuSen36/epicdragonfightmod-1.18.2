@@ -1,9 +1,9 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import susen36.epicdragonfight.api.animation.*;
+import susen36.epicdragonfight.api.animation.AnimationPlayer;
+import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
-import susen36.epicdragonfight.gameasset.Animations;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,11 +14,7 @@ public abstract class DynamicAnimation {
 	protected final boolean isRepeat;
 	protected final float convertTime;
 	protected float totalTime = 0.0F;
-	
-	public DynamicAnimation() {
-		this(0.15F, false);
-	}
-	
+
 	public DynamicAnimation(float convertTime, boolean isRepeat) {
 		this.jointTransforms = new HashMap<>();
 		this.isRepeat = isRepeat;
@@ -29,56 +25,6 @@ public abstract class DynamicAnimation {
 		this.jointTransforms.put(jointName, sheet);
 	}
 
-	
-	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
-		Pose pose = new Pose();
-		
-		for (String jointName : this.jointTransforms.keySet()) {
-			if (!entitypatch.getOriginal().level.isClientSide() || this.isJointEnabled(entitypatch, jointName)) {
-				pose.putJointData(jointName, this.jointTransforms.get(jointName).getInterpolatedTransform(time));
-			}
-		}
-		
-		this.modifyPose(pose, entitypatch, time);
-		
-		return pose;
-	}
-	
-	/** Modify the pose which also modified in link animation. **/
-	protected void modifyPose(Pose pose, IDragonPatch entitypatch, float time) {
-	}
-	
-	public void setLinkAnimation(Pose pose1, float convertTimeModifier, IDragonPatch entitypatch, LinkAnimation dest) {
-		if (!entitypatch.getOriginal().level.isClientSide()) {
-			pose1 = Animations.DUMMY_ANIMATION.getPoseByTime(entitypatch, 0.0F, 1.0F);
-		}
-		
-		float totalTime = convertTimeModifier >= 0.0F ? convertTimeModifier + this.convertTime : this.convertTime;
-		boolean isNeg = convertTimeModifier < 0.0F;
-		float nextStart = isNeg ? -convertTimeModifier : 0.0F;
-		
-		if (isNeg) {
-			dest.startsAt = nextStart;
-		}
-		
-		dest.getTransfroms().clear();
-		dest.setTotalTime(totalTime);
-		dest.setNextAnimation(this);
-		
-		Map<String, JointTransform> data1 = pose1.getJointTransformData();
-		Map<String, JointTransform> data2 = this.getPoseByTime(entitypatch, nextStart, 1.0F).getJointTransformData();
-		
-		for (String jointName : data1.keySet()) {
-			if (data1.containsKey(jointName) && data2.containsKey(jointName)) {
-				Keyframe[] keyframes = new Keyframe[2];
-				keyframes[0] = new Keyframe(0.0F, data1.get(jointName));
-				keyframes[1] = new Keyframe(totalTime, data2.get(jointName));
-				TransformSheet sheet = new TransformSheet(keyframes);
-				dest.addSheet(jointName, sheet);
-			}
-		}
-	}
-	
 	public void putOnPlayer(AnimationPlayer player) {
 		player.setPlayAnimation(this);
 	}
@@ -86,11 +32,6 @@ public abstract class DynamicAnimation {
 	public void begin(IDragonPatch entitypatch) {}
 	public void tick(IDragonPatch entitypatch) {}
 	public void end(IDragonPatch entitypatch, boolean isEnd) {}
-	public void linkTick(IDragonPatch entitypatch, LinkAnimation linkAnimation) {}
-	
-	public boolean isJointEnabled(IDragonPatch entitypatch, String joint) {
-		return this.jointTransforms.containsKey(joint);
-	}
 
 	public EntityState getState(float time) {
 		return EntityState.DEFAULT;
@@ -139,17 +80,4 @@ public abstract class DynamicAnimation {
 	public <V> Optional<V> getProperty(AnimationProperty<V> propertyType) {
 		return Optional.empty();
 	}
-	
-	public boolean isMainFrameAnimation() {
-		return false;
-	}
-	
-	public boolean isReboundAnimation() {
-		return false;
-	}
-	
-	public boolean isMetaAnimation() {
-		return false;
-	}
-
 }

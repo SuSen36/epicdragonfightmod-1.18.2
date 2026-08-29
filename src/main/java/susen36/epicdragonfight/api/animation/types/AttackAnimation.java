@@ -1,48 +1,16 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import com.mojang.math.Vector3f;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.PartEntity;
-import susen36.epicdragonfight.api.animation.*;
-import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationCoordSetter;
+import susen36.epicdragonfight.api.animation.AnimationPlayer;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.AttackAnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
-import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 
 public class AttackAnimation extends ActionAnimation {
-	protected static final ActionAnimationCoordSetter COMMON_COORD_SETTER = (self, entitypatch, transformSheet) -> {
-		LivingEntity attackTarget = entitypatch.getOriginal().getTarget();
-		
-		if (!self.getRealAnimation().getProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE).orElse(false) && attackTarget != null) {
-			TransformSheet transform = self.getTransfroms().get("root").copyAll();
-			Keyframe[] keyframes = transform.getKeyframes();
-			int startFrame = 0;
-			int endFrame = transform.getKeyframes().length - 1;
-			Vector3f keyLast = keyframes[endFrame].transform().translation();
-			Vec3 pos = entitypatch.getOriginal().getEyePosition();
-			Vec3 targetpos = attackTarget.position();
-			float horizontalDistance = Math.max((float)targetpos.subtract(pos).horizontalDistance() - (attackTarget.getBbWidth() + entitypatch.getOriginal().getBbWidth()) * 0.75F, 0.0F);
-			Vector3f worldPosition = new Vector3f(keyLast.x, 0.0F, -horizontalDistance);
-			float worldPositionLength = (float) Math.sqrt(worldPosition.dot(worldPosition));
-			float keyLastLength = (float) Math.sqrt(keyLast.dot(keyLast));
-			float scale = Math.min(worldPositionLength / keyLastLength, 2.0F);
-			
-			for (int i = startFrame; i <= endFrame; i++) {
-				Vector3f translation = keyframes[i].transform().translation();
-				translation.z *= scale;
-			}
-			
-			transformSheet.readFrom(transform);
-		} else {
-			transformSheet.readFrom(self.getTransfroms().get("root"));
-		}
-	};
-	
 	public final Phase[] phases;
 	
 	public AttackAnimation(float convertTime, float antic, float preDelay, float contact, float recovery, String index, String name) {
@@ -52,8 +20,6 @@ public class AttackAnimation extends ActionAnimation {
 	public AttackAnimation(float convertTime, String name, Phase... phases) {
 		super(convertTime, name);
 		
-		this.addProperty(ActionAnimationProperty.COORD_SET_BEGIN, COMMON_COORD_SETTER);
-		this.addProperty(ActionAnimationProperty.COORD_SET_TICK, COMMON_COORD_SETTER);
 		this.addProperty(ActionAnimationProperty.STOP_MOVEMENT, true);
 		this.phases = phases;
 		
@@ -149,21 +115,6 @@ public class AttackAnimation extends ActionAnimation {
 		return null;
 	}
 
-	@Override
-	public Pose getPoseByTime(IDragonPatch entitypatch, float time, float partialTicks) {
-		Pose pose = super.getPoseByTime(entitypatch, time, partialTicks);
-		
-		this.getProperty(AttackAnimationProperty.ROTATE_X).ifPresent((flag) -> {
-			if (flag) {
-				float pitch = entitypatch.getAttackDirectionPitch();
-				JointTransform chest = pose.getOrDefaultTransform("Chest");
-				chest.frontResult(JointTransform.getRotation(Vector3f.XP.rotationDegrees(-pitch)), OpenMatrix4f::mulAsOriginFront);
-			}
-		});
-		
-		return pose;
-	}
-	
 	@Override
 	public float getPlaySpeed(IDragonPatch entitypatch) {
 		if (this.getProperty(StaticAnimationProperty.PLAY_SPEED).isPresent()) {

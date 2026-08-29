@@ -79,7 +79,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	private boolean groundPhase;
 	public int shieldEndEffectAge = 10;
-	public LivingMotions prevMotion = LivingMotions.FLY;
+	public LivingMotions prevMotion = LivingMotions.IDLE;
 
 	private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(false).setCreateWorldFog(false);
 
@@ -101,6 +101,9 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		this.livingMotions.put(LivingMotions.DEATH, Animations.DRAGON_DEATH);
 
 		this.animator = EpicDragonFight.getAnimator(this);
+		for (Map.Entry<LivingMotions, StaticAnimation> entry : this.livingMotions.entrySet()) {
+			this.animator.addLivingAnimation(entry.getKey(), entry.getValue());
+		}
 		this.animator.init();
 		this.currentlyAttackedEntity = new ArrayList<>();
 
@@ -125,6 +128,17 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			//super.clientTick();
 			if (this.shieldEndEffectAge < 10) {
 				this.shieldEndEffectAge++;
+			}
+			this.updateMotion(false);
+
+			if (this.prevMotion != this.currentLivingMotion && !this.animator.getEntityState().inaction()) {
+				if (this.livingMotions.containsKey(this.currentLivingMotion)) {
+					StaticAnimation anim = this.livingMotions.get(this.currentLivingMotion);
+					if (anim != null) {
+						this.animator.playAnimation(anim, 0.0F);
+					}
+				}
+				this.prevMotion = this.currentLivingMotion;
 			}
 		} else {
 			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();

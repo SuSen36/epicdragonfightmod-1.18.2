@@ -6,15 +6,12 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.api.animation.Animator;
 import susen36.epicdragonfight.api.animation.LivingMotions;
 import susen36.epicdragonfight.api.animation.types.EntityState;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
-import susen36.epicdragonfight.api.client.animation.ClientAnimator;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
 import susen36.epicdragonfight.network.server.SPPlayAnimation;
@@ -26,9 +23,6 @@ public interface IDragonPatch {
 
 	@NotNull
 	EnderDragon getOriginal();
-
-	@OnlyIn(Dist.CLIENT)
-    void initAnimator(ClientAnimator clientAnimator);
 
     void updateMotion(boolean considerInaction);
 	
@@ -48,9 +42,6 @@ public interface IDragonPatch {
 	}
 
 	<A extends Animator> A getAnimator();
-
-	@OnlyIn(Dist.CLIENT)
-	ClientAnimator getClientAnimator();
 
 	EntityState getEntityState();
 

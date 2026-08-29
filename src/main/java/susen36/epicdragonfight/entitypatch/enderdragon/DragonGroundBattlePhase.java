@@ -150,11 +150,11 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 	}
 	
 	public void fly() {
-		this.combatBehaviors.execute(6);
+		this.combatBehaviors.execute(5);
 	}
 	
 	public void resetFlyCooldown() {
-		this.combatBehaviors.resetCooldown(6, false);
+		this.combatBehaviors.resetCooldown(5, false);
 	}
 	
 	@Override

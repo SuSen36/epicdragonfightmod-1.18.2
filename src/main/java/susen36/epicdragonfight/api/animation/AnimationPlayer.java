@@ -1,7 +1,6 @@
 package susen36.epicdragonfight.api.animation;
 
 import susen36.epicdragonfight.api.animation.types.DynamicAnimation;
-import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationCoordSetter;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 
@@ -12,34 +11,29 @@ public class AnimationPlayer {
 	private boolean doNotResetNext;
 	private boolean reversed;
 	private DynamicAnimation play;
-	private TransformSheet actionAnimationCoord = new TransformSheet();
 	
 	public AnimationPlayer() {
 		this.setPlayAnimation(Animations.DUMMY_ANIMATION);
 	}
 	
 	public void tick(IDragonPatch entitypatch) {
-		this.prevElapsedTime = this.elapsedTime;
-		this.elapsedTime += (float) (0.05 * this.getAnimation().getPlaySpeed(entitypatch) *
+		float delta = (float) (0.05 * this.getAnimation().getPlaySpeed(entitypatch) *
                         (this.isReversed() && this.getAnimation().canBePlayedReverse() ? -1.0F : 1.0F));
+		this.prevElapsedTime = this.elapsedTime;
+		this.elapsedTime += delta;
+		
+		if (this.play.isRepeat()) {
+			// 循环动画无休止累计时间，循环取模由 vanilla KeyframeAnimations 处理，避免此处 totalTime 未设置时卡回首帧
+			return;
+		}
 		
 		if (this.elapsedTime >= this.play.getTotalTime()) {
-			if (this.play.isRepeat()) {
-				this.prevElapsedTime = 0;
-				this.elapsedTime %= this.play.getTotalTime();
-			} else {
-				this.elapsedTime = this.play.getTotalTime();
-				this.isEnd = true;
-			}
+			this.elapsedTime = this.play.getTotalTime();
+			this.isEnd = true;
 		} else if (this.elapsedTime < 0) {
-			if (this.play.isRepeat()) {
-				this.prevElapsedTime = this.play.getTotalTime();
-				this.elapsedTime = this.play.getTotalTime() + this.elapsedTime;
-			} else {
-				System.out.println("?? " + this.getAnimation());
-				this.elapsedTime = 0.0F;
-				this.isEnd = true;
-			}
+			System.out.println("?? " + this.getAnimation());
+			this.elapsedTime = 0.0F;
+			this.isEnd = true;
 		}
 	}
 
@@ -57,18 +51,6 @@ public class AnimationPlayer {
 		}
 		
 		this.play = animation;
-	}
-	
-	public void setActionAnimationCoord(DynamicAnimation animation, IDragonPatch entitypatch, ActionAnimationCoordSetter actionAnimationCoordSetter) {
-		actionAnimationCoordSetter.set(animation, entitypatch, this.actionAnimationCoord);
-	}
-	
-	public TransformSheet getActionAnimationCoord() {
-		return this.actionAnimationCoord;
-	}
-	
-	public Pose getCurrentPose(IDragonPatch entitypatch, float partialTicks) {
-		return this.play.getPoseByTime(entitypatch, this.prevElapsedTime + (this.elapsedTime - this.prevElapsedTime) * partialTicks, partialTicks);
 	}
 	
 	public float getElapsedTime() {
