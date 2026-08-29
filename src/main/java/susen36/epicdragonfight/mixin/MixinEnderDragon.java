@@ -70,21 +70,17 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	int pendingServerEventTicks = 0;
 	int phaseSwitchDelay = 0;
 	int pendingPhaseSwitch = 0;
-	boolean deathAnimationPlayed = false;
 
 	AnimationState idleAnimationState = new AnimationState();
 	AnimationState walkAnimationState = new AnimationState();
 	AnimationState flyAnimationState = new AnimationState();
-	AnimationState airstrikeAnimationState = new AnimationState();
 	AnimationState attack1AnimationState = new AnimationState();
 	AnimationState attack2AnimationState = new AnimationState();
 	AnimationState leftTailSweepAnimationState = new AnimationState();
 	AnimationState rightTailSweepAnimationState = new AnimationState();
 	AnimationState fireballAnimationState = new AnimationState();
-	AnimationState groundToFlyAnimationState = new AnimationState();
 	AnimationState flyToGroundAnimationState = new AnimationState();
 	AnimationState crystalLinkAnimationState = new AnimationState();
-	AnimationState deathAnimationState = new AnimationState();
 
 	private final ServerBossEvent bossEvent = (ServerBossEvent)(new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.PINK, BossEvent.BossBarOverlay.PROGRESS)).setPlayBossMusic(false).setCreateWorldFog(false);
 
@@ -118,30 +114,20 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
 			boolean oneShotActive = this.attack1AnimationState.isStarted() || this.attack2AnimationState.isStarted()
 				|| this.leftTailSweepAnimationState.isStarted() || this.rightTailSweepAnimationState.isStarted()
-				|| this.fireballAnimationState.isStarted() || this.groundToFlyAnimationState.isStarted()
-				|| this.flyToGroundAnimationState.isStarted() || this.crystalLinkAnimationState.isStarted()
-				|| this.deathAnimationState.isStarted();
+				|| this.fireballAnimationState.isStarted() || this.flyToGroundAnimationState.isStarted()
+				|| this.crystalLinkAnimationState.isStarted();
 
 			this.stopAnimationAfterDuration(this.attack1AnimationState, Animations.ATTACK1_TICKS);
 			this.stopAnimationAfterDuration(this.attack2AnimationState, Animations.ATTACK2_TICKS);
 			this.stopAnimationAfterDuration(this.leftTailSweepAnimationState, Animations.LEFT_TAIL_SWEEP_TICKS);
 			this.stopAnimationAfterDuration(this.rightTailSweepAnimationState, Animations.RIGHT_TAIL_SWEEP_TICKS);
 			this.stopAnimationAfterDuration(this.fireballAnimationState, Animations.FIREBALL_TICKS);
-			this.stopAnimationAfterDuration(this.groundToFlyAnimationState, Animations.GROUND_TO_FLY_TICKS);
 			this.stopAnimationAfterDuration(this.flyToGroundAnimationState, Animations.FLY_TO_GROUND_TICKS);
 			this.stopAnimationAfterDuration(this.crystalLinkAnimationState, Animations.CRYSTAL_LINK_TICKS);
-			this.stopAnimationAfterDuration(this.deathAnimationState, Animations.DEATH_TICKS);
 
 			if (!oneShotActive) {
-				if (!this.groundPhase) {
-					boolean isAirstrike = currentPhase == PatchedPhases.AIRSTRIKE || currentPhase == PatchedPhases.CHARGE;
-					if (isAirstrike) {
-						this.airstrikeAnimationState.startIfStopped(this.tickCount);
-						this.flyAnimationState.stop();
-					} else {
-						this.flyAnimationState.startIfStopped(this.tickCount);
-						this.airstrikeAnimationState.stop();
-					}
+				if (this.isFlyingPhase()) {
+					this.flyAnimationState.startIfStopped(this.tickCount);
 					this.idleAnimationState.stop();
 					this.walkAnimationState.stop();
 				} else {
@@ -154,13 +140,11 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 						this.walkAnimationState.stop();
 					}
 					this.flyAnimationState.stop();
-					this.airstrikeAnimationState.stop();
 				}
 			} else {
 				this.idleAnimationState.stop();
 				this.walkAnimationState.stop();
 				this.flyAnimationState.stop();
-				this.airstrikeAnimationState.stop();
 			}
 		} else {
 			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
@@ -206,7 +190,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	public void handleEntityEvent(byte event) {
 		if (this.level.isClientSide()) {
 			switch (event) {
-				case 100 -> this.groundToFlyAnimationState.start(this.tickCount);
 				case 101 -> this.flyToGroundAnimationState.start(this.tickCount);
 				case 102 -> this.attack1AnimationState.start(this.tickCount);
 				case 103 -> this.attack2AnimationState.start(this.tickCount);
@@ -214,7 +197,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 				case 105 -> this.rightTailSweepAnimationState.start(this.tickCount);
 				case 106 -> this.fireballAnimationState.start(this.tickCount);
 				case 107 -> this.crystalLinkAnimationState.start(this.tickCount);
-				case 108 -> this.deathAnimationState.start(this.tickCount);
 			}
 		}
 	}
@@ -264,28 +246,20 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			this.setFlyingPhase(true);
 		} else if (this.pendingPhaseSwitch == 2) {
 			this.setFlyingPhase(false);
-			AABB aabb = this.getBoundingBox().inflate(4.0D);
-			List<Entity> list = this.level.getEntities(this, aabb);
-			for (Entity entity : list) {
-				if (entity instanceof LivingEntity living && !entity.is(this)) {
-					entity.hurt(DamageSource.mobAttack(this), 6.0F);
-				}
-			}
+			//AABB aabb = this.getBoundingBox().inflate(4.0D);
+			//List<Entity> list = this.level.getEntities(this, aabb);
+			//for (Entity entity : list) {
+			//	if (entity instanceof LivingEntity && !entity.is(this)) {
+			//		entity.hurt(DamageSource.mobAttack(this), 6.0F);
+			//	}
+			//}
 		}
 		this.pendingPhaseSwitch = 0;
 	}
 
 	@Override
 	public EntityDimensions getDimensions(Pose pose) {
-		return EntityDimensions.scalable(5.0F, 4F);
-	}
-
-	@Inject(method = "tickDeath", at = @At("HEAD"))
-	private void onTickDeath(CallbackInfo ci) {
-		if (!this.level.isClientSide() && !this.deathAnimationPlayed) {
-			this.deathAnimationPlayed = true;
-			this.playAnimation(Animations.DEATH_EVENT, Animations.DEATH_TICKS);
-		}
+		return EntityDimensions.scalable(3.0F, 2.75F);
 	}
 
 	@ModifyVariable(method = "tickDeath", name = "i", at = @At(value = "STORE", ordinal = 0))
@@ -293,22 +267,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		return 12000;
 	}
 
-	@Inject(
-		method = "createAttributes",
-		at = @At("RETURN"),
-		cancellable = true
-	)
-	private static void onCreateAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
-		AttributeSupplier.Builder builder = cir.getReturnValue();
-		builder.add(Attributes.MAX_HEALTH, 400.0D);
-		builder.add(Attributes.ARMOR, 2D);
-		builder.add(Attributes.ARMOR_TOUGHNESS, 2.0D);
-		builder.add(Attributes.ATTACK_DAMAGE, 10.0D);
-		builder.add(Attributes.ATTACK_KNOCKBACK, 0.35D);
-		builder.add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
-		builder.add(Attributes.FOLLOW_RANGE, 64.0D);
-		cir.setReturnValue(builder);
-	}
 
 	/**
 	 * @author
@@ -351,7 +309,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			this.sittingDamageReceived += (this.getHealth() - this.getHealth());
 			if (this.sittingDamageReceived > 0.25F * this.getMaxHealth()) {
 				this.sittingDamageReceived = 0.0F;
-				this.phaseManager.setPhase(EnderDragonPhase.TAKEOFF);
+				this.takeOff();
 			}
 		}
 
@@ -370,14 +328,15 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 		if (this.isEffectiveAi()) {
 			this.targetSelector.tick();
 		}
-		this.xxa *= 0.98F;
-		this.zza *= 0.98F;
-		this.travel(new Vec3(this.xxa, this.yya, this.zza));
 		this.noPhysics = this.isFlyingPhase();
 		this.setNoGravity(this.isFlyingPhase());
+
+		if (!this.isFlyingPhase() && !this.isNoGravity()) {
+			this.travel(new Vec3(this.xxa,this.yya,this.zza));
+		}
 	}
 
-
+	
 	@Override
 	public boolean causeFallDamage(float fallDistance, float multiplier, DamageSource source) {
 		return false;
@@ -400,8 +359,7 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	public void setFlyingPhase(boolean isFlying) {
 		this.groundPhase = !isFlying;
-		this.horizontalCollision = !isFlying;
-		this.verticalCollision = !isFlying;
+		this.horizontalCollision = this.verticalCollision = !isFlying;
 		this.updateGroundPhaseAttributes();
 	}
 
@@ -457,6 +415,11 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 
 	@Override
 	public boolean isFlyingPhase() {
+		if (this.level.isClientSide()) {
+			EnderDragonPhase<?> currentPhase = this.phaseManager.getCurrentPhase().getPhase();
+			return currentPhase == PatchedPhases.FLYING || currentPhase == PatchedPhases.CHARGE
+				|| currentPhase == PatchedPhases.AIRSTRIKE || currentPhase == PatchedPhases.LANDING;
+		}
 		return !this.groundPhase;
 	}
 
@@ -466,6 +429,24 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 			this.actionTimer = actionTicks;
 			this.level.broadcastEntityEvent(this, event);
 		}
+	}
+
+	@Inject(
+			method = "createAttributes",
+			at = @At("RETURN"),
+			cancellable = true
+	)
+	private static void onCreateAttributes(CallbackInfoReturnable<AttributeSupplier.Builder> cir) {
+		AttributeSupplier.Builder builder = cir.getReturnValue();
+		builder.add(Attributes.MAX_HEALTH, 400.0D);
+		builder.add(Attributes.ARMOR, 2D);
+		builder.add(Attributes.ARMOR_TOUGHNESS, 2.0D);
+		builder.add(Attributes.ATTACK_DAMAGE, 10.0D);
+		builder.add(Attributes.ATTACK_KNOCKBACK, 0.35D);
+		builder.add(Attributes.MOVEMENT_SPEED, 0.35D);
+		builder.add(Attributes.KNOCKBACK_RESISTANCE, 1.0D);
+		builder.add(Attributes.FOLLOW_RANGE, 64.0D);
+		cir.setReturnValue(builder);
 	}
 
 	@Override
@@ -517,11 +498,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
-	public AnimationState getAirstrikeAnimationState() {
-		return this.airstrikeAnimationState;
-	}
-
-	@Override
 	public AnimationState getAttack1AnimationState() {
 		return this.attack1AnimationState;
 	}
@@ -547,11 +523,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	}
 
 	@Override
-	public AnimationState getGroundToFlyAnimationState() {
-		return this.groundToFlyAnimationState;
-	}
-
-	@Override
 	public AnimationState getFlyToGroundAnimationState() {
 		return this.flyToGroundAnimationState;
 	}
@@ -559,11 +530,6 @@ public abstract class MixinEnderDragon extends Mob implements IDragonPatch {
 	@Override
 	public AnimationState getCrystalLinkAnimationState() {
 		return this.crystalLinkAnimationState;
-	}
-
-	@Override
-	public AnimationState getDeathAnimationState() {
-		return this.deathAnimationState;
 	}
 
 	@Override

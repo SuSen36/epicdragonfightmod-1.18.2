@@ -6,10 +6,13 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
 import susen36.epicdragonfight.EpicDragonFight;
 import susen36.epicdragonfight.client.anim.DragonAnimKeyFrames;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 public class EnderDragonModel extends HierarchicalModel<EnderDragon> {
 	public static final ModelLayerLocation DRAGON = new ModelLayerLocation(new ResourceLocation(EpicDragonFight.MODID, "dragon"), "main");
@@ -205,20 +208,26 @@ public class EnderDragonModel extends HierarchicalModel<EnderDragon> {
 	public void setupAnim(EnderDragon entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.root().getAllParts().forEach(ModelPart::resetPose);
 
+		if (entity.dragonDeathTime > 0) {
+			return;
+		}
+
 		if (entity instanceof IDragonPatch dragonPatch) {
 			this.animate(dragonPatch.getIdleAnimationState(), DragonAnimKeyFrames.get("idle"), ageInTicks);
 			this.animate(dragonPatch.getWalkAnimationState(), DragonAnimKeyFrames.get("walk"), ageInTicks);
 			this.animate(dragonPatch.getFlyAnimationState(), DragonAnimKeyFrames.get("fly"), ageInTicks);
-			this.animate(dragonPatch.getAirstrikeAnimationState(), DragonAnimKeyFrames.get("airstrike"), ageInTicks);
 			this.animate(dragonPatch.getAttack1AnimationState(), DragonAnimKeyFrames.get("attack1"), ageInTicks);
 			this.animate(dragonPatch.getAttack2AnimationState(), DragonAnimKeyFrames.get("attack2"), ageInTicks);
 			this.animate(dragonPatch.getLeftTailSweepAnimationState(), DragonAnimKeyFrames.get("left_tail_sweep"), ageInTicks);
 			this.animate(dragonPatch.getRightTailSweepAnimationState(), DragonAnimKeyFrames.get("right_tail_sweep"), ageInTicks);
 			this.animate(dragonPatch.getFireballAnimationState(), DragonAnimKeyFrames.get("fireball"), ageInTicks);
-			this.animate(dragonPatch.getGroundToFlyAnimationState(), DragonAnimKeyFrames.get("ground_to_fly"), ageInTicks);
 			this.animate(dragonPatch.getFlyToGroundAnimationState(), DragonAnimKeyFrames.get("fly_to_ground"), ageInTicks);
 			this.animate(dragonPatch.getCrystalLinkAnimationState(), DragonAnimKeyFrames.get("crystal_link"), ageInTicks);
-			this.animate(dragonPatch.getDeathAnimationState(), DragonAnimKeyFrames.get("death"), ageInTicks);
+
+			EnderDragonPhase<?> currentPhase = entity.getPhaseManager().getCurrentPhase().getPhase();
+			if (currentPhase == PatchedPhases.AIRSTRIKE) {
+				this.jaw.xRot += 73.52F * Mth.DEG_TO_RAD;
+			}
 		}
 	}
 

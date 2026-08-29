@@ -9,6 +9,8 @@ import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import susen36.epicdragonfight.EpicDragonFight;
+import susen36.epicdragonfight.entitypatch.enderdragon.DragonFlyingPhase;
+import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 public interface IDragonPatch {
 
@@ -39,8 +41,6 @@ public interface IDragonPatch {
 
 	AnimationState getFlyAnimationState();
 
-	AnimationState getAirstrikeAnimationState();
-
 	AnimationState getAttack1AnimationState();
 
 	AnimationState getAttack2AnimationState();
@@ -51,13 +51,9 @@ public interface IDragonPatch {
 
 	AnimationState getFireballAnimationState();
 
-	AnimationState getGroundToFlyAnimationState();
-
 	AnimationState getFlyToGroundAnimationState();
 
 	AnimationState getCrystalLinkAnimationState();
-
-	AnimationState getDeathAnimationState();
 
 	default float getAttackDirectionPitch() {
 		Entity attackTarget = this.getOriginal().getTarget();
@@ -127,5 +123,13 @@ public interface IDragonPatch {
 		if (!this.getOriginal().level.isClientSide()) {
 			this.getOriginal().setTarget(entityIn);
 		}
+	}
+
+	default void takeOff() {
+		EnderDragon dragon = this.getOriginal();
+		this.setFlyingPhase(true);
+		dragon.setDeltaMovement(dragon.getDeltaMovement().add(0.0D, 0.4D, 0.0D));
+		dragon.getPhaseManager().setPhase(PatchedPhases.FLYING);
+		((DragonFlyingPhase)dragon.getPhaseManager().getCurrentPhase()).enableAirstrike();
 	}
 }

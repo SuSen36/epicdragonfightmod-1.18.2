@@ -6,7 +6,6 @@ import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.Behavior;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.BehaviorSeries;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.Health.Comparator;
 import susen36.epicdragonfight.entitypatch.ai.CombatBehaviors.RandomAnimation;
-import susen36.epicdragonfight.entitypatch.enderdragon.DragonFlyingPhase;
 import susen36.epicdragonfight.entitypatch.enderdragon.PatchedPhases;
 
 public class MobCombatBehaviors {
@@ -37,11 +36,6 @@ public class MobCombatBehaviors {
 		).newBehaviorSeries(
 			BehaviorSeries.builder().weight(10.0F).cooldown(1600).canBeInterrupted(false).looping(false)
 				.nextBehavior(Behavior.builder().health(0.5F, Comparator.LESS_RATIO).custom((mobpatch) -> mobpatch.getOriginal().getDragonFight() != null && mobpatch.getOriginal().getDragonFight().getCrystalsAlive() > 0)
-				.behavior((mobpatch) -> {
-					mobpatch.playAnimation(Animations.GROUND_TO_FLY_EVENT, Animations.GROUND_TO_FLY_TICKS);
-					mobpatch.scheduleSetFlyingPhase(Animations.GROUND_TO_FLY_PHASE_TICKS);
-					mobpatch.getOriginal().getPhaseManager().setPhase(PatchedPhases.FLYING);
-					((DragonFlyingPhase)mobpatch.getOriginal().getPhaseManager().getCurrentPhase()).enableAirstrike();
-				}))
+				.behavior(IDragonPatch::takeOff))
 		);
 }
