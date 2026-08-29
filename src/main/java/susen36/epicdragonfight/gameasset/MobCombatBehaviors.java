@@ -22,9 +22,6 @@ public class MobCombatBehaviors {
 				.nextBehavior(Behavior.builder().animationBehavior(Animations.DRAGON_ATTACK2))
 				.nextBehavior(Behavior.builder().randomAnimationBehavior(Animations.DRAGON_LEFT_TAIL_SWEEP, Animations.DRAGON_RIGHT_TAIL_SWEEP).randomChance(0.4F).withinDistance(0.0D, 7.0D))
 		).newBehaviorSeries(
-			BehaviorSeries.builder().weight(50.0F).cooldown(200).simultaneousCooldown(3).canBeInterrupted(false).looping(false)
-				.nextBehavior(Behavior.builder().animationBehavior(Animations.DRAGON_ATTACK3).withinDistance(10.0D, 15.0D).withinAngle(0.0F, 40.0F))
-		).newBehaviorSeries(
 			BehaviorSeries.builder().weight(100.0F).cooldown(240).canBeInterrupted(false).looping(false)
 				.nextBehavior(Behavior.builder().animationBehavior(Animations.DRAGON_FIREBALL).withinDistance(15.0D, 30.0D).withinAngleHorizontal(0.0F, 10.0F))
 		).newBehaviorSeries(

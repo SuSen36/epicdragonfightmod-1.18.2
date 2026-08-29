@@ -34,7 +34,6 @@ public class Animations {
 	public static StaticAnimation DRAGON_RIGHT_TAIL_SWEEP;
 	public static StaticAnimation DRAGON_ATTACK1;
 	public static StaticAnimation DRAGON_ATTACK2;
-	public static StaticAnimation DRAGON_ATTACK3;
 	public static StaticAnimation DRAGON_FIREBALL;
 	public static StaticAnimation DRAGON_AIRSTRIKE;
 	public static StaticAnimation DRAGON_CRYSTAL_LINK;
@@ -96,16 +95,6 @@ public class Animations {
 			Entity target = entitypatch.getOriginal().getTarget();
 			if(target != null && original.distanceTo(target)<=8) {
 				original.doHurtTarget(target);
-			}
-		}, Side.SERVER)});
-
-		DRAGON_ATTACK3 = new EnderDragonTailAttackAnimation(0.35F, 0.5F, 1.15F, 1.26F, 1.9F, "root", "attack3")
-		   .addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(1.2F, (entitypatch) -> {
-			entitypatch.getOriginal().playSound(SoundEvents.GENERIC_EXPLODE, 0, 0);
-		}, Side.CLIENT), Event.create(1.26F, (entitypatch) -> {
-			LivingEntity original = entitypatch.getOriginal();
-			for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(2.0D, 0.D, 2.0D))) {
-				original.doHurtTarget(entity);
 			}
 		}, Side.SERVER)});
 
