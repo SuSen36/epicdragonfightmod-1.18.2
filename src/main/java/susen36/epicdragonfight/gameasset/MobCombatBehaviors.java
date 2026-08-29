@@ -25,9 +25,6 @@ public class MobCombatBehaviors {
 			BehaviorSeries.builder().weight(50.0F).cooldown(200).simultaneousCooldown(3).canBeInterrupted(false).looping(false)
 				.nextBehavior(Behavior.builder().animationBehavior(Animations.DRAGON_ATTACK3).withinDistance(10.0D, 15.0D).withinAngle(0.0F, 40.0F))
 		).newBehaviorSeries(
-			BehaviorSeries.builder().weight(100.0F).cooldown(100).simultaneousCooldown(2).canBeInterrupted(false).looping(false)
-				.nextBehavior(Behavior.builder().animationBehavior(Animations.DRAGON_BACKJUMP_PREPARE).withinDistance(0.0D, 4.0D).withinAngle(90.0F, 180.0F))
-		).newBehaviorSeries(
 			BehaviorSeries.builder().weight(100.0F).cooldown(240).canBeInterrupted(false).looping(false)
 				.nextBehavior(Behavior.builder().animationBehavior(Animations.DRAGON_FIREBALL).withinDistance(15.0D, 30.0D).withinAngleHorizontal(0.0F, 10.0F))
 		).newBehaviorSeries(

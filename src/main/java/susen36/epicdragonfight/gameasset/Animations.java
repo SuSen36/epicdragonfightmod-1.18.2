@@ -13,7 +13,6 @@ import susen36.epicdragonfight.api.animation.JointTransform;
 import susen36.epicdragonfight.api.animation.TransformSheet;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation;
 import susen36.epicdragonfight.api.animation.types.ActionAnimation.ActionTime;
-import susen36.epicdragonfight.api.animation.types.AttackAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event;
 import susen36.epicdragonfight.api.animation.types.StaticAnimation.Event.Side;
@@ -21,7 +20,6 @@ import susen36.epicdragonfight.api.animation.types.procedural.EnderDragonAttackA
 import susen36.epicdragonfight.api.animation.types.procedural.EnderDragonDeathAnimation;
 import susen36.epicdragonfight.api.animation.types.procedural.EnderDragonTailAttackAnimation;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.ActionAnimationProperty;
-import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.AttackAnimationProperty;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty.StaticAnimationProperty;
 import susen36.epicdragonfight.api.utils.math.MathUtils;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
@@ -45,9 +43,6 @@ public class Animations {
 	public static StaticAnimation DRAGON_ATTACK3;
 	public static StaticAnimation DRAGON_FIREBALL;
 	public static StaticAnimation DRAGON_AIRSTRIKE;
-	public static StaticAnimation DRAGON_BACKJUMP_PREPARE;
-	public static StaticAnimation DRAGON_BACKJUMP_MOVE;
-	public static StaticAnimation DRAGON_BACKJUMP_RECOVERY;
 	public static StaticAnimation DRAGON_CRYSTAL_LINK;
 	public static StaticAnimation DRAGON_NEUTRALIZED;
 	public static StaticAnimation DRAGON_NEUTRALIZED_RECOVERY;
@@ -161,31 +156,6 @@ public class Animations {
 		}, Side.SERVER)});
 		DRAGON_AIRSTRIKE = new StaticAnimation(0.35F,true, "airstrike")
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, ReuseableEvents.WING_FLAP, Side.CLIENT)});
-
-		DRAGON_BACKJUMP_PREPARE = new ActionAnimation(0.35F, "backjump_prepare").addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.3F, (entitypatch) -> {
-			entitypatch.getAnimator().reserveAnimation(DRAGON_BACKJUMP_MOVE);
-		}, Side.BOTH)});
-		DRAGON_BACKJUMP_MOVE = new AttackAnimation(0.0F, 10.0F, 10.0F, 10.0F, 10.0F, "root", "backjump_move")
-				.addProperty(AttackAnimationProperty.FIXED_MOVE_DISTANCE, true)
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.5F, (entitypatch) -> {
-					LivingEntity original = entitypatch.getOriginal();
-					DamageSource damageSource = DamageSource.mobAttack(original);
-
-					for (Entity entity : original.level.getEntities(original, original.getBoundingBox().inflate(2.0D, 0.0D, 2.0D))) {
-						if (entity != original && !(entity instanceof EnderDragonPart part && part.getParent() == original)) {
-							entity.hurt(damageSource, 8.0F);
-						}
-					}
-				}, Side.SERVER), Event.create(1.0F, (entitypatch) -> {
-					entitypatch.getAnimator().reserveAnimation(DRAGON_BACKJUMP_RECOVERY);
-				}, Side.BOTH)});
-
-		DRAGON_BACKJUMP_RECOVERY = new ActionAnimation(0.0F, "backjump_recovery")
-				.addProperty(ActionAnimationProperty.MOVE_VERTICAL, true)
-				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(0.15F, (entitypatch) -> {
-					entitypatch.getOriginal().playSound(SoundEvents.STONE_FALL, 0, 0);
-
-				}, Side.CLIENT)});
 
 		DRAGON_CRYSTAL_LINK = new ActionAnimation(0.5F, "crystal_link")
 				.addProperty(StaticAnimationProperty.EVENTS, new Event[]{Event.create(7.0F, (entitypatch) -> {

@@ -1,23 +1,19 @@
 package susen36.epicdragonfight.api.animation.types;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Vector3f;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import susen36.epicdragonfight.api.animation.*;
 import susen36.epicdragonfight.api.animation.types.property.AnimationProperty;
 import susen36.epicdragonfight.api.client.animation.JointMask.BindModifier;
-import susen36.epicdragonfight.api.model.Armature;
 import susen36.epicdragonfight.api.utils.math.OpenMatrix4f;
-import susen36.epicdragonfight.client.renderer.DragonFightRenderTypes;
-import susen36.epicdragonfight.client.renderer.RenderingTool;
 import susen36.epicdragonfight.entitypatch.IDragonPatch;
 import susen36.epicdragonfight.gameasset.Animations;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public abstract class DynamicAnimation {
 	protected Map<String, TransformSheet> jointTransforms;
@@ -164,24 +160,6 @@ public abstract class DynamicAnimation {
 	
 	public boolean isMetaAnimation() {
 		return false;
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	public void renderDebugging(PoseStack poseStack, MultiBufferSource buffer, IDragonPatch entitypatch, float playTime, float partialTicks, OpenMatrix4f[] poses, Armature armature) {
-		Joint rootJoint = armature.getJointHierarcy();
-		List<Vector3f> jointPositions = new ArrayList<>();
-		List<int[]> connections = new ArrayList<>();
-		this.collectJointData(rootJoint, poses, jointPositions, connections, -1);
-
-		VertexConsumer quadBuilder = buffer.getBuffer(DragonFightRenderTypes.debugQuads());
-        for (Vector3f jointPosition : jointPositions) {
-            RenderingTool.drawCube(poseStack, quadBuilder, jointPosition, 0.2F, 0.0F, 1.0F, 0.0F);
-        }
-
-		VertexConsumer lineBuilder = buffer.getBuffer(RenderType.lines());
-		for (int[] conn : connections) {
-			RenderingTool.drawLine(poseStack, lineBuilder, jointPositions.get(conn[0]), jointPositions.get(conn[1]), 0.0F, 1.0F, 0.0F);
-		}
 	}
 
 	@OnlyIn(Dist.CLIENT)

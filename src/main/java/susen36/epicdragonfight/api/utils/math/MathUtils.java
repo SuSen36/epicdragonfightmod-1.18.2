@@ -1,10 +1,8 @@
 package susen36.epicdragonfight.api.utils.math;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
 
 public class MathUtils {
 	public static OpenMatrix4f getModelMatrixIntegral(float prevPosX, float posX, float prevPosY, float posY, float prevPosZ, float posZ, float prevPitch, float pitch, float prevYaw, float yaw, float partialTick, float scaleX, float scaleY, float scaleZ) {
@@ -44,72 +42,18 @@ public class MathUtils {
 		
 		return f1;
 	}
-	
-	public static void translateStack(PoseStack mStack, OpenMatrix4f mat) {
-		Vector3f vector = new Vector3f(mat.m30, mat.m31, mat.m32);
-		mStack.translate(vector.x(), vector.y(), vector.z());
-	}
-	
-	public static void rotateStack(PoseStack mStack, OpenMatrix4f mat) {
-		mStack.mulPose(getQuaternionFromMatrix(mat));
-	}
-	
-	public static void scaleStack(PoseStack mStack, OpenMatrix4f mat) {
-		Vector3f vector = getScaleVectorFromMatrix(mat);
-		mStack.scale(vector.x(), vector.y(), vector.z());
-	}
+
 	
 	public static double getAngleBetween(Vector3f a, Vector3f b) {
 		double cos = (a.x * b.x + a.y * b.y + a.z * b.z);
 		return Math.acos(cos);
 	}
-	
-	private static Quaternion getQuaternionFromMatrix(OpenMatrix4f mat) {
-		float w, x, y, z;
-		float diagonal = mat.m00 + mat.m11 + mat.m22;
 
-		if (diagonal > 0) {
-			float w4 = (float) (Math.sqrt(diagonal + 1.0F) * 2.0F);
-			w = w4 * 0.25F;
-			x = (mat.m21 - mat.m12) / w4;
-			y = (mat.m02 - mat.m20) / w4;
-			z = (mat.m10 - mat.m01) / w4;
-		} else if ((mat.m00 > mat.m11) && (mat.m00 > mat.m22)) {
-			float x4 = (float) (Math.sqrt(1.0F + mat.m00 - mat.m11 - mat.m22) * 2F);
-			w = (mat.m21 - mat.m12) / x4;
-			x = x4 * 0.25F;
-			y = (mat.m01 + mat.m10) / x4;
-			z = (mat.m02 + mat.m20) / x4;
-		} else if (mat.m11 > mat.m22) {
-			float y4 = (float) (Math.sqrt(1.0F + mat.m11 - mat.m00 - mat.m22) * 2F);
-			w = (mat.m02 - mat.m20) / y4;
-			x = (mat.m01 + mat.m10) / y4;
-			y = y4 * 0.25F;
-			z = (mat.m12 + mat.m21) / y4;
-		} else {
-			float z4 = (float) (Math.sqrt(1.0F + mat.m22 - mat.m00 - mat.m11) * 2F);
-			w = (mat.m10 - mat.m01) / z4;
-			x = (mat.m02 + mat.m20) / z4;
-			y = (mat.m12 + mat.m21) / z4;
-			z = z4 * 0.25F;
-		}
-		
-		Quaternion quat = new Quaternion(x, y, z, w);
-		quat.normalize();
-		return quat;
-	}
-	
 	public static Vector3f lerpVector(Vector3f start, Vector3f end, float weight) {
 		float x = start.x + (end.x - start.x) * weight;
 		float y = start.y + (end.y - start.y) * weight;
 		float z = start.z + (end.z - start.z) * weight;
 		return new Vector3f(x, y, z);
-	}
-	
-	public static Vec3 projectVector(Vec3 from, Vec3 to) {
-		double dot = to.dot(from);
-		double normalScale = 1.0D / ((to.x * to.x) + (to.y * to.y) + (to.z * to.z));
-		return new Vec3(dot * to.x * normalScale, dot * to.y * normalScale, dot * to.z * normalScale);
 	}
 	
 	public static void setQuaternion(Quaternion quat, float x, float y, float z, float w) {
@@ -162,14 +106,6 @@ public class MathUtils {
 		}
 	}
 
-	private static Vector3f getScaleVectorFromMatrix(OpenMatrix4f mat) {
-		Vector3f a = new Vector3f(mat.m00, mat.m10, mat.m20);
-		Vector3f b = new Vector3f(mat.m01, mat.m11, mat.m21);
-		Vector3f c = new Vector3f(mat.m02, mat.m12, mat.m22);
-
-		return new Vector3f((float) Math.sqrt(a.dot(a)), (float) Math.sqrt(b.dot(b)), (float) Math.sqrt(c.dot(c)));
-	}
-	
 	private static float fastInvSqrt(float number) {
 		float f = 0.5F * number;
 		int i = Float.floatToIntBits(number);
