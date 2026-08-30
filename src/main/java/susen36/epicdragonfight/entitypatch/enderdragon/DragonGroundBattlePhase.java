@@ -54,7 +54,6 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 		}
 		
 		LivingEntity target = this.dragon.getTarget();
-		
 		if (isValidTarget(target) && isInEndSpikes(target)) {
 			boolean isInAction = this.dragonpatch.isInAction();
 			this.combatBehaviors.tick();
@@ -68,36 +67,32 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
 						result.execute(this.dragonpatch);
 					}
 				}
-			} else {
-				if (!isInAction) {
-					CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
+			} else if (!isInAction) {
+				CombatBehaviors.Behavior<IDragonPatch> result = this.combatBehaviors.selectRandomBehaviorSeries();
 
-					if (result != null) {
-						result.execute(this.dragonpatch);
-					} else {
-						if (this.dragon.tickCount % 20 == 0) {
-							if (!this.checkTargetPath(target)) {
-								if (this.noPathWarningCounter++ >= 3) {
-									this.fly();
-								}
-							} else {
-								this.noPathWarningCounter = 0;
-							}
-						}
-
-						double dx = target.getX() - this.dragon.getX();
-						double dz = target.getZ() - this.dragon.getZ();
-						float yRot = 180.0F - (float) Math.toDegrees(Mth.atan2(dx, dz));
-						this.dragon.setYRot(Mth.approachDegrees(this.dragon.getYRot(), yRot, 6.0F));
-						Vec3 forward = this.dragon.getForward().scale(-0.25F);
-						this.dragon.move(MoverType.SELF, forward);
-					}
+				if (result != null) {
+					result.execute(this.dragonpatch);
 				} else {
-					if (this.aggroCounter < 0) {
-						this.aggroCounter = 200;
-						this.searchNearestTarget();
+					if (this.dragon.tickCount % 20 == 0) {
+						if (!this.checkTargetPath(target)) {
+							if (this.noPathWarningCounter++ >= 3) {
+								this.fly();
+							}
+						} else {
+							this.noPathWarningCounter = 0;
+						}
 					}
+
+					double dx = target.getX() - this.dragon.getX();
+					double dz = target.getZ() - this.dragon.getZ();
+					float yRot = 180.0F - (float) Math.toDegrees(Mth.atan2(dx, dz));
+					this.dragon.setYRot(Mth.approachDegrees(this.dragon.getYRot(), yRot, 6.0F));
+					Vec3 forward = this.dragon.getForward().scale(-0.25F);
+					this.dragon.move(MoverType.SELF, forward);
 				}
+			} else if (this.aggroCounter < 0) {
+				this.aggroCounter = 200;
+				this.searchNearestTarget();
 			}
 		} else {
 			this.searchNearestTarget();
@@ -127,13 +122,17 @@ public class DragonGroundBattlePhase extends PatchedDragonPhase {
         PathNavigationRegion pathnavigationregion = new PathNavigationRegion(this.dragon.level, blockpos.offset(-sight, -sight, -sight), blockpos.offset(sight, sight, sight));
         
         Path path = this.pathFinder.findPath(pathnavigationregion, this.dragon, ImmutableSet.of(target.blockPosition()), sight, 0, 1.0F);
-        //TODO 方法调用 'getNode' 可能产生 'NullPointerException'
+
+        if (path == null) {
+            return false;
+        }
+
         BlockPos pathEnd = path.getNode(path.getNodeCount() - 1).asBlockPos();
         BlockPos targetPos = path.getTarget();
         double xd = Math.abs(pathEnd.getX() - targetPos.getX());
         double yd = Math.abs(pathEnd.getY() - targetPos.getY());
         double zd = Math.abs(pathEnd.getZ() - targetPos.getZ());
-        
+
         return xd < this.dragon.getBbWidth() && yd < this.dragon.getBbHeight() && zd < this.dragon.getBbWidth();
 	}
 	

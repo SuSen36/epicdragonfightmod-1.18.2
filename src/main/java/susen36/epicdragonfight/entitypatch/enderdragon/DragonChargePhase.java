@@ -113,11 +113,6 @@ public class DragonChargePhase extends PatchedDragonPhase {
 	}
 
 	@Override
-	public float getFlySpeed() {
-		return 1.15F;
-	}
-
-	@Override
 	public EnderDragonPhase<? extends DragonPhaseInstance> getPhase() {
 		return PatchedPhases.CHARGE;
 	}
